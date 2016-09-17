@@ -195,3 +195,8 @@ SOCIAL_AUTH_TWITTER_SECRET = 'update me'
 # FACEBOOK
 SOCIAL_AUTH_FACEBOOK_KEY = 'update me'
 SOCIAL_AUTH_FACEBOOK_SECRET = 'update me'
+
+try:
+    from local_settings import *
+except:
+    print("NO LOCAL SETTINGS")
