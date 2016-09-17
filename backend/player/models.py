@@ -5,7 +5,7 @@ from django.contrib.gis.measure import D
 
 
 class Player(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="user")
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="player")
     pos = models.PointField(null=True, blank=True)
 
     def set_position(self, lat, lon):
@@ -13,10 +13,14 @@ class Player(models.Model):
         self.save()
 
     def __str__(self):
-        return "%s %s" % (self.user.username, self.pos.coords)
+        if self.pos:
+            coords = self.pos.coords
+        else:
+            coords = "(None, None)"
+        return "%s %s" % (self.user.username, coords)
 
     def serialize(self):
         return {
             'username': self.user.username,
-            'pos': self.pos.coords
+            'pos': self.pos.coords if self.pos else (None, None)
         }
