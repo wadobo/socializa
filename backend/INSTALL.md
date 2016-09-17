@@ -15,3 +15,7 @@
     $ ./manage.py shell
     shell: from world import load
     shell: load.run()
+
+# Permit login with social networks
+
+http://python-social-auth.readthedocs.io/en/latest/backends/index.html
