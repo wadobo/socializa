@@ -18,5 +18,6 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url("^api/social/", include("social.apps.django_app.urls", namespace="social")),
     url("^api/player/", include("player.urls"))
 ]
