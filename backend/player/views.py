@@ -13,7 +13,6 @@ class PlayersNear(View):
     def get(self, request):
         ctx = {}
         player = request.user.player
-        import ipdb; ipdb.set_trace()
         if player.pos:
             near_players = Player.objects.filter(pos__distance_lte=(player.pos, D(km=self.NEAR_DISTANCE))).exclude(pk=player.pk)
             ctx['players'] = [player.serialize() for player in near_players]
