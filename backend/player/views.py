@@ -21,3 +21,20 @@ class PlayersNear(View):
         return JsonResponse(ctx)
 
 near = login_required(PlayersNear.as_view())
+
+
+class Meeting(View):
+
+    MEETING_DISTANCE = 10 # m
+
+    def post(self, request, pk):
+        player1 = request.user.player
+        is_near = Player.objects.filter(pk=pk, pos__distance_lte=(player.pos, D(m=self.MEETING_DISTANCE)))
+        if is_near:
+            meeting = Meeting(player1=player1, player2=is_near.first())
+            meeting.save()
+            return "Meeting created"
+        else:
+            return "User is far for meeting"
+
+meeting_create = login_required(PlayersNear.as_view())
