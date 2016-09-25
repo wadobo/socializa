@@ -3,26 +3,44 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
+#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: socializa v0.1\n"
+"Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-17 13:56+0200\n"
-"PO-Revision-Date: 2016-09-17 14:03+0200\n"
-"Language: es\n"
+"POT-Creation-Date: 2016-09-25 13:17+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Last-Translator: Daniel Garcia Moreno <danigm@wadobo.com>\n"
-"Language-Team: Wadobo <info@wadobo.com>\n"
-"X-Generator: Poedit 1.8.8\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Poedit-SourceCharset: UTF-8\n"
 
-#: src/index.html:14
+#: src/index.html:14 src/app.html:76 src/app.html:77
 msgid "View One"
 msgstr "Vista Uno"
 
-#: src/app.html:79
+#: src/app.html:79 src/app.html:86 src/app.html:88
 msgid "Hello World!"
 msgstr "¡Hola Mundo!"
+
+#: src/login.html:24 src/login.html:64
+msgid "new account"
+msgstr "nueva cuenta"
+
+#: src/login.html:36 src/login.html:90
+msgid "password"
+msgstr "contraseña"
+
+#: src/login.html:37 src/login.html:91
+msgid "email"
+msgstr "email"
+
+#: src/app.html:78
+msgid "Logout"
+msgstr "Salir"
+
+#: src/login.html:79
+msgid "Login"
+msgstr "Entrar"

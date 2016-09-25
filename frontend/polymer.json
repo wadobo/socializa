@@ -8,6 +8,8 @@
   "sourceGlobs": [
    "src/**/*",
    "images/**/*",
+   "bower_components/font-awesome/**/*",
+   "locales/**/LC_MESSAGES/*.po",
    "bower.json"
   ],
   "includeDependencies": [
