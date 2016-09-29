@@ -15,9 +15,11 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
+from rest_framework.authtoken import views
+
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url("^api/social/", include("social.apps.django_app.urls", namespace="social")),
-    url("^api/player/", include("player.urls"))
+    url(r"^api/social/", include("rest_framework_social_oauth2.urls")),
+    url(r"^api/player/", include("player.urls"))
 ]
