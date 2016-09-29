@@ -1,0 +1,178 @@
+[
+{
+  "model": "auth.user",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$30000$mQYHRclkzme4$7VK0hKz2iUr1dC/2S9cN4vYl0Gjj4COp9GkDMy+qhSk=",
+    "last_login": "2016-09-24T16:02:25.774Z",
+    "is_superuser": true,
+    "username": "admin",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2016-09-17T13:59:10.267Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 2,
+  "fields": {
+    "password": "pbkdf2_sha256$30000$mQYHRclkzme4$7VK0hKz2iUr1dC/2S9cN4vYl0Gjj4COp9GkDMy+qhSk=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "test1",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2016-09-20T14:36:23.947Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 3,
+  "fields": {
+    "password": "pbkdf2_sha256$30000$mQYHRclkzme4$7VK0hKz2iUr1dC/2S9cN4vYl0Gjj4COp9GkDMy+qhSk=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "test2",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2016-09-20T14:36:23.947Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 4,
+  "fields": {
+    "password": "pbkdf2_sha256$30000$mQYHRclkzme4$7VK0hKz2iUr1dC/2S9cN4vYl0Gjj4COp9GkDMy+qhSk=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "test3",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2016-09-20T14:36:23.947Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 5,
+  "fields": {
+    "password": "pbkdf2_sha256$30000$mQYHRclkzme4$7VK0hKz2iUr1dC/2S9cN4vYl0Gjj4COp9GkDMy+qhSk=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "test4",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2016-09-20T14:36:23.947Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 6,
+  "fields": {
+    "password": "pbkdf2_sha256$30000$mQYHRclkzme4$7VK0hKz2iUr1dC/2S9cN4vYl0Gjj4COp9GkDMy+qhSk=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "test5",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2016-09-20T14:36:23.947Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "player.player",
+  "pk": 1,
+  "fields": {
+    "user": 2,
+    "pos": "SRID=4326;POINT (-6.9738306157521 37.319122407938)"
+  }
+},
+{
+  "model": "player.player",
+  "pk": 2,
+  "fields": {
+    "user": 3,
+    "pos": "SRID=4326;POINT (-6.9738735310963 37.319165323283)"
+  }
+},
+{
+  "model": "player.player",
+  "pk": 3,
+  "fields": {
+    "user": 4,
+    "pos": "SRID=4326;POINT (-6.9735302083424 37.349377725627)"
+  }
+},
+{
+  "model": "player.player",
+  "pk": 4,
+  "fields": {
+    "user": 5,
+    "pos": "SRID=4326;POINT (-6.9668568723136 37.423149202373)"
+  }
+},
+{
+  "model": "player.player",
+  "pk": 5,
+  "fields": {
+    "user": 6,
+    "pos": "SRID=4326;POINT (-6.9163884274894 38.326774690654)"
+  }
+},
+{
+  "model": "oauth2_provider.application",
+  "pk": 1,
+  "fields": {
+    "client_id": "4q02TH3FBK9lUzPObiUkiXGCkuHpw9FqO5SE8Hgb",
+    "user": 1,
+    "redirect_uris": "",
+    "client_type": "confidential",
+    "authorization_grant_type": "password",
+    "client_secret": "f6nCyat8rrJ721wVNCosK43ecMkhqhoKPyKhJz6NcgqemPuNJRztp3rCkB7H723nU1dhRo3S3UD938bbqkktW1Z8UrZC2LM9TUYYmNdWbeQMQZBrkeFpXL4esAIrtWz3",
+    "name": "Facebook",
+    "skip_authorization": false
+  }
+},
+{
+  "model": "oauth2_provider.application",
+  "pk": 2,
+  "fields": {
+    "client_id": "xKwVuUYr7BCVNrnSN5flaynFQ",
+    "user": 1,
+    "redirect_uris": "",
+    "client_type": "confidential",
+    "authorization_grant_type": "password",
+    "client_secret": "gQVsC2wMMx0Wkp1pxHXHnhiRMFBXHqYcah3ABjqeHNXwoo2Ndl",
+    "name": "Twitter",
+    "skip_authorization": false
+  }
+}
+]
