@@ -1,10 +1,16 @@
+services:
+  - postgresql
+addons:
+    postgresql: "9.4"
+before_script:
+  - psql -c 'create database socializa_test;' -U socializa
+  - psql -U socializa -c "create extension postgis"
 language: python
 python:
   - "3.4"
 install:
   - pip install -r backend/requirements.txt
   - pip install coveralls
-# command to run tests
 script:
   - cd backend
   - python manage.py migrate
