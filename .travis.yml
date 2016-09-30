@@ -3,8 +3,9 @@ services:
 addons:
     postgresql: "9.4"
 before_script:
-  - psql -c 'create database socializa_test;' -U socializa
-  - psql -U socializa -c "create extension postgis"
+  - psql -U postgres -c "create user socializa password 'socializa'"
+  - psql -U postgres -c "create database test_socializa owner socializa"
+  - psql -U postgres -d test_socializa -c "create extension postgis"
 language: python
 python:
   - "3.4"
@@ -13,7 +14,6 @@ install:
   - pip install coveralls
 script:
   - cd backend
-  - python manage.py migrate
   - python manage.py test --keepdb
-  - coverage run --source='.' manage.py test --keepdb
+  - coverage run manage.py test --keepdb
 after_success: coveralls
