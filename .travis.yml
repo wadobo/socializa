@@ -1,0 +1,13 @@
+language: python
+python:
+  - "3.4"
+install:
+  - pip install -r backend/requirements.txt
+  - pip install coveralls
+# command to run tests
+script:
+  - cd backend
+  - python manage.py migrate
+  - python manage.py test --keepdb
+  - coverage run --source='.' manage.py test --keepdb
+after_success: coveralls
