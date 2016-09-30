@@ -9,7 +9,7 @@ from oauth2_provider.models import Application
 class PlayerTestCase(APITestCase):
     """
     Inside fixture have 5 players:
-    - playerX -> pk=X
+    - admin -> pk=1; playerX -> pk=X+1
     - player1 and player2: distance < 10 m
     - player1 and player3: distance < 1 km
     - player1 and player4: distance < 5 km
@@ -22,6 +22,7 @@ class PlayerTestCase(APITestCase):
         self.c = Client()
 
     def get_access_token_with_user_password(self):
+        """ login with player1 """
         app = Application.objects.get(name='Twitter')
         data = {
                 "grant_type": "password",
@@ -41,23 +42,24 @@ class PlayerTestCase(APITestCase):
         self.assertEqual(response.status_code, 401)
 
     def test_players_near_with_login(self):
-        # Should be 
         auth = self.get_access_token_with_user_password()
         response = self.c.get('/api/player/near/', {}, HTTP_AUTHORIZATION=auth)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), 2)
 
-    def _test_players_near(self):
-        """ Somebody near """
-        pass
+    def test_meeting_without_login(self):
+        pk = 3
+        response = self.c.post('/api/player/meeting/{0}/'.format(pk), {})
+        self.assertEqual(response.status_code, 401)
 
+    def test_meeting_with_login_far(self):
+        auth = self.get_access_token_with_user_password()
+        pk = 6
+        response = self.c.post('/api/player/meeting/{0}/'.format(pk), {}, HTTP_AUTHORIZATION=auth)
+        self.assertEqual(response.status_code, 200)
 
-    def _test_meeting_without_login(self):
-        pass
-
-    def _test_meeting_near(self):
-        pass
-
-    def _test_meeting_far(self):
-        pass
-
+    def test_meeting_with_login_near(self):
+        auth = self.get_access_token_with_user_password()
+        pk = 3
+        response = self.c.post('/api/player/meeting/{0}/'.format(pk), {}, HTTP_AUTHORIZATION=auth)
+        self.assertEqual(response.status_code, 201)
