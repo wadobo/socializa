@@ -15,5 +15,5 @@ install:
 script:
   - cd backend
   - python manage.py test --keepdb
-  - coverage run manage.py test --keepdb
+  - coverage run --source='.' manage.py test --keepdb
 after_success: coveralls
