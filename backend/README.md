@@ -1,4 +1,4 @@
-# Socializa backend [![Build Status](https://travis-ci.org/wadobo/socializa.svg?branch=travisci)](https://travis-ci.org/wadobo/socializa) [![Coverage Status](https://coveralls.io/repos/github/wadobo/socializa/badge.svg?branch=travisci)](https://coveralls.io/github/wadobo/socializa?branch=travisci)
+# Socializa backend [![Build Status](https://travis-ci.org/wadobo/socializa.svg?branch=master)](https://travis-ci.org/wadobo/socializa) [![Coverage Status](https://coveralls.io/repos/github/wadobo/socializa/badge.svg?branch=master)](https://coveralls.io/github/wadobo/socializa?branch=master)
 
 # Create postgis database
 
