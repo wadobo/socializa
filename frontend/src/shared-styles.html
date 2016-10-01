@@ -1,0 +1,27 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<!-- shared styles for all views -->
+<dom-module id="shared-styles">
+  <template>
+    <style>
+      :host {
+          --app-success-color: #9dffa9;
+      }
+
+      .fixed-btn {
+        position: fixed;
+        bottom: 0px;
+        left: 0;
+        right: 0px;
+        height: 80px;
+        line-height: 80px;
+        font-size: 20px;
+        text-decoration: none;
+      }
+
+      .success {
+        background-color: var(--app-success-color);
+      }
+    </style>
+  </template>
+</dom-module>

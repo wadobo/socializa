@@ -1,0 +1,108 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="shared-styles.html">
+<link rel="import" href="i18n.html">
+
+<dom-module id="socializa-profile">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+        padding: 10px;
+      }
+      .interest {
+        display: inline-block;
+        padding: 5px;
+        margin-bottom: 5px;
+        color: white;
+        background-color: #ff8c8c;
+        border-radius: 4px;
+      }
+
+      #passwordchange {
+        display: none;
+      }
+    </style>
+
+    <div class="card">
+        <paper-textarea id="about" value="{{ about::input }}" label="{{ aboutLabel }}"></paper-textarea>
+
+        <!-- interests -->
+        <div id="interests">
+            <paper-input id="interests" value="{{ interest::input }}" label="{{ interestLabel }}">
+                <paper-icon-button suffix on-tap="addInterest" icon="add" alt="add" title="add">
+                </paper-icon-button>
+            </paper-input>
+
+            <template is="dom-repeat" items="{{ user.interests }}" indexAs="index">
+                <div class="interest">
+                    {{ item }}
+                <iron-icon on-tap="removeInterest" dataindex="{{ index }}"
+                           icon="clear" alt="remove" title="remove">
+                </iron-icon>
+                </div>
+            </template>
+        </div>
+
+        <!-- password change -->
+        <paper-button on-tap="showPasswordForm">
+            <iron-icon icon="lock"></iron-icon>
+            {{ _("Change password") }}
+        </paper-button>
+        <div id="passwordchange">
+            <paper-input type="password" id="currPassword" label="{{ currPasswordLabel }}" value="{{ currPassword::input }}"></paper-input>
+            <paper-input type="password" id="newPassword" label="{{ newPasswordLabel }}" value="{{ newPassword::input }}"></paper-input>
+            <paper-input type="password" id="confPassword" label="{{ confPasswordLabel }}" value="{{ confPassword::input }}"></paper-input>
+        </div>
+    </div>
+
+    <paper-button on-tap="save" class="fixed-btn success">{{ _("Save") }}</paper-button>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'socializa-profile',
+      _: i18n._,
+
+      properties: {
+        user: { notify: true },
+
+        about: { notify: true },
+        aboutLabel: { value: function() { return i18n._("About you") } },
+
+        interest: { notify: true },
+        interestLabel: { value: function() { return i18n._("Interests") } },
+
+        currPassword: { notify: true },
+        currPasswordLabel: { value: function() { return i18n._("Current password") } },
+        newPassword: { notify: true },
+        newPasswordLabel: { value: function() { return i18n._("New password") } },
+        confPassword: { notify: true },
+        confPasswordLabel: { value: function() { return i18n._("Confirm new password") } },
+      },
+
+      addInterest: function() {
+        this.push('user.interests', this.interest);
+      },
+
+      removeInterest: function(e) {
+        var index = e.target.dataindex;
+        this.splice('user.interests', index, 1);
+      },
+
+      showPasswordForm: function() {
+        $("#passwordchange").show();
+      },
+
+      save: function() {
+        // TODO save all changes
+        document.querySelector('app-route').set('route.path', '/index');
+      },
+
+    });
+  </script>
+</dom-module>
+

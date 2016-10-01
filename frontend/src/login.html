@@ -1,14 +1,19 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="shared-styles.html">
 <link rel="import" href="i18n.html">
 
 <link rel="stylesheet" href="../bower_components/font-awesome/css/font-awesome.min.css">
 
 <dom-module id="socializa-login">
   <template>
-    <style>
+    <style include="shared-styles">
       :host {
         display: block;
         text-align: center;
+        padding-left: 10px;
+        padding-right: 10px;
         padding-top: 20px;
       }
 
@@ -33,33 +38,17 @@
       .last {
         margin-right: 0px;
       }
-
-      .fixed-btn {
-        position: fixed;
-        bottom: 0px;
-        left: 0;
-        right: 0px;
-        height: 80px;
-        line-height: 80px;
-        font-size: 20px;
-        text-decoration: none;
-      }
-
-      .success {
-        background-color: green;
-        color: white;
-      }
     </style>
 
     <div class="header">
-        <img src="../images/login/icon.png" class="logo" alt="logo"/><br/>
+        <img src="../images/icon.png" class="logo" alt="logo"/><br/>
         <h1>Socializa</h1>
     </div>
 
     <div class="form">
         <form>
-            <input type="email" id="email" placeholder$='{{ email }}' value="{{ emailv::input }}"/><br/>
-            <input type="password" id="password" placeholder$='{{ password }}' value="{{ passwordv::input }}"/><br/>
+            <paper-input type="email" id="email" label="{{ emailLabel }}" value="{{ email::input }}"></paper-input>
+            <paper-input type="password" id="password" label="{{ passwordLabel }}" value="{{ password::input }}"></paper-input>
         </form>
         <a href="#">{{ _("new account") }}</a>
     </div>
@@ -76,7 +65,7 @@
         </div>
     </div>
 
-    <a href="#" id="login" class="fixed-btn success">{{ _("Login") }}</a>
+    <paper-button on-tap="login" class="fixed-btn success">{{ _("Login") }}</paper-button>
 
   </template>
 
@@ -87,21 +76,17 @@
 
       properties: {
         user: { notify: true },
-        password: { value: function() { return i18n._("password") } },
-        email: { value: function () { return i18n._("email") } },
-        emailv: { notify: true },
-        passwordv: { notify: true },
+        email: { notify: true },
+        emailLabel: { value: function () { return i18n._("email") } },
+        password: { notify: true },
+        passwordLabel: { value: function() { return i18n._("password") } },
       },
 
-      listeners: {
-        'login.tap': 'loginTap',
-      },
-
-      loginTap: function(e) {
+      login: function(e) {
         // TODO: make the real login
-        console.log("auth: " + this.emailv + ', ' + this.passwordv);
+        console.log("auth: " + this.email + ', ' + this.password);
         this.set('user.isAuthenticated', true);
-        this.set('user.username', this.emailv);
+        this.set('user.username', this.email);
         this.set('user.apikey', 'APIKEY');
 
         $.cookie('socializa-user', JSON.stringify(this.user));
