@@ -13,9 +13,6 @@
         "cordova-plugin-camera": {
             "PACKAGE_NAME": "com.wadobo.socializa"
         },
-        "cordova-plugin-media-capture": {
-            "PACKAGE_NAME": "com.wadobo.socializa"
-        },
         "cordova-plugin-console": {
             "PACKAGE_NAME": "com.wadobo.socializa"
         },
@@ -49,6 +46,9 @@
         "cordova-plugin-media": {
             "PACKAGE_NAME": "com.wadobo.socializa"
         },
+        "cordova-plugin-media-capture": {
+            "PACKAGE_NAME": "com.wadobo.socializa"
+        },
         "cordova-plugin-network-information": {
             "PACKAGE_NAME": "com.wadobo.socializa"
         },
@@ -62,6 +62,12 @@
             "PACKAGE_NAME": "com.wadobo.socializa"
         },
         "cordova-plugin-whitelist": {
+            "PACKAGE_NAME": "com.wadobo.socializa"
+        },
+        "cordova.plugins.diagnostic": {
+            "PACKAGE_NAME": "com.wadobo.socializa"
+        },
+        "cordova-plugin-request-location-accuracy": {
             "PACKAGE_NAME": "com.wadobo.socializa"
         }
     },

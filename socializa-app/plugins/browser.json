@@ -63,6 +63,12 @@
         },
         "cordova-plugin-whitelist": {
             "PACKAGE_NAME": "com.wadobo.socializa"
+        },
+        "cordova.plugins.diagnostic": {
+            "PACKAGE_NAME": "com.wadobo.socializa"
+        },
+        "cordova-plugin-request-location-accuracy": {
+            "PACKAGE_NAME": "com.wadobo.socializa"
         }
     },
     "dependent_plugins": {
