@@ -83,7 +83,7 @@
       <app-drawer id="menu">
         <app-toolbar>Menu</app-toolbar>
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-          <a name="index" href="/index">{{ _("View One") }}</a>
+          <a name="index" href="/index">{{ _("Map") }}</a>
           <a name="profile" href="/profile">{{ _("Profile") }}</a>
           <a id="logout" href="#">{{ _("Logout") }}</a>
         </iron-selector>
@@ -161,8 +161,10 @@
             isAuthenticated: false,
             interests: []
         });
-        document.querySelector('#menu').close();
-        document.querySelector('app-route').set('route.path', '/index');
+        menu = document.querySelectorAll("socializa-app /deep/ #menu")[0];
+        menu.close();
+        route = document.querySelectorAll("socializa-app /deep/ route-app")[0];
+        route.set('route.path', '/index');
       },
 
       observers: [
@@ -178,7 +180,8 @@
         var resolvedPageUrl = this.resolveUrl(page + '.html');
         $(".menu-text").html($("a[name="+page+"]").html());
         this.importHref(resolvedPageUrl, null, this._showPage404, true);
-        document.querySelector('#menu').close();
+        menu = document.querySelectorAll("socializa-app /deep/ #menu")[0];
+        menu.close();
       },
 
       _showPage404: function() {

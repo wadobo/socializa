@@ -1,26 +1,120 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="shared-styles.html">
 <link rel="import" href="i18n.html">
+
+<link rel="stylesheet" href="../openlayers/ol.css" type="text/css">
+<script src="../openlayers/ol.js" type="text/javascript"></script>
 
 <dom-module id="socializa-index">
   <template>
-    <style>
+    <style include="shared-styles">
       :host {
         display: block;
-        padding: 10px;
+      }
+
+      .map {
+        position: absolute;
+        width: 100%;
+        /**height: calc(100vh - 144px);**/
+        height: 400px;
       }
     </style>
 
-    <div class="card">
-      <h1>{{ _("View One") }}</h1>
-      <p>Ut labores minimum atomorum pro. Laudem tibique ut has.</p>
-      <p>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Cu mei vide viris gloriatur, at populo eripuit sit.</p>
+    <div id="map" class="map">
     </div>
+
+    <paper-button on-tap="startSharing" class="fixed-btn success">{{ _("Start Sharing") }}</paper-button>
   </template>
 
   <script>
     Polymer({
       is: 'socializa-index',
-      _: i18n._
+      _: i18n._,
+
+      initOpenLayers: function() {
+          this.view = new ol.View({
+            center: ol.proj.fromLonLat([37.41, 8.82]),
+            zoom: 12
+          });
+
+          this.map = new ol.Map({
+            target: 'map',
+            layers: [
+              new ol.layer.Tile({
+                source: new ol.source.OSM()
+              })
+            ],
+            view: this.view
+          });
+
+          this.geolocation = new ol.Geolocation({
+            projection: this.view.getProjection()
+          });
+
+          this.accuracyFeature = new ol.Feature();
+          this.positionFeature = new ol.Feature();
+
+          // my position layer
+          this.positionLayer = new ol.layer.Vector({
+            map: this.map,
+            source: new ol.source.Vector({
+              features: [this.accuracyFeature, this.positionFeature]
+            })
+          });
+
+          this.select = new ol.interaction.Select();
+      },
+
+      // openlayers js
+      ready: function() {
+        this.initOpenLayers();
+
+        var geoloc = this.geolocation;
+        var accuracy = this.accuracyFeature;
+        var position = this.positionFeature;
+        var view = this.view;
+
+        geoloc.on('change', function() {
+          positionaccuracy = geoloc.getAccuracy() + ' [m]';
+          altitude = geoloc.getAltitude() + ' [m]';
+          altitudeAccuracy = geoloc.getAltitudeAccuracy() + ' [m]';
+          heading = geoloc.getHeading() + ' [rad]';
+          speed = geoloc.getSpeed() + ' [m/s]';
+        });
+
+        // handle geolocation error.
+        geoloc.on('error', function(error) {
+          console.error(error.message);
+        });
+
+        geoloc.on('change:accuracyGeometry', function() {
+          accuracy.setGeometry(geoloc.getAccuracyGeometry());
+        });
+
+        geoloc.on('change:position', function() {
+          var coordinates = geoloc.getPosition();
+          view.setCenter(coordinates);
+          position.setGeometry(coordinates ?
+              new ol.geom.Point(coordinates) : null);
+        });
+
+        position.customData = {name: 'me'};
+        position.setStyle(new ol.style.Style({
+          image: new ol.style.Icon({ src: '../images/geo1.svg' })
+        }));
+
+        geoloc.setTracking(true);
+
+        this.map.addInteraction(this.select);
+        this.select.on('select', function(e) {
+              var f = e.target.getFeatures();
+              if (f.getLength()) {
+                  console.log(f.getArray()[0]);
+                  console.log(f.getArray()[0].customData.name);
+              }
+        });
+      },
     });
   </script>
 </dom-module>

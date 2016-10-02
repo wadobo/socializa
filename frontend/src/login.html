@@ -90,7 +90,8 @@
         this.set('user.apikey', 'APIKEY');
 
         $.cookie('socializa-user', JSON.stringify(this.user));
-        document.querySelector('app-route').set('route.path', '/index');
+        route = document.querySelectorAll("socializa-app /deep/ route-app")[0];
+        route.set('route.path', '/index');
         // Fix to refresh header layout styles
         document.querySelector("app-header-layout").notifyResize();
       }
