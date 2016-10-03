@@ -100,6 +100,12 @@ var cssTask = function (options) {
     }
 }
 
+var copyFilesTask = function (options) {
+  var dest = options.dest;
+  gulp.src(["images/*"]).pipe(copy(dest, {prefix: 0}));
+  gulp.src(["manifest.json"]).pipe(copy(dest, {prefix: 0}));
+}
+
 // Starts our development workflow
 gulp.task('default', function () {
   livereload.listen();
@@ -107,19 +113,23 @@ gulp.task('default', function () {
   browserifyTask({
     development: true,
     src: './src/main.js',
-    dest: './build'
+    dest: './build/app'
   });
 
   cssTask({
     development: true,
     src: './styles/**/*.css',
-    dest: './build'
+    dest: './build/app'
   });
 
-  gulp.src(["src/index.html"]).pipe(copy("./build", {prefix: 1}));
+  copyFilesTask({
+    dest: './build/app'
+  });
+
+  gulp.src(["index.html"]).pipe(copy('./build', {prefix: 0}));
 
   connect.server({
-    root: 'build/',
+    root: 'build/app',
     port: 8889
   });
 
@@ -130,14 +140,18 @@ gulp.task('deploy', function () {
   browserifyTask({
     development: false,
     src: './src/main.js',
-    dest: './dist'
+    dest: './dist/app'
   });
 
   cssTask({
     development: false,
     src: './styles/**/*.css',
-    dest: './dist'
+    dest: './dist/app'
   });
 
-  gulp.src(["src/index.html"]).pipe(copy("./dist", {prefix: 1}));
+  copyFilesTask({
+    dest: './dist/app'
+  });
+
+  gulp.src(["index.html"]).pipe(copy('./dist', {prefix: 0}));
 });

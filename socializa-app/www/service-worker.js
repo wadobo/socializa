@@ -1,1 +1,0 @@
-../../frontend/build/bundled/service-worker.js
