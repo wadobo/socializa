@@ -19,6 +19,7 @@
     "gulp-streamify": "^1.0.2",
     "gulp-uglify": "^1.5.3",
     "gulp-util": "^3.0.7",
+    "gulp-less": "^3.1.0",
     "phantomjs-prebuilt": "^2.1.7",
     "react-dom": "^15.0.2",
     "vinyl-source-stream": "^1.1.0",

@@ -16,6 +16,7 @@ var glob = require('glob');
 var livereload = require('gulp-livereload');
 var connect = require('gulp-connect');
 var copy = require('gulp-copy');
+var less = require('gulp-less');
 
 // External dependencies you do not want to rebundle while developing,
 // but include in your application deployment
@@ -84,6 +85,7 @@ var cssTask = function (options) {
         var start = new Date();
         console.log('Building CSS bundle');
         gulp.src(options.src)
+          .pipe(less())
           .pipe(concat('main.css'))
           .pipe(gulp.dest(options.dest))
           .pipe(notify(function () {
@@ -94,10 +96,14 @@ var cssTask = function (options) {
       gulp.watch(options.src, run);
     } else {
       gulp.src(options.src)
+        .pipe(less())
         .pipe(concat('main.css'))
         .pipe(cssmin())
         .pipe(gulp.dest(options.dest));
     }
+
+    gulp.src('bower_components/font-awesome/fonts/**')
+        .pipe(gulp.dest(options.dest + '/fonts/'));
 }
 
 var copyFilesTask = function (options) {
@@ -118,7 +124,7 @@ gulp.task('default', function () {
 
   cssTask({
     development: true,
-    src: './styles/**/*.css',
+    src: './styles/**/*.less',
     dest: './build/app'
   });
 
@@ -129,7 +135,7 @@ gulp.task('default', function () {
   gulp.src(["index.html"]).pipe(copy('./build', {prefix: 0}));
 
   connect.server({
-    root: 'build/app',
+    root: 'build/',
     port: 8889
   });
 
@@ -145,7 +151,7 @@ gulp.task('deploy', function () {
 
   cssTask({
     development: false,
-    src: './styles/**/*.css',
+    src: './styles/**/*.less',
     dest: './dist/app'
   });
 
