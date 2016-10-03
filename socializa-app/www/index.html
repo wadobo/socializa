@@ -55,14 +55,22 @@
     </style>
 </head>
 
-<body unresolved>
+<body>
+    <!-- TEST -->
     <span id="status">ST</span><br>
     <span id="location">TEST</span><br>
-    <button id="send-pos" type="button" onclick="sendPos()">GET POS</button>
+    <button id="send-pos" type="button" onclick="sendPos()">GET POS</button><br>
+    <span id="qrtext">empty</span><br>
+    <button id="qrcode-scan" type="button" onclick="scanQR()">SCAN QR</button><br>
+    <span id="qrcreating">empty</span><br>
+    <button id="qrcode-create" type="button" onclick="createQR()">CREATE QR</button><br>
+    <!-- END TEST -->
+
     <socializa-app></socializa-app>
     <script type="text/javascript" src="cordova.js"></script>
     <script type="text/javascript" src="js/index.js"></script>
-    <script type="text/javascript" src="js/test.js"></script>
+    <script type="text/javascript" src="js/location.js"></script>
+    <script type="text/javascript" src="js/qrcode.js"></script>
     <script type="text/javascript">
         app.initialize();
     </script>

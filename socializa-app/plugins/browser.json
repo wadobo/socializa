@@ -52,9 +52,6 @@
         "cordova-plugin-network-information": {
             "PACKAGE_NAME": "com.wadobo.socializa"
         },
-        "cordova-plugin-splashscreen": {
-            "PACKAGE_NAME": "com.wadobo.socializa"
-        },
         "cordova-plugin-statusbar": {
             "PACKAGE_NAME": "com.wadobo.socializa"
         },
@@ -68,6 +65,10 @@
             "PACKAGE_NAME": "com.wadobo.socializa"
         },
         "cordova-plugin-request-location-accuracy": {
+            "PACKAGE_NAME": "com.wadobo.socializa"
+        },
+        "phonegap-plugin-barcodescanner": {
+            "CAMERA_USAGE_DESCRIPTION": " ",
             "PACKAGE_NAME": "com.wadobo.socializa"
         }
     },
