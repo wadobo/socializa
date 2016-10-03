@@ -4,6 +4,7 @@
   "dependencies": {
     "ijs": "*",
     "bootstrap": "*",
-    "font-awesome": "*"
+    "font-awesome": "*",
+    "jquery.cookie": "jquery-cookie#^1.4.1"
   }
 }
