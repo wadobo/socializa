@@ -1,19 +1,34 @@
-var React = require('react');
-var ReactDOM = require('react-dom');
+import React from 'react';
+import $ from 'jquery';
+import 'jquery.cookie';
 
-var $ = require('jquery');
-require('jquery.cookie');
 
-module.exports = React.createClass({
-    getInitialState: function() {
-        return {email: '', password: ''};
-    },
+export default class Login extends React.Component {
+    emailChange = (e) => {
+        this.setState({email: e.target.value});
+    }
 
-    emailChange: function(e) { this.setState({email: e.target.value}); },
-    passChange: function(e) { this.setState({password: e.target.value}); },
+    passChange = (e) => {
+        this.setState({password: e.target.value});
+    }
 
-    render: function() {
-        var that = this;
+    state = {
+        email: '',
+        password: ''
+    }
+
+    login = (e) => {
+        // TODO: make the real login
+        console.log("auth: " + this.state.email + ', ' + this.state.password);
+        this.props.user.isAuthenticated = true;
+        this.props.user.username = this.state.email;
+        this.props.user.apikey = 'FAKEAPIKEY';
+
+        $.cookie('socializa-user', JSON.stringify(this.props.user));
+        this.props.updateUser(this.props.user);
+    }
+
+    render() {
         return (
             <div id="login" className="container">
                 <div className="header text-center">
@@ -22,8 +37,8 @@ module.exports = React.createClass({
                 </div>
 
                 <form className="form">
-                        <input className="form-control" type="email" id="email" placeholder="email" value={ this.state.email } onChange={ this.emailChange }/>
-                        <input className="form-control" type="password" id="password" placeholder="password" value={ this.state.password } onChange={ this.passChange }/>
+                        <input className="form-control" type="email" id="email" name="email" placeholder="email" value={ this.state.email } onChange={ this.emailChange }/>
+                        <input className="form-control" type="password" id="password" name="password" placeholder="password" value={ this.state.password } onChange={ this.passChange }/>
                 </form>
 
                 <a href="#">New account</a>
@@ -53,16 +68,5 @@ module.exports = React.createClass({
                 <button className="btn btn-block btn-success" onClick={ this.login }>Login</button>
             </div>
         );
-    },
-
-    login: function(e) {
-        // TODO: make the real login
-        console.log("auth: " + this.state.email + ', ' + this.state.password);
-        this.props.user.isAuthenticated = true;
-        this.props.user.username = this.state.email;
-        this.props.user.apikey = 'FAKEAPIKEY';
-
-        $.cookie('socializa-user', JSON.stringify(this.props.user));
-        this.props.updateUser(this.props.user);
     }
-});
+}

@@ -3,7 +3,6 @@
 var gulp = require('gulp');
 var source = require('vinyl-source-stream'); // Used to stream bundle for further handling
 var browserify = require('browserify');
-var shim = require('browserify-shim');
 var watchify = require('watchify');
 var babelify = require('babelify');
 var gulpif = require('gulp-if');
@@ -22,7 +21,7 @@ var less = require('gulp-less');
 // External dependencies you do not want to rebundle while developing,
 // but include in your application deployment
 var dependencies = [
-  'react', 'react-dom'
+  'react', 'react-dom', 'jquery', 'jquery.cookie'
 ];
 
 var browserifyTask = function (options) {
@@ -30,7 +29,7 @@ var browserifyTask = function (options) {
   // Our app bundler
   var appBundler = browserify({
     entries: [options.src], // Only need initial file, browserify finds the rest
-    transform: [[babelify, {presets: ['react']}], 'debowerify', 'browserify-shim'], // We want to convert JSX to normal javascript
+    transform: [[babelify, {presets: ['es2015', 'react'], "plugins": ["transform-class-properties"]}]], // We want to convert JSX to normal javascript
     debug: options.development, // Gives us sourcemapping
     cache: {}, packageCache: {}, fullPaths: options.development // Requirement of watchify
   });
@@ -105,7 +104,7 @@ var cssTask = function (options) {
         .pipe(gulp.dest(options.dest));
     }
 
-    gulp.src('bower_components/font-awesome/fonts/**')
+    gulp.src('node_modules/font-awesome/fonts/**')
         .pipe(gulp.dest(options.dest + '/fonts/'));
 }
 
