@@ -21,7 +21,8 @@ var less = require('gulp-less');
 // External dependencies you do not want to rebundle while developing,
 // but include in your application deployment
 var dependencies = [
-  'react', 'react-dom', 'jquery', 'jquery.cookie'
+  'react', 'react-dom', 'react-router',
+  'jquery', 'jquery.cookie'
 ];
 
 var browserifyTask = function (options) {

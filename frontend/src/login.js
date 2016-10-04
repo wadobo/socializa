@@ -1,9 +1,15 @@
 import React from 'react';
+import { browserHistory } from 'react-router'
 import $ from 'jquery';
-import 'jquery.cookie';
+
+import { login } from './auth';
 
 
 export default class Login extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
     emailChange = (e) => {
         this.setState({email: e.target.value});
     }
@@ -13,19 +19,12 @@ export default class Login extends React.Component {
     }
 
     state = {
-        email: '',
-        password: ''
+        email: '', password: ''
     }
 
     login = (e) => {
-        // TODO: make the real login
-        console.log("auth: " + this.state.email + ', ' + this.state.password);
-        this.props.user.isAuthenticated = true;
-        this.props.user.username = this.state.email;
-        this.props.user.apikey = 'FAKEAPIKEY';
-
-        $.cookie('socializa-user', JSON.stringify(this.props.user));
-        this.props.updateUser(this.props.user);
+        login(this.state.email, this.state.password);
+        browserHistory.push('/');
     }
 
     render() {
