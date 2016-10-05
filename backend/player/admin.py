@@ -10,7 +10,6 @@ class MeetingAdmin(admin.ModelAdmin):
 
 
 class PlayerAdmin(admin.OSMGeoAdmin):
-    filter_horizontal = ('events', )
     # Center in Spain
     default_zoom = 6
     pnt = Point(-4, 40, srid=4326)
