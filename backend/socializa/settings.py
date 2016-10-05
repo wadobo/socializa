@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'oauth2_provider',
     'social.apps.django_app.default',
     'rest_framework_social_oauth2',
+    'rest_framework_swagger',
     'world',
     'player',
     'event',
@@ -219,6 +220,12 @@ SOCIAL_AUTH_TWITTER_SECRET = 'update me'
 # FACEBOOK
 SOCIAL_AUTH_FACEBOOK_KEY = 'update me'
 SOCIAL_AUTH_FACEBOOK_SECRET = 'update me'
+
+SWAGGER_SETTINGS = {
+        'DOC_EXPANSION': 'list',
+        'APIS_SORTER': 'alpha',
+        'OPERATIONS_SORTER': 'alpha',
+}
 
 try:
     from local_settings import *

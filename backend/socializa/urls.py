@@ -17,9 +17,11 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from rest_framework.authtoken import views
 
+from .views import schema_view
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^docs/', schema_view),
     url(r"^api/social/", include("rest_framework_social_oauth2.urls")),
     url(r"^api/player/", include("player.urls"))
 ]
