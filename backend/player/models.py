@@ -10,7 +10,7 @@ from event.models import Event
 class Player(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="player")
     pos = models.PointField(null=True, blank=True)
-    events = models.ManyToManyField(Event, related_name="players")
+    events = models.ManyToManyField(Event, related_name="players", null=True, blank=True)
 
     def set_position(self, lat, lon):
         self.pos = GEOSGeometry('POINT(%d %d)' % (lat, lon))
