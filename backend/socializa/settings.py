@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'rest_framework_social_oauth2',
     'world',
     'player',
-    'event'
+    'event',
+    'game'
 ]
 
 MIDDLEWARE = [
