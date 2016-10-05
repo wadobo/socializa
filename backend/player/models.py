@@ -4,10 +4,13 @@ from django.contrib.gis.geos import GEOSGeometry
 from django.contrib.gis.measure import D
 from django.core.exceptions import ValidationError
 
+from event.models import Event
+
 
 class Player(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="player")
     pos = models.PointField(null=True, blank=True)
+    events = models.ManyToManyField(Event, related_name="players")
 
     def set_position(self, lat, lon):
         self.pos = GEOSGeometry('POINT(%d %d)' % (lat, lon))

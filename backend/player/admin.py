@@ -9,7 +9,7 @@ class MeetingAdmin(admin.ModelAdmin):
 
 
 class PlayerAdmin(admin.ModelAdmin):
-    pass
+    filter_horizontal = ('events', )
 
 
 admin.site.register(Meeting, MeetingAdmin)
