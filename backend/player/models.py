@@ -13,7 +13,7 @@ class Player(models.Model):
     events = models.ManyToManyField(Event, related_name="players", null=True, blank=True)
 
     def set_position(self, lat, lon):
-        self.pos = GEOSGeometry('POINT(%d %d)' % (lat, lon))
+        self.pos = GEOSGeometry('POINT({0} {1})'.format(lat, lon))
         self.save()
 
     def __str__(self):

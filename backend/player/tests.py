@@ -63,3 +63,21 @@ class PlayerTestCase(APITestCase):
         pk = 3
         response = self.c.post('/api/player/meeting/{0}/'.format(pk), {}, HTTP_AUTHORIZATION=auth)
         self.assertEqual(response.status_code, 201)
+
+    def test_change_position_unauthorized(self):
+        response = self.c.post('/api/player/set-pos/', {'lat': '-6', 'lon': '37'})
+        self.assertEqual(response.status_code, 401)
+
+    def test_change_position(self):
+        auth = self.get_access_token_with_user_password()
+        response = self.c.post('/api/player/set-pos/', {'lat': '-6', 'lon': '37'}, HTTP_AUTHORIZATION=auth)
+        self.assertEqual(response.status_code, 200)
+
+    def test_change_position_invalid(self):
+        auth = self.get_access_token_with_user_password()
+        response = self.c.post('/api/player/set-pos/', {'lat': 'bad', 'lon': '37'}, HTTP_AUTHORIZATION=auth)
+        self.assertEqual(response.status_code, 400)
+        response = self.c.post('/api/player/set-pos/', {'lat': '', 'lon': ''}, HTTP_AUTHORIZATION=auth)
+        self.assertEqual(response.status_code, 400)
+        response = self.c.post('/api/player/set-pos/', {'lat': '', 'lon': '37'}, HTTP_AUTHORIZATION=auth)
+        self.assertEqual(response.status_code, 400)

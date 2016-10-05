@@ -55,3 +55,20 @@ class MeetingCreate(APIView):
             return Response("User is far for meeting", status=status.HTTP_200_OK)
 
 meeting_create = MeetingCreate.as_view()
+
+
+class SetPosition(APIView):
+
+    def post(self, request):
+        if request.user.is_anonymous():
+            return Response("Anonymous user", status=status.HTTP_401_UNAUTHORIZED)
+        player = request.user.player
+        lat = request.POST.get('lat', None)
+        lon = request.POST.get('lon', None)
+        try:
+            player.set_position(lat, lon)
+        except:
+            return Response("Invalid position", status=status.HTTP_400_BAD_REQUEST)
+        return Response("Position changed", status=status.HTTP_200_OK)
+
+set_position = SetPosition.as_view()
