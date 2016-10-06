@@ -40,4 +40,5 @@ class JClient(Client):
         return super(JClient, self).put(url, data, HTTP_AUTHORIZATION=self.auth_token)
 
     def delete(self, url, data):
-        return super(JClient, self).delete(url, data, HTTP_AUTHORIZATION=self.auth_token)
+        return super(JClient, self).delete(url, data,
+                content_type="application/json", HTTP_AUTHORIZATION=self.auth_token)

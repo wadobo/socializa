@@ -18,7 +18,7 @@ class Event(models.Model):
     players = models.ManyToManyField(Player, through="Membership")
 
     def __str__(self):
-        return self.name
+        return "{0} [{1}/{2}]".format(self.name, self.players.count(), self.max_players)
 
 
 MEMBERSHIP_STATUS = (

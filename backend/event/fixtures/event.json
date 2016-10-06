@@ -1,0 +1,221 @@
+[
+{
+  "model": "event.event",
+  "pk": 1,
+  "fields": {
+    "name": "general",
+    "world": null,
+    "start_date": "2016-10-05T09:00:00Z",
+    "end_date": "2016-10-05T12:00:00Z",
+    "max_players": 0,
+    "price": "0.00",
+    "game": 1
+  }
+},
+{
+  "model": "event.event",
+  "pk": 2,
+  "fields": {
+    "name": "event 2",
+    "world": null,
+    "start_date": "2016-10-05T09:00:00Z",
+    "end_date": "2016-10-05T12:00:00Z",
+    "max_players": 3,
+    "price": "0.00",
+    "game": 2
+  }
+},
+{
+  "model": "event.event",
+  "pk": 3,
+  "fields": {
+    "name": "event 3",
+    "world": null,
+    "start_date": "2016-10-05T12:00:00Z",
+    "end_date": "2016-10-05T20:00:00Z",
+    "max_players": 10,
+    "price": "1.00",
+    "game": 3
+  }
+},
+{
+  "model": "game.challenge",
+  "pk": 1,
+  "fields": {
+    "name": "challenge",
+    "desc": "",
+    "solution": ""
+  }
+},
+{
+  "model": "game.challenge",
+  "pk": 2,
+  "fields": {
+    "name": "pista 1",
+    "desc": "El británico vive en la casa roja. El sueco tiene un perro.",
+    "solution": ""
+  }
+},
+{
+  "model": "game.challenge",
+  "pk": 3,
+  "fields": {
+    "name": "pista 2",
+    "desc": "El danés toma té. La casa verde esta a la izquierda de la blanca.",
+    "solution": ""
+  }
+},
+{
+  "model": "game.challenge",
+  "pk": 4,
+  "fields": {
+    "name": "pista 3",
+    "desc": "El dueño de la casa verde toma café.  La persona que fuma Pall Mall tiene un pájaro.",
+    "solution": ""
+  }
+},
+{
+  "model": "game.challenge",
+  "pk": 5,
+  "fields": {
+    "name": "pista 4",
+    "desc": "El dueño de la casa amarilla fuma Dunhill.  El que vive en la casa del centro toma leche.",
+    "solution": ""
+  }
+},
+{
+  "model": "game.challenge",
+  "pk": 6,
+  "fields": {
+    "name": "pista 5",
+    "desc": "El noruego vive en la primera casa.  La persona que fuma Brends vive junto a la que tiene un gato.",
+    "solution": ""
+  }
+},
+{
+  "model": "game.challenge",
+  "pk": 7,
+  "fields": {
+    "name": "pista 6",
+    "desc": "La persona que tiene un caballo vive junto a la que fuma Dunhill.  El que fuma Bluemasters bebe cerveza.",
+    "solution": ""
+  }
+},
+{
+  "model": "game.challenge",
+  "pk": 8,
+  "fields": {
+    "name": "pista 7",
+    "desc": "El alemán fuma prince.  El noruego vive junto a la casa azul.  El que fuma Brends tiene un vecino que toma agua.",
+    "solution": ""
+  }
+},
+{
+  "model": "game.challenge",
+  "pk": 9,
+  "fields": {
+    "name": "pista 1",
+    "desc": "La primera y la penúltima palabra son artículos determinados, masculino y femenino respectivamente.",
+    "solution": "el - la"
+  }
+},
+{
+  "model": "game.challenge",
+  "pk": 10,
+  "fields": {
+    "name": "pista 2",
+    "desc": "Dícese de un animal con pluma",
+    "solution": "pájaro"
+  }
+},
+{
+  "model": "game.challenge",
+  "pk": 11,
+  "fields": {
+    "name": "pista 3",
+    "desc": "no",
+    "solution": "no"
+  }
+},
+{
+  "model": "game.challenge",
+  "pk": 12,
+  "fields": {
+    "name": "pista 4",
+    "desc": "Presente de la tercera persona del singular del verbo ser",
+    "solution": "es"
+  }
+},
+{
+  "model": "game.challenge",
+  "pk": 13,
+  "fields": {
+    "name": "pista 5",
+    "desc": "La clave está en dicha palabra",
+    "solution": "clave"
+  }
+},
+{
+  "model": "game.game",
+  "pk": 1,
+  "fields": {
+    "name": "general game",
+    "desc": "description game",
+    "solution": "solution game",
+    "challenges": [
+      1
+    ]
+  }
+},
+{
+  "model": "game.game",
+  "pk": 2,
+  "fields": {
+    "name": "Einstein Game",
+    "desc": "Tenemos 5 casas de cinco colores diferentes y en cada una de ellas vive una persona de una nacionalidad diferente.  Cada uno de los dueños bebe una bebida diferente, fuma una marca de cigarrillos diferente y tiene una mascota diferente. ¿Quién es el dueño del pececito?",
+    "solution": "aleman - verde - pecesito - café - prince - casa 4",
+    "challenges": [
+      2, 3, 4, 5, 6, 7, 8
+    ]
+  }
+},
+{
+  "model": "game.game",
+  "pk": 3,
+  "fields": {
+    "name": "Adivina la frase",
+    "desc": "Tenemos que ir buscando pistas para componer una frase completa y descubrir el misterio",
+    "solution": "El pájaro no es la clave",
+    "challenges": [
+      9, 10, 11, 12, 13
+    ]
+  }
+},
+{
+  "model": "event.membership",
+  "pk": 1,
+  "fields": {
+    "player": 3,
+    "event": 3,
+    "status": "registered"
+  }
+},
+{
+  "model": "event.membership",
+  "pk": 2,
+  "fields": {
+    "player": 5,
+    "event": 1,
+    "status": "registered"
+  }
+},
+{
+  "model": "event.membership",
+  "pk": 3,
+  "fields": {
+    "player": 5,
+    "event": 3,
+    "status": "registered"
+  }
+}
+]
