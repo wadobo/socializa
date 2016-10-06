@@ -20,16 +20,11 @@ class Player(models.Model):
             coords = "(None, None)"
         return "%s %s" % (self.user.username, coords)
 
-    def serialize(self):
-        return {
-            'username': self.user.username,
-            'pos': self.pos.coords if self.pos else (None, None)
-        }
-
 
 class Meeting(models.Model):
     player1 = models.ForeignKey(Player, on_delete=models.CASCADE, related_name="player1")
     player2 = models.ForeignKey(Player, on_delete=models.CASCADE, related_name="player2")
+    event_id = models.IntegerField(null=True, blank=True, default=None)
 
     def clean_fields(self, *args, **kwargs):
         super(Meeting, self).clean_fields(*args, **kwargs)

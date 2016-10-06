@@ -148,6 +148,14 @@
   }
 },
 {
+  "model": "player.meeting",
+  "pk": 1,
+  "fields": {
+    "player1": 2,
+    "player2": 4
+  }
+},
+{
   "model": "oauth2_provider.application",
   "pk": 1,
   "fields": {

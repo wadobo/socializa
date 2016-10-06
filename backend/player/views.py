@@ -1,4 +1,6 @@
 from django.contrib.gis.measure import D
+from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from rest_framework import status
@@ -19,16 +21,42 @@ def distance(pos1, pos2, unit='km'):
         return dis
 
 
+def create_meeting(player1, player2, event_id=None):
+    meeting = None
+    if player1 == player2:
+        msg = "narcissistic: you cannot connect with yourself"
+        st = status.HTTP_400_BAD_REQUEST
+    else:
+        meeting, created = Meeting.objects.get_or_create(player1=player1, player2=player2, event_id=event_id)
+        if not created:
+            msg = "Meeting already exist"
+            st = status.HTTP_200_OK
+        else:
+            msg = "Meeting created"
+            st = status.HTTP_201_CREATED
+    return meeting, msg, st
+
+
 class PlayersNear(APIView):
 
     NEAR_DISTANCE = 5 # km
 
-    def get(self, request):
+    def get(self, request, event_id=None):
         if request.user.is_anonymous():
             return Response("Anonymous user", status=status.HTTP_401_UNAUTHORIZED)
         player = request.user.player
+        event = None
+        if event_id:
+            event = player.event_set.filter(pk=event_id).first()
+            if event is None:
+                return Response("Unauthorized event", status=status.HTTP_401_UNAUTHORIZED)
+
         if player.pos:
-            near_players = Player.objects.filter(pos__distance_lte=(player.pos, D(km=self.NEAR_DISTANCE))).exclude(pk=player.pk)
+            q = Q()
+            q &= Q(pos__distance_lte=(player.pos, D(km=self.NEAR_DISTANCE)))
+            if event:
+                q &= Q(pk__in=event.players.values_list('pk', flat=True))
+            near_players = Player.objects.filter(q).exclude(pk=player.pk)
             serializer = PlayerSerializer(near_players, many=True)
             data = serializer.data
         else:
@@ -42,15 +70,23 @@ class MeetingCreate(APIView):
 
     MEETING_DISTANCE = 10 # m
 
-    def post(self, request, pk):
+    def post(self, request, player_id, event_id=None):
         if request.user.is_anonymous():
             return Response("Anonymous user", status=status.HTTP_401_UNAUTHORIZED)
         player1 = request.user.player
-        player2 = get_object_or_404(Player, user__pk=pk)
+        player2 = get_object_or_404(Player, pk=player_id)
+        event = None
+        if event_id:
+            event = player1.event_set.filter(pk=event_id).first()
+            if event is None:
+                return Response("Unauthorized event", status=status.HTTP_401_UNAUTHORIZED)
+            else:
+                if not player2.event_set.filter(pk=event_id).first():
+                    return Response("Other player not join at this event", status=status.HTTP_400_BAD_REQUEST)
         if distance(player1.pos, player2.pos, unit='m') <= self.MEETING_DISTANCE:
-            meeting = Meeting(player1=player1, player2=player2)
-            meeting.save()
-            return Response("Meeting created", status=status.HTTP_201_CREATED)
+
+            meeting, msg, st = create_meeting(player1, player2, event_id)
+            return Response(msg, status=st)
         else:
             return Response("User is far for meeting", status=status.HTTP_200_OK)
 

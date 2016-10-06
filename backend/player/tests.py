@@ -15,6 +15,9 @@ class PlayerTestCase(APITestCase):
     - applications: facebook, twitter
     """
     fixtures = ['player-test.json']
+    PLAYER2_PK = 2
+    PLAYER5_PK = 5
+    PLAYERS_NEAR_PLAYER1 = 2
 
     def setUp(self):
         self.username = 'test1'
@@ -33,26 +36,25 @@ class PlayerTestCase(APITestCase):
         self.assertEqual(response.status_code, 200)
         response = self.c.get('/api/player/near/', {})
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.json()), 2)
+        self.assertEqual(len(response.json()), self.PLAYERS_NEAR_PLAYER1)
 
     def test_meeting_without_login(self):
-        pk = 3
-        response = self.c.post('/api/player/meeting/{0}/'.format(pk), {})
+        response = self.c.post('/api/player/meeting/{0}/'.format(self.PLAYER2_PK), {})
         self.assertEqual(response.status_code, 401)
 
     def test_meeting_with_login_far(self):
         response = self.c.authenticate(self.username, self.pwd)
         self.assertEqual(response.status_code, 200)
-        pk = 6
-        response = self.c.post('/api/player/meeting/{0}/'.format(pk), {})
+        response = self.c.post('/api/player/meeting/{0}/'.format(self.PLAYER5_PK), {})
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), 'User is far for meeting')
 
     def test_meeting_with_login_near(self):
         response = self.c.authenticate(self.username, self.pwd)
         self.assertEqual(response.status_code, 200)
-        pk = 3
-        response = self.c.post('/api/player/meeting/{0}/'.format(pk), {})
+        response = self.c.post('/api/player/meeting/{0}/'.format(self.PLAYER2_PK), {})
         self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.json(), 'Meeting created')
 
     def test_change_position_unauthorized(self):
         response = self.c.post('/api/player/set-pos/', {'lat': '-6', 'lon': '37'})
