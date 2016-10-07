@@ -17,12 +17,14 @@ var livereload = require('gulp-livereload');
 var connect = require('gulp-connect');
 var copy = require('gulp-copy');
 var less = require('gulp-less');
+var cssimport = require("gulp-cssimport");
 
 // External dependencies you do not want to rebundle while developing,
 // but include in your application deployment
 var dependencies = [
   'react', 'react-dom', 'react-router',
-  'jquery', 'jquery.cookie'
+  'jquery', 'jquery.cookie',
+  'openlayers'
 ];
 
 var browserifyTask = function (options) {
@@ -88,6 +90,7 @@ var cssTask = function (options) {
         var start = new Date();
         console.log('Building CSS bundle');
         gulp.src(options.src)
+          .pipe(cssimport({matchPattern: "*.css"}))
           .pipe(less())
           .pipe(concat('main.css'))
           .pipe(gulp.dest(options.dest))

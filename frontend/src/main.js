@@ -5,6 +5,7 @@ import { Router, Route, Link, browserHistory } from 'react-router'
 
 import App from './app';
 import Login from './login';
+import Map from './map';
 
 import { requireAuth } from './auth';
 
@@ -15,6 +16,8 @@ import { requireAuth } from './auth';
 ReactDOM.render((
   <Router history={browserHistory}>
     <Route path="/login" component={Login}/>
-    <Route path="/" component={App} onEnter={requireAuth}/>
+    <Route path="/" component={App} onEnter={requireAuth}>
+        <Route path="map" component={Map}/>
+    </Route>
   </Router>
 ), document.getElementById('content'))

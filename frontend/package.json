@@ -19,6 +19,7 @@
     "gulp-concat": "^2.6.0",
     "gulp-connect": "^4.0.0",
     "gulp-copy": "0.0.2",
+    "gulp-cssimport": "^4.0.0",
     "gulp-cssmin": "^0.1.7",
     "gulp-if": "^2.0.1",
     "gulp-less": "^3.1.0",
@@ -35,6 +36,7 @@
     "watchify": "^3.7.0"
   },
   "dependencies": {
+    "openlayers": "^3.18.2",
     "react": "^15.0.2",
     "react-dom": "^15.0.2",
     "react-router": "^2.8.1"
