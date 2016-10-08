@@ -1,5 +1,5 @@
 import React from 'react';
-import { browserHistory } from 'react-router'
+import { hashHistory } from 'react-router'
 import $ from 'jquery';
 
 import { login } from './auth';
@@ -24,7 +24,7 @@ export default class Login extends React.Component {
 
     login = (e) => {
         login(this.state.email, this.state.password);
-        browserHistory.push('/');
+        hashHistory.push('/map');
     }
 
     render() {

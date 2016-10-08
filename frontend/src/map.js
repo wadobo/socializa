@@ -1,5 +1,5 @@
 import React from 'react';
-import { browserHistory } from 'react-router'
+import { hashHistory } from 'react-router'
 import { Link } from 'react-router'
 import ol from 'openlayers'
 
@@ -50,7 +50,7 @@ export default class Map extends React.Component {
 
       var positionFeature = new ol.Feature();
       positionFeature.setStyle(new ol.style.Style({
-        image: new ol.style.Icon({ src: '/app/images/geo1.svg' })
+        image: new ol.style.Icon({ src: 'app/images/geo1.svg' })
       }));
       positionFeature.customData = {name: 'me'};
 

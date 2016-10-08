@@ -1,5 +1,5 @@
 import React from 'react';
-import { browserHistory } from 'react-router'
+import { hashHistory } from 'react-router'
 import { Link } from 'react-router'
 
 import { user, logout } from './auth';
@@ -10,7 +10,7 @@ export default class App extends React.Component {
 
     logout = (e) => {
         logout();
-        browserHistory.push('/login');
+        hashHistory.push('/login');
     }
 
     render() {
@@ -26,7 +26,7 @@ export default class App extends React.Component {
                         <span className="icon-bar"></span>
                       </button>
                       <Link className="navbar-brand" to="/">
-                        <img alt="Brand" src="/app/images/icon.png" height="20px"/>
+                        <img alt="Brand" src="app/images/icon.png" height="20px"/>
                       </Link>
                     </div>
 
