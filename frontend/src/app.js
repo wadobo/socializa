@@ -4,6 +4,11 @@ import { Link } from 'react-router'
 
 import { user, logout } from './auth';
 
+import $ from 'jquery';
+window.$ = window.jQuery = $;
+var Bootstrap = require('bootstrap');
+Bootstrap.$ = $;
+
 
 export default class App extends React.Component {
     state = { user: user }

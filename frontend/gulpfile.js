@@ -24,6 +24,7 @@ var cssimport = require("gulp-cssimport");
 var dependencies = [
   'react', 'react-dom', 'react-router',
   'jquery', 'jquery.cookie',
+  'bootstrap',
   'openlayers'
 ];
 
