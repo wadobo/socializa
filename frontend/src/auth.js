@@ -59,3 +59,8 @@ export function logout() {
     user = $.extend({}, defuser);
     console.log("logout");
 };
+
+
+export function register(email, password) {
+    return true;
+};

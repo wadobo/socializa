@@ -1,5 +1,5 @@
 import React from 'react';
-import { hashHistory } from 'react-router'
+import { hashHistory, Link } from 'react-router'
 import $ from 'jquery';
 
 import { login } from './auth';
@@ -40,7 +40,7 @@ export default class Login extends React.Component {
                         <input className="form-control" type="password" id="password" name="password" placeholder="password" value={ this.state.password } onChange={ this.passChange }/>
                 </form>
 
-                <a href="#">New account</a>
+                <Link to="/register">New account</Link>
 
                 <hr/>
 
