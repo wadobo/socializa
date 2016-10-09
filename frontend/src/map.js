@@ -7,27 +7,39 @@ import { user, logout } from './auth';
 
 
 export default class Map extends React.Component {
-    state = { user: user }
+    state = { user: user, state: 'stopped' }
 
     componentDidMount() {
-      var view = new ol.View({
+      this.view = new ol.View({
         center: ol.proj.fromLonLat([37.41, 8.82]),
         zoom: 12
       });
 
-      var map = new ol.Map({
+      this.map = new ol.Map({
         target: 'socializa-map',
         layers: [
           new ol.layer.Tile({
             source: new ol.source.OSM()
           })
         ],
-        view: view
+        view: this.view
       });
+
+      this.startGeolocation();
+
+      $('canvas').height($(window).height() - 120);
+      this.map.updateSize();
+    }
+
+    startGeolocation() {
+      var view = this.view;
+      var map = this.map;
 
       var geolocation = new ol.Geolocation({
         projection: view.getProjection()
       });
+
+      this.geolocation = geolocation;
 
       // update when the position changes.
       geolocation.on('change', function() {
@@ -70,9 +82,6 @@ export default class Map extends React.Component {
         })
       });
 
-      geolocation.setTracking(true);
-
-
       var select = new ol.interaction.Select();
       map.addInteraction(select);
       select.on('select', function(e) {
@@ -84,9 +93,34 @@ export default class Map extends React.Component {
       });
     }
 
+    start = (e) => {
+        this.geolocation.setTracking(true);
+        this.view.setZoom(18);
+        this.setState({ state: 'started' });
+    }
+
+    stop = (e) => {
+        this.geolocation.setTracking(false);
+        this.setState({ state: 'stopped' });
+    }
+
     render() {
         return (
-            <div id="socializa-map">
+            <div>
+                <div id="socializa-map">
+                </div>
+
+                {(
+                    () => {
+                        switch (this.state.state) {
+                            case 'started':
+                                return <button className="btn btn-block btn-danger" onClick={ this.stop }>Stop</button>
+                            default:
+                                return <button className="btn btn-block btn-success" onClick={ this.start }>Start</button>
+                        }
+                    }
+                )()}
+
             </div>
         );
     }
