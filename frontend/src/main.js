@@ -7,6 +7,7 @@ import App from './app';
 import Login from './login';
 import Register from './register';
 import Map from './map';
+import Profile from './profile';
 
 import { requireAuth } from './auth';
 
@@ -17,6 +18,7 @@ ReactDOM.render((
     <Route path="/register" component={Register}/>
     <Route path="/" component={App} onEnter={requireAuth}>
         <Route path="map" component={Map}/>
+        <Route path="profile" component={Profile}/>
     </Route>
   </Router>
 ), document.getElementById('content'))

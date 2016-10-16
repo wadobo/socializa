@@ -29,7 +29,6 @@
     "gulp-util": "^3.0.7",
     "ijs": "^0.4.0",
     "jquery": "^3.1.1",
-    "jquery.cookie": "^1.4.1",
     "phantomjs-prebuilt": "^2.1.7",
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^3.7.0"

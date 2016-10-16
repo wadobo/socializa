@@ -1,5 +1,4 @@
 import $ from 'jquery';
-import 'jquery.cookie';
 
 
 let defuser = {
@@ -19,13 +18,18 @@ export let user = {
 
 
 function loadUser() {
-    var u = $.cookie('socializa-user');
+    var u = localStorage['socializa-user'];
     if (u) {
         u = JSON.parse(u);
         user = $.extend(user, u);
     }
 }
 loadUser();
+
+
+export function setUser(newuser) {
+    user = $.extend(user, newuser);
+}
 
 
 export function requireAuth(nextState, replace) {
@@ -50,12 +54,12 @@ export function login(email, password) {
     user.username = email;
     user.apikey = 'FAKEAPIKEY';
 
-    $.cookie('socializa-user', JSON.stringify(user));
+    localStorage['socializa-user'] = JSON.stringify(user);
 };
 
 
 export function logout() {
-    $.cookie('socializa-user', '');
+    localStorage['socializa-user'] = ''
     user = $.extend({}, defuser);
     console.log("logout");
 };
