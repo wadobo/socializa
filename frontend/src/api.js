@@ -32,6 +32,20 @@ function JSONPost(data, token) {
 }
 
 
+function JSONGet(token) {
+    var d = {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+    }
+
+    if (token) {
+        d.headers.Authorization = 'Token ' + token;
+    }
+
+    return d;
+}
+
+
 export default class API {
     static login(email, password) {
         var data = JSONPost({
@@ -45,5 +59,10 @@ export default class API {
     static setPos(lat, lon, token) {
         var data = JSONPost({ lat: lat, lon: lon }, token);
         return fetch('/api/player/set-pos/', data).then(checkStatus).then(parseJSON);
+    }
+
+    static nearPlayers(token) {
+        var data = JSONGet(token);
+        return fetch('/api/player/near/', data).then(checkStatus).then(parseJSON);
     }
 }

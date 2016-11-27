@@ -100,10 +100,23 @@ export default class Map extends React.Component {
       });
     }
 
+    playersUpdated = (data) => {
+        console.log(data);
+    }
+
+    updatePlayers = () => {
+        API.nearPlayers(user.apikey).
+            then(this.playersUpdated.bind(this));
+        if (this.state.state == 'started') {
+            setTimeout(this.updatePlayers.bind(this), 2000);
+        }
+    }
+
     start = (e) => {
         this.geolocation.setTracking(true);
         this.view.setZoom(18);
         this.setState({ state: 'started' });
+        setTimeout(this.updatePlayers.bind(this), 500);
     }
 
     stop = (e) => {
