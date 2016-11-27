@@ -25,7 +25,8 @@ var dependencies = [
   'react', 'react-dom', 'react-router',
   'jquery', 'jquery.cookie',
   'bootstrap',
-  'openlayers'
+  'openlayers',
+  'fetch'
 ];
 
 var browserifyTask = function (options) {
@@ -103,6 +104,7 @@ var cssTask = function (options) {
       gulp.watch(options.src, run);
     } else {
       gulp.src(options.src)
+        .pipe(cssimport({matchPattern: "*.css"}))
         .pipe(less())
         .pipe(concat('main.css'))
         .pipe(cssmin())

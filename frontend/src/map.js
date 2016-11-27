@@ -4,6 +4,7 @@ import { Link } from 'react-router'
 import ol from 'openlayers'
 
 import { user, logout } from './auth';
+import API from './api';
 
 
 export default class Map extends React.Component {
@@ -40,14 +41,20 @@ export default class Map extends React.Component {
       });
 
       this.geolocation = geolocation;
+      window.map = map;
+      window.geo = geolocation;
 
       // update when the position changes.
       geolocation.on('change', function() {
-        accuracy = geolocation.getAccuracy() + ' [m]';
-        altitude = geolocation.getAltitude() + ' [m]';
-        altitudeAccuracy = geolocation.getAltitudeAccuracy() + ' [m]';
-        heading = geolocation.getHeading() + ' [rad]';
-        speed = geolocation.getSpeed() + ' [m/s]';
+        var accuracy = geolocation.getAccuracy() + ' [m]';
+        var altitude = geolocation.getAltitude() + ' [m]';
+        var altitudeAccuracy = geolocation.getAltitudeAccuracy() + ' [m]';
+        var heading = geolocation.getHeading() + ' [rad]';
+        var speed = geolocation.getSpeed() + ' [m/s]';
+
+        var coordinates = geolocation.getPosition();
+        var lonlat = ol.proj.toLonLat(coordinates);
+        API.setPos(lonlat[1], lonlat[0], user.apikey);
       });
 
       // handle geolocation error.

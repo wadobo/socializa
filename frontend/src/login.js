@@ -23,8 +23,12 @@ export default class Login extends React.Component {
     }
 
     login = (e) => {
-        login(this.state.email, this.state.password);
-        hashHistory.push('/map');
+        login(this.state.email, this.state.password)
+            .then(function() {
+                hashHistory.push('/map');
+            }).catch(function(error) {
+                alert(error);
+            });
     }
 
     render() {

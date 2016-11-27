@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import API from './api';
 
 
 let defuser = {
@@ -48,13 +49,13 @@ export function isAuthenticated() {
 
 
 export function login(email, password) {
-    // TODO: make the real login
-    console.log("auth: " + email + ', ' + password);
-    user.isAuthenticated = true;
-    user.username = email;
-    user.apikey = 'FAKEAPIKEY';
-
-    localStorage['socializa-user'] = JSON.stringify(user);
+    return API.login(email, password)
+        .then(function(resp) {
+            user.isAuthenticated = true;
+            user.username = email;
+            user.apikey = resp.token;
+            localStorage['socializa-user'] = JSON.stringify(user);
+        });
 };
 
 
