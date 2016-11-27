@@ -22,6 +22,7 @@ from .views import schema_view
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^docs/', schema_view),
+    url(r'^api/token/', views.obtain_auth_token),
     url(r"^api/social/", include("rest_framework_social_oauth2.urls")),
     url(r"^api/player/", include("player.urls")),
     url(r"^api/event/", include("event.urls"))
