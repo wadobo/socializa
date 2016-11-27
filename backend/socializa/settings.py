@@ -43,10 +43,11 @@ INSTALLED_APPS = [
     'social.apps.django_app.default',
     'rest_framework_social_oauth2',
     'rest_framework_swagger',
+    'frontend',
     'world',
     'player',
     'event',
-    'game'
+    'game',
 ]
 
 MIDDLEWARE = [
