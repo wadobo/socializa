@@ -9,8 +9,8 @@ class Player(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="player")
     pos = models.PointField(null=True, blank=True)
 
-    def set_position(self, lat, lon):
-        self.pos = GEOSGeometry('POINT({0} {1})'.format(lat, lon))
+    def set_position(self, lon, lat):
+        self.pos = GEOSGeometry('POINT({0} {1})'.format(lon, lat))
         self.save()
 
     def __str__(self):

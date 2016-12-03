@@ -89,6 +89,13 @@ export default class Map extends React.Component {
         })
       });
 
+      this.playerList = new ol.source.Vector();
+
+      var playersLayer = new ol.layer.Vector({
+        map: map,
+        source: this.playerList
+      });
+
       var select = new ol.interaction.Select();
       map.addInteraction(select);
       select.on('select', function(e) {
@@ -101,7 +108,21 @@ export default class Map extends React.Component {
     }
 
     playersUpdated = (data) => {
-        console.log(data);
+        this.playerList.clear();
+        var pl = this;
+        data.forEach(function(p) {
+            var playerFeature = new ol.Feature();
+            playerFeature.setStyle(new ol.style.Style({
+              image: new ol.style.Icon({ src: 'app/images/geo2.svg' })
+            }));
+            playerFeature.customData = {id: p.pk};
+            var coords = [parseFloat(p.pos.longitude), parseFloat(p.pos.latitude)];
+            playerFeature.setGeometry(
+                new ol.geom.Point(ol.proj.fromLonLat(coords))
+            );
+
+            pl.playerList.addFeature(playerFeature);
+        });
     }
 
     updatePlayers = () => {
