@@ -52,6 +52,7 @@ export default class Events extends React.Component {
 
     componentDidMount() {
         this.updateEvents();
+        this.props.setAppState({ title: 'Events' });
     }
 
     updateEvents = () => {

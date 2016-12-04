@@ -8,6 +8,10 @@ import { setUser, user, logout } from './auth';
 export default class Profile extends React.Component {
     state = { user: user }
 
+    componentDidMount() {
+        this.props.setAppState({ title: 'Profile' });
+    }
+
     save = (e) => {
         // TODO update user info
         setUser(this.state.user);

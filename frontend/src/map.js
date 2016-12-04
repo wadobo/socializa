@@ -11,6 +11,8 @@ export default class Map extends React.Component {
     state = { user: user, state: 'stopped' }
 
     componentDidMount() {
+      this.props.setAppState({ title: 'Map' });
+
       this.view = new ol.View({
         center: ol.proj.fromLonLat([37.41, 8.82]),
         zoom: 12

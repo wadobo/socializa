@@ -11,14 +11,24 @@ Bootstrap.$ = $;
 
 
 export default class App extends React.Component {
-    state = { user: user }
+    state = { user: user, title: 'Socializa' }
 
     logout = (e) => {
         logout();
         hashHistory.push('/login');
     }
 
+    setAppState = (newst) => {
+        this.setState(newst);
+    }
+
     render() {
+        const childrenWithProps = React.Children.map(this.props.children,
+            (child) => React.cloneElement(child, {
+                setAppState: this.setAppState
+            })
+        );
+
         return (
             <div id="socializa-app">
                 <nav className="navbar navbar-default navbar-fixed-top">
@@ -33,6 +43,8 @@ export default class App extends React.Component {
                       <Link className="navbar-brand" to="/">
                         <img alt="Brand" src="app/images/icon.png" height="20px"/>
                       </Link>
+                      <span className="socializa-title">{this.state.title}</span>
+
                     </div>
 
                     <div className="collapse navbar-collapse" id="collapse">
@@ -49,7 +61,7 @@ export default class App extends React.Component {
                 </nav>
 
 
-                <div>{this.props.children}</div>
+                <div>{childrenWithProps}</div>
             </div>
         );
     }
