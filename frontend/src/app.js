@@ -38,6 +38,7 @@ export default class App extends React.Component {
                     <div className="collapse navbar-collapse" id="collapse">
                       <ul className="nav navbar-nav" id="menu">
                           <li><Link to="/map">map</Link></li>
+                          <li><Link to="/events">events</Link></li>
                           <li><Link to="/profile">profile</Link></li>
                       </ul>
                       <ul className="nav navbar-nav navbar-right">

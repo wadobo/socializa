@@ -8,6 +8,7 @@ import Login from './login';
 import Register from './register';
 import Map from './map';
 import Profile from './profile';
+import Events from './events';
 
 import { requireAuth } from './auth';
 
@@ -19,6 +20,7 @@ ReactDOM.render((
     <Route path="/" component={App} onEnter={requireAuth}>
         <Route path="map" component={Map}/>
         <Route path="profile" component={Profile}/>
+        <Route path="events" component={Events}/>
     </Route>
   </Router>
 ), document.getElementById('content'))

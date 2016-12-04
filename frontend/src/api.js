@@ -65,4 +65,9 @@ export default class API {
         var data = JSONGet(token);
         return fetch('/api/player/near/', data).then(checkStatus).then(parseJSON);
     }
+
+    static allEvents(token) {
+        var data = JSONGet(token);
+        return fetch('/api/event/all/', data).then(checkStatus).then(parseJSON);
+    }
 }

@@ -26,6 +26,7 @@ var dependencies = [
   'jquery', 'jquery.cookie',
   'bootstrap',
   'openlayers',
+  'moment',
   'fetch'
 ];
 

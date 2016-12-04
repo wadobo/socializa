@@ -36,6 +36,7 @@
   "dependencies": {
     "bootstrap": "^3.3.7",
     "fetch": "^1.1.0",
+    "moment": "^2.17.1",
     "openlayers": "^3.18.2",
     "react": "^15.0.2",
     "react-dom": "^15.0.2",
