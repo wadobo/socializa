@@ -1,4 +1,3 @@
-import json
 from rest_framework.test import APITestCase
 
 from player.test_client import JClient

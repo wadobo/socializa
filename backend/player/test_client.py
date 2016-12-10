@@ -1,4 +1,3 @@
-import json
 from django.test import Client
 from requests.auth import _basic_auth_str
 

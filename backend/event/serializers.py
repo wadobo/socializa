@@ -1,7 +1,5 @@
 from rest_framework import serializers
 
-from event.models import Event
-
 
 class EventSerializer(serializers.Serializer):
     pk = serializers.IntegerField(read_only=True)

@@ -1,7 +1,6 @@
 from django.contrib.auth.models import User
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import GEOSGeometry
-from django.contrib.gis.measure import D
 from django.core.exceptions import ValidationError
 
 
