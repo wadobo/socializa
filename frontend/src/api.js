@@ -1,4 +1,6 @@
+var Promise = require('es6-promise').Promise;
 import 'fetch';
+import "isomorphic-fetch";
 
 
 function checkStatus(response) {
