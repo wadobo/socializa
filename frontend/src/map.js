@@ -109,7 +109,7 @@ export default class Map extends React.Component {
                 var id = f.getArray()[0].customData.id;
                 var content = $('<a id="connect" href="#">Connect</a>');
                 content.click(function() {
-                    self.connectPlayer.bind(self)(id);
+                    self.connectPlayer(id);
                 });
 
                 $(element).popover({
