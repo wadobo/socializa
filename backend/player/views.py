@@ -1,6 +1,7 @@
 from django.contrib.gis.measure import D
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -18,7 +19,12 @@ def distance(pos1, pos2, unit='km'):
         return dis
 
 
-def create_meeting(player1, player2, event_id=None):
+def current_event(player):
+    now = timezone.now()
+    return player.event_set.filter(start_date__lt=now, end_date__gt=now).first()
+
+
+def create_meeting(player1, player2, event_id):
     meeting = None
     if player1 == player2:
         msg = "narcissistic: you cannot connect with yourself"
@@ -73,16 +79,16 @@ class MeetingCreate(APIView):
         player1 = request.user.player
         player2 = get_object_or_404(Player, pk=player_id)
         event = None
-        if event_id:
-            event = player1.event_set.filter(pk=event_id).first()
+        if not event_id:
+            event = current_event(player1)
             if event is None:
                 return Response("Unauthorized event", status=status.HTTP_401_UNAUTHORIZED)
             else:
-                if not player2.event_set.filter(pk=event_id).first():
+                if not player2.event_set.filter(pk=event.pk).first():
                     return Response("Other player not join at this event", status=status.HTTP_400_BAD_REQUEST)
-        if distance(player1.pos, player2.pos, unit='m') <= self.MEETING_DISTANCE:
 
-            meeting, msg, st = create_meeting(player1, player2, event_id)
+        if distance(player1.pos, player2.pos, unit='m') <= self.MEETING_DISTANCE:
+            meeting, msg, st = create_meeting(player1, player2, event.pk)
             return Response(msg, status=st)
         else:
             return Response("User is far for meeting", status=status.HTTP_200_OK)
