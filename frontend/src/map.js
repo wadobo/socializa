@@ -99,17 +99,23 @@ export default class Map extends React.Component {
       });
 
       var select = new ol.interaction.Select();
+      var self = this;
       map.addInteraction(select);
       select.on('select', function(e) {
             var f = e.target.getFeatures();
             var element = document.getElementById('popup');
             if (f.getLength()) {
-                window.popup.setPosition(f.getArray()[0].customData.coords);
+                self.popup.setPosition(f.getArray()[0].customData.coords);
                 var id = f.getArray()[0].customData.id;
+                var content = $('<a id="connect" href="#">Connect</a>');
+                content.click(function() {
+                    self.connectPlayer.bind(self)(id);
+                });
+
                 $(element).popover({
                     'placement': 'top',
                     'html': true,
-                    'content': '<a id="connect" href="#" onclick="connectPlayer('+id+');">Connect</a>'
+                    'content': content
                 });
                 $(element).popover("show");
             } else {
@@ -146,6 +152,7 @@ export default class Map extends React.Component {
     }
 
     connectPlayer = (id) => {
+        console.log("connect player", id);
         API.connectPlayer(id).then(console.log("CONTECTADO"));
     }
 
@@ -153,12 +160,12 @@ export default class Map extends React.Component {
         this.geolocation.setTracking(true);
         this.view.setZoom(18);
         this.setState({ state: 'started' });
-        window.popup = new ol.Overlay({
+        this.popup = new ol.Overlay({
             element: document.getElementById('popup'),
             positining: 'bottom-center',
             stopEvent: false
         });
-        window.map.addOverlay(window.popup);
+        this.map.addOverlay(this.popup);
         setTimeout(this.updatePlayers.bind(this), 500);
     }
 
