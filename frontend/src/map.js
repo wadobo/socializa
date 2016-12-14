@@ -102,9 +102,18 @@ export default class Map extends React.Component {
       map.addInteraction(select);
       select.on('select', function(e) {
             var f = e.target.getFeatures();
+            var element = document.getElementById('popup');
             if (f.getLength()) {
-                console.log(f.getArray()[0]);
-                console.log(f.getArray()[0].customData.name);
+                window.popup.setPosition(f.getArray()[0].customData.coords);
+                var id = f.getArray()[0].customData.id;
+                $(element).popover({
+                    'placement': 'top',
+                    'html': true,
+                    'content': '<a id="connect" href="#" onclick="connectPlayer('+id+');">Connect</a>'
+                });
+                $(element).popover("show");
+            } else {
+                $(element).popover("hide");
             }
       });
     }
@@ -117,8 +126,9 @@ export default class Map extends React.Component {
             playerFeature.setStyle(new ol.style.Style({
               image: new ol.style.Icon({ src: 'app/images/geo2.svg' })
             }));
-            playerFeature.customData = {id: p.pk};
             var coords = [parseFloat(p.pos.longitude), parseFloat(p.pos.latitude)];
+            var point = new ol.proj.transform([coords[0], coords[1]], 'EPSG:4326', 'EPSG:3857');
+            playerFeature.customData = {id: p.pk, coords: point};
             playerFeature.setGeometry(
                 new ol.geom.Point(ol.proj.fromLonLat(coords))
             );
@@ -135,10 +145,20 @@ export default class Map extends React.Component {
         }
     }
 
+    connectPlayer = (id) => {
+        API.connectPlayer(id).then(console.log("CONTECTADO"));
+    }
+
     start = (e) => {
         this.geolocation.setTracking(true);
         this.view.setZoom(18);
         this.setState({ state: 'started' });
+        window.popup = new ol.Overlay({
+            element: document.getElementById('popup'),
+            positining: 'bottom-center',
+            stopEvent: false
+        });
+        window.map.addOverlay(window.popup);
         setTimeout(this.updatePlayers.bind(this), 500);
     }
 
@@ -151,6 +171,7 @@ export default class Map extends React.Component {
         return (
             <div>
                 <div id="socializa-map">
+                    <div id="popup"></div>
                 </div>
 
                 {(
