@@ -1,6 +1,7 @@
 from django.contrib.gis.measure import D
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -16,6 +17,11 @@ def distance(pos1, pos2, unit='km'):
         return dis * 1000
     else:
         return dis
+
+
+def current_event(player):
+    now = timezone.now()
+    return player.event_set.filter(start_date__lt=now, end_date__gt=now).first()
 
 
 def create_meeting(player1, player2, event_id=None):
@@ -80,8 +86,8 @@ class MeetingCreate(APIView):
             else:
                 if not player2.event_set.filter(pk=event_id).first():
                     return Response("Other player not join at this event", status=status.HTTP_400_BAD_REQUEST)
-        if distance(player1.pos, player2.pos, unit='m') <= self.MEETING_DISTANCE:
 
+        if distance(player1.pos, player2.pos, unit='m') <= self.MEETING_DISTANCE:
             meeting, msg, st = create_meeting(player1, player2, event_id)
             return Response(msg, status=st)
         else:

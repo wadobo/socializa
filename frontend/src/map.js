@@ -99,12 +99,27 @@ export default class Map extends React.Component {
       });
 
       var select = new ol.interaction.Select();
+      var self = this;
       map.addInteraction(select);
       select.on('select', function(e) {
             var f = e.target.getFeatures();
+            var element = document.getElementById('popup');
             if (f.getLength()) {
-                console.log(f.getArray()[0]);
-                console.log(f.getArray()[0].customData.name);
+                self.popup.setPosition(f.getArray()[0].customData.coords);
+                var id = f.getArray()[0].customData.id;
+                var content = $('<a id="connect" href="#">Connect</a>');
+                content.click(function() {
+                    self.connectPlayer(id);
+                });
+
+                $(element).popover({
+                    'placement': 'top',
+                    'html': true,
+                    'content': content
+                });
+                $(element).popover("show");
+            } else {
+                $(element).popover("hide");
             }
       });
     }
@@ -117,8 +132,9 @@ export default class Map extends React.Component {
             playerFeature.setStyle(new ol.style.Style({
               image: new ol.style.Icon({ src: 'app/images/geo2.svg' })
             }));
-            playerFeature.customData = {id: p.pk};
             var coords = [parseFloat(p.pos.longitude), parseFloat(p.pos.latitude)];
+            var point = new ol.proj.transform([coords[0], coords[1]], 'EPSG:4326', 'EPSG:3857');
+            playerFeature.customData = {id: p.pk, coords: point};
             playerFeature.setGeometry(
                 new ol.geom.Point(ol.proj.fromLonLat(coords))
             );
@@ -135,10 +151,21 @@ export default class Map extends React.Component {
         }
     }
 
+    connectPlayer = (id, ev=null) => {
+        console.log("connect player", id);
+        API.connectPlayer(id, ev, user.apikey).then(console.log("CONNECTED"));
+    }
+
     start = (e) => {
         this.geolocation.setTracking(true);
         this.view.setZoom(18);
         this.setState({ state: 'started' });
+        this.popup = new ol.Overlay({
+            element: document.getElementById('popup'),
+            positining: 'bottom-center',
+            stopEvent: false
+        });
+        this.map.addOverlay(this.popup);
         setTimeout(this.updatePlayers.bind(this), 500);
     }
 
@@ -151,6 +178,7 @@ export default class Map extends React.Component {
         return (
             <div>
                 <div id="socializa-map">
+                    <div id="popup"></div>
                 </div>
 
                 {(
