@@ -6,8 +6,11 @@ dev: package.json
 serve: clean
 	./node_modules/.bin/gulp
 
-build: clean
+web: clean
 	NODE_ENV=production ./node_modules/.bin/gulp deploy
+
+app: clean
+	NODE_ENV=production ./node_modules/.bin/gulp deploy --app
 
 clean:
 	rm -rf build dist

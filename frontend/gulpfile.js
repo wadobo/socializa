@@ -18,6 +18,7 @@ var connect = require('gulp-connect');
 var copy = require('gulp-copy');
 var less = require('gulp-less');
 var cssimport = require("gulp-cssimport");
+var htmlreplace = require("gulp-html-replace");
 
 // External dependencies you do not want to rebundle while developing,
 // but include in your application deployment
@@ -122,6 +123,16 @@ var copyFilesTask = function (options) {
   gulp.src(["manifest.json"]).pipe(copy(dest, {prefix: 0}));
 }
 
+var htmlReplaceTask = function (options) {
+  var dest = options.dest;
+  var src = gulp.src('index.html');
+  if (options.build != 'app') {
+        src.pipe(htmlreplace({ 'app': '' }));
+  }
+  src.pipe(gulp.dest(dest));
+  //gulp.src(["index.html"]).pipe(copy('./build', {prefix: 0}));
+}
+
 // Starts our development workflow
 gulp.task('default', function () {
   livereload.listen();
@@ -142,7 +153,10 @@ gulp.task('default', function () {
     dest: './build/app'
   });
 
-  gulp.src(["index.html"]).pipe(copy('./build', {prefix: 0}));
+  htmlReplaceTask({
+    build: 'web',
+    dest: './build'
+  });
 
   connect.server({
     root: 'build/',
@@ -152,6 +166,10 @@ gulp.task('default', function () {
 });
 
 gulp.task('deploy', function () {
+  var build = 'web';
+  if (process.argv.indexOf("--app") >= 0) {
+    build = 'app';
+  }
 
   browserifyTask({
     development: false,
@@ -169,5 +187,8 @@ gulp.task('deploy', function () {
     dest: './dist/app'
   });
 
-  gulp.src(["index.html"]).pipe(copy('./dist', {prefix: 0}));
+  htmlReplaceTask({
+    build: build,
+    dest: './dist'
+  });
 });

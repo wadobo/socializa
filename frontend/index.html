@@ -3,6 +3,8 @@
     <meta charset="utf-8">
     <meta name="format-detection" content="telephone=no" />
     <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
+    <!-- build:app -->
+
     <!-- This is a wide open CSP declaration. To lock this down for production, see below. -->
     <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *" />
     <!-- Good default declaration:
@@ -14,6 +16,8 @@
     * Create your own at http://cspisawesome.com
     -->
     <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: 'unsafe-inline' https://ssl.gstatic.com; style-src 'self' 'unsafe-inline'; media-src *" /> -->
+
+    <!-- endbuild -->
 
     <title>Socializa</title>
     <meta name="description" content="Find people in real life">
@@ -57,6 +61,9 @@
     END TEST -->
 
     <!-- scripts -->
+
+    <!-- build:app -->
+
     <script src="cordova.js"></script>
     <script src="js/index.js"></script>
 
@@ -65,6 +72,8 @@
             app.initialize();
         }
     </script>
+
+    <!-- endbuild -->
 
     <script src="app/vendors.js"></script>
     <script src="app/main.js"></script>
