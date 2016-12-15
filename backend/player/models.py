@@ -17,11 +17,7 @@ class Player(models.Model):
         self.save()
 
     def get_coords(self):
-        if self.pos:
-            coords = self.pos.coords
-        else:
-            coords = "(None, None)"
-        return coords
+        return self.pos.coords if self.pos else "(None, None)"
 
     def __str__(self):
         return self.user.username

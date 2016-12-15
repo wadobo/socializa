@@ -40,6 +40,13 @@ class EventTestCase(APITestCase):
         response = self.c.post('/api/event/join/{0}/'.format(self.EVENT_PK_2), {})
         self.assertEqual(response.status_code, 401)
 
+    def test_join_an_event_not_exist(self):
+        response = self.c.authenticate(self.username, self.pwd)
+        self.assertEqual(response.status_code, 200)
+        response = self.c.post('/api/event/join/{0}/'.format(999), {})
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json(), 'Event not exist')
+
     def test_join_an_event(self):
         response = self.c.authenticate(self.username, self.pwd)
         self.assertEqual(response.status_code, 200)
@@ -51,6 +58,9 @@ class EventTestCase(APITestCase):
         self.assertEqual(response.status_code, 200)
         response = self.c.post('/api/event/join/{0}/'.format(self.EVENT_PK_2), {})
         self.assertEqual(response.status_code, 201)
+        response = self.c.post('/api/event/join/{0}/'.format(self.EVENT_PK_2), {})
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json(), 'This player already is join at this event')
 
     def test_join_an_event_max(self):
         repeat = 1
@@ -64,6 +74,11 @@ class EventTestCase(APITestCase):
         response = self.c.post('/api/event/join/{0}/'.format(self.EVENT_PK_2), {})
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json(), 'Maximum number of player in this event')
+
+    def test_unjoin_event(self):
+        response = self.c.delete('/api/event/unjoin/{0}/'.format(self.EVENT_PK_3), {})
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.json(), 'Anonymous user')
 
     def test_unjoin_event(self):
         response = self.c.authenticate('test3', self.pwd)
@@ -85,12 +100,22 @@ class EventTestCase(APITestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json(), 'Event not exist')
 
+    def test_get_my_events_unauth(self):
+        response = self.c.get('/api/event/my-events/', {})
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.json(), 'Anonymous user')
+
     def test_get_my_events(self):
         response = self.c.authenticate('test5', self.pwd)
         self.assertEqual(response.status_code, 200)
         response = self.c.get('/api/event/my-events/', {})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), self.PLAYER5_JOINED_EVENT)
+
+    def test_get_all_events_unauth(self):
+        response = self.c.get('/api/event/all/', {})
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.json(), 'Anonymous user')
 
     def test_get_all_events(self):
         response = self.c.authenticate('test5', self.pwd)
