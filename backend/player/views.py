@@ -24,7 +24,7 @@ def current_event(player):
     return player.event_set.filter(start_date__lt=now, end_date__gt=now).first()
 
 
-def create_meeting(player1, player2, event_id):
+def create_meeting(player1, player2, event_id=None):
     meeting = None
     if player1 == player2:
         msg = "narcissistic: you cannot connect with yourself"
@@ -79,16 +79,16 @@ class MeetingCreate(APIView):
         player1 = request.user.player
         player2 = get_object_or_404(Player, pk=player_id)
         event = None
-        if not event_id:
-            event = current_event(player1)
+        if event_id:
+            event = player1.event_set.filter(pk=event_id).first()
             if event is None:
                 return Response("Unauthorized event", status=status.HTTP_401_UNAUTHORIZED)
             else:
-                if not player2.event_set.filter(pk=event.pk).first():
+                if not player2.event_set.filter(pk=event_id).first():
                     return Response("Other player not join at this event", status=status.HTTP_400_BAD_REQUEST)
 
         if distance(player1.pos, player2.pos, unit='m') <= self.MEETING_DISTANCE:
-            meeting, msg, st = create_meeting(player1, player2, event.pk)
+            meeting, msg, st = create_meeting(player1, player2, event_id)
             return Response(msg, status=st)
         else:
             return Response("User is far for meeting", status=status.HTTP_200_OK)

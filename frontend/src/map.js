@@ -151,9 +151,9 @@ export default class Map extends React.Component {
         }
     }
 
-    connectPlayer = (id) => {
+    connectPlayer = (id, ev=null) => {
         console.log("connect player", id);
-        API.connectPlayer(id, user.apikey).then(console.log("CONNECTED"));
+        API.connectPlayer(id, ev, user.apikey).then(console.log("CONNECTED"));
     }
 
     start = (e) => {

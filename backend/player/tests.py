@@ -40,6 +40,7 @@ class PlayerTestCase(APITestCase):
     def test_meeting_without_login(self):
         response = self.c.post('/api/player/meeting/{0}/'.format(self.PLAYER2_PK), {})
         self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.json(), 'Anonymous user')
 
     def test_meeting_with_login_far(self):
         response = self.c.authenticate(self.username, self.pwd)
