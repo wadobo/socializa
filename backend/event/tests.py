@@ -1,3 +1,4 @@
+from django.utils import timezone
 from rest_framework.test import APITestCase
 
 from .models import Event
@@ -29,11 +30,11 @@ class EventTestCase(APITestCase):
         self.username = 'test1'
         self.pwd = 'qweqweqwe'
         self.c = JClient()
+        self.event = Event.objects.get(pk=self.EVENT_PK_2)
 
     def tearDown(self):
         self.c = None
-        event = Event.objects.get(pk=self.EVENT_PK_2)
-        event.players.clear()
+        self.event.players.clear()
 
     def test_join_an_event_unauthorized(self):
         response = self.c.post('/api/event/join/{0}/'.format(self.EVENT_PK_2), {})
@@ -90,6 +91,21 @@ class EventTestCase(APITestCase):
         response = self.c.get('/api/event/my-events/', {})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), self.PLAYER5_JOINED_EVENT)
+
+    def test_get_all_events(self):
+        response = self.c.authenticate('test5', self.pwd)
+        self.assertEqual(response.status_code, 200)
+        response = self.c.get('/api/event/all/', {})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json()), 0)
+        # Edit an event for tomorrow
+        self.event.start_date = timezone.now() + timezone.timedelta(days=1)
+        self.event.end_date = timezone.now() + timezone.timedelta(days=2)
+        self.event.save()
+        response = self.c.get('/api/event/all/', {})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json()), 1)
+
 
 
 class PlayerEventTestCase(APITestCase):
