@@ -70,9 +70,13 @@ export default class API {
         return fetch(HOST+'/api/player/near/', data).then(checkStatus).then(parseJSON);
     }
 
-    static connectPlayer(id, token) {
+    static connectPlayer(id, ev, token) {
         var data = JSONPost({}, token);
-        return fetch(HOST+'/api/player/meeting/'+id+'/', data).then(checkStatus).then(parseJSON);
+        var url = HOST+'/api/player/meeting/'+id+'/';
+        if (ev) {
+            url += ev + '/';
+        }
+        return fetch(url, data).then(checkStatus).then(parseJSON);
     }
 
     static allEvents(token) {
