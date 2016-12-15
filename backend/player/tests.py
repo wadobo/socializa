@@ -66,6 +66,16 @@ class PlayerTestCase(APITestCase):
         response = self.c.post('/api/player/set-pos/', {'lat': '-6', 'lon': '37'})
         self.assertEqual(response.status_code, 200)
 
+    def test_delete_position_unauthorized(self):
+        response = self.c.delete('/api/player/set-pos/', {})
+        self.assertEqual(response.status_code, 401)
+
+    def test_delete_position(self):
+        response = self.c.authenticate(self.username, self.pwd)
+        self.assertEqual(response.status_code, 200)
+        response = self.c.delete('/api/player/set-pos/', {})
+        self.assertEqual(response.status_code, 200)
+
     def test_change_position_invalid(self):
         response = self.c.authenticate(self.username, self.pwd)
         self.assertEqual(response.status_code, 200)

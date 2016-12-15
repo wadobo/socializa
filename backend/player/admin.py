@@ -10,6 +10,7 @@ class MeetingAdmin(admin.ModelAdmin):
 
 
 class PlayerAdmin(admin.OSMGeoAdmin):
+    list_display = ('user', 'get_coords')
     # Center in Spain
     default_zoom = 6
     pnt = Point(-4, 40, srid=4326)

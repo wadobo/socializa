@@ -12,6 +12,10 @@ class Player(models.Model):
         self.pos = GEOSGeometry('POINT({0} {1})'.format(lon, lat))
         self.save()
 
+    def delete_position(self):
+        self.pos = None
+        self.save()
+
     def get_coords(self):
         if self.pos:
             coords = self.pos.coords

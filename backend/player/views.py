@@ -110,4 +110,11 @@ class SetPosition(APIView):
             return Response("Invalid position", status=status.HTTP_400_BAD_REQUEST)
         return Response("Position changed", status=status.HTTP_200_OK)
 
+    def delete(self, request):
+        if request.user.is_anonymous():
+            return Response("Anonymous user", status=status.HTTP_401_UNAUTHORIZED)
+        player = request.user.player
+        player.delete_position()
+        return Response("Position deleted", status=status.HTTP_200_OK)
+
 set_position = SetPosition.as_view()
