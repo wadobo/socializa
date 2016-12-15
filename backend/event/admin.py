@@ -5,11 +5,11 @@ from .models import Membership
 
 
 class EventAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('game', 'status', 'price', 'start_date', 'end_date')
 
 
 class MembershipAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('player', 'event', 'status')
 
 
 admin.site.register(Event, EventAdmin)

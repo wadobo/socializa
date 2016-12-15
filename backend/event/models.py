@@ -17,8 +17,11 @@ class Event(models.Model):
     game = models.ForeignKey(Game, related_name="events", null=True)
     players = models.ManyToManyField(Player, through="Membership")
 
+    def status(self):
+        return "[{0}/{1}]".format(self.players.count(), self.max_players)
+
     def __str__(self):
-        return "{0} [{1}/{2}]".format(self.name, self.players.count(), self.max_players)
+        return self.name
 
 
 MEMBERSHIP_STATUS = (
@@ -32,3 +35,6 @@ class Membership(models.Model):
     player = models.ForeignKey(Player)
     event = models.ForeignKey(Event)
     status = models.CharField(max_length=16, choices=MEMBERSHIP_STATUS, default='registered')
+
+    def __str__(self):
+        return "{0} ∈ {1}".format(self.player.user.username, self.event.name)

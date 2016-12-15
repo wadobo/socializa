@@ -6,7 +6,7 @@ from .models import Player
 
 
 class MeetingAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('player1', 'player2', 'event_id')
 
 
 class PlayerAdmin(admin.OSMGeoAdmin):

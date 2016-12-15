@@ -12,12 +12,15 @@ class Player(models.Model):
         self.pos = GEOSGeometry('POINT({0} {1})'.format(lon, lat))
         self.save()
 
-    def __str__(self):
+    def get_coords(self):
         if self.pos:
             coords = self.pos.coords
         else:
             coords = "(None, None)"
-        return "%s %s" % (self.user.username, coords)
+        return coords
+
+    def __str__(self):
+        return self.user.username
 
 
 class Meeting(models.Model):
@@ -31,4 +34,4 @@ class Meeting(models.Model):
             raise ValidationError({'player2': ["narcissistic: you cannot connect with yourself",]})
 
     def __str__(self):
-        return "%s - %s" % (self.player1.user.username, self.player2.user.username)
+        return "{0} - {1}".format(self.player1, self.player2)

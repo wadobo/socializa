@@ -5,10 +5,11 @@ from .models import Game
 
 
 class ChallengeAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('name', 'desc')
 
 
 class GameAdmin(admin.ModelAdmin):
+    list_display = ('name', 'desc', 'num_challenges')
     filter_horizontal = ('challenges', )
 
 
