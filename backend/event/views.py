@@ -84,7 +84,7 @@ class AllEvents(APIView):
             return Response("Anonymous user", status=status.HTTP_401_UNAUTHORIZED)
         events = Event.objects.filter(end_date__gt=timezone.now())
         events = events.order_by('-pk')
-        serializer = EventSerializer(events, many=True)
+        serializer = EventSerializer(events, many=True, context={'player': request.user.player})
         data = serializer.data
         return Response(data)
 
