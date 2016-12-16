@@ -8,39 +8,91 @@ import moment from 'moment';
 
 
 class EventRow extends React.Component {
-    render() {
-        let maxp, price;
-        if (parseInt(this.props.ev.max_players)) {
-            maxp = (
-                <div className="max badge">
-                    <i className="fa fa-users"></i> { this.props.ev.max_players }
-                </div>
-            )
-        } else {
-            maxp = ''
-        }
+    state = { joined: false }
 
-        if (parseFloat(this.props.ev.price)) {
-            price = (
+    componentWillMount() {
+      this.setState({ joined: this.props.ev.joined });
+    }
+
+    join = (e) => {
+        var self = this;
+        API.joinEvent(this.props.ev.pk, user.apikey)
+            .then(function() {
+                self.setState({joined: true});
+            }).catch(function(error) {
+                alert(error);
+            });
+    }
+
+    leave = (e) => {
+        var self = this;
+        API.leaveEvent(this.props.ev.pk, user.apikey)
+            .then(function() {
+                self.setState({joined: false});
+            }).catch(function(error) {
+                alert(error);
+            });
+    }
+
+    price = (ev) => {
+        if (parseFloat(ev.price)) {
+            return (
                 <div className="badge price">
-                    <i className="fa fa-money"></i> { parseFloat(this.props.ev.price) }
+                    <i className="fa fa-money"></i> { parseFloat(ev.price) }
                 </div>
             )
-        } else {
-            price = (
-                <div className="badge price free">
-                    free
+        }
+        return (
+            <div className="badge price free">
+                free
+            </div>
+        )
+    }
+
+    maxp = (ev) => {
+        if (parseInt(ev.max_players)) {
+            return (
+                <div className="max badge">
+                    <i className="fa fa-users"></i> { ev.max_players }
                 </div>
+            )
+        }
+        return ''
+    }
+
+    joinButton = (ev) => {
+        if (this.state.joined) {
+            return (
+                <button onClick={ this.leave } className="btn btn-danger">
+                    Leave
+                </button>
             )
         }
 
         return (
-            <div className="event bg-info">
-                <h2>{ this.props.ev.name }</h2>
-                { price }
-                <div className="start label label-default">{ moment(this.props.ev.start_date).format('lll') }</div>
-                <div className="end label label-danger">{ moment(this.props.ev.end_date).format('lll') }</div>
-                { maxp }
+            <button onClick={ this.join } className="btn btn-success">
+                Join
+            </button>
+        )
+    }
+
+    render() {
+        return (
+            <div className="event">
+                <div className="row">
+                    <div className="col-xs-2">
+                        { this.joinButton(this.props.ev) }
+                    </div>
+
+                    <div className="col-xs-8">
+                        <h2>{ this.props.ev.name }</h2>
+                        <div className="start label label-default">{ moment(this.props.ev.start_date).format('lll') }</div>
+                        <div className="end label label-danger">{ moment(this.props.ev.end_date).format('lll') }</div>
+                    </div>
+                </div>
+
+                { this.price(this.props.ev) }
+                { this.maxp(this.props.ev) }
             </div>
         )
     }
