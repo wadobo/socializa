@@ -29,6 +29,11 @@ export default class App extends React.Component {
             })
         );
 
+        $('.nav a').on('click', function(){
+            // hidding the navbar
+            $('.navbar-toggle').click();
+        });
+
         return (
             <div id="socializa-app">
                 <nav className="navbar navbar-default navbar-fixed-top">
