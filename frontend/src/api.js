@@ -2,8 +2,6 @@ var Promise = require('es6-promise').Promise;
 import 'fetch';
 import "isomorphic-fetch";
 
-//var HOST = "http://socializa.wadobo.com";
-var HOST = "";
 
 function checkStatus(response) {
     if (response.status >= 200 && response.status < 300) {

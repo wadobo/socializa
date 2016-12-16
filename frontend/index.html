@@ -62,12 +62,17 @@
 
     <!-- scripts -->
 
+    <script type="text/javascript">
+        var HOST = "";
+    </script>
+
     <!-- build:app -->
 
     <script src="cordova.js"></script>
     <script src="js/index.js"></script>
 
     <script type="text/javascript">
+        HOST = "http://socializa.wadobo.com";
         if (app) {
             app.initialize();
         }
