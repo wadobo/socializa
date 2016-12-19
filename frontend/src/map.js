@@ -56,7 +56,7 @@ export default class Map extends React.Component {
 
         var coordinates = geolocation.getPosition();
         var lonlat = ol.proj.toLonLat(coordinates);
-        API.setPos(lonlat[1], lonlat[0], user.apikey);
+        API.setPos(lonlat[1], lonlat[0]);
       });
 
       // handle geolocation error.
@@ -144,7 +144,7 @@ export default class Map extends React.Component {
     }
 
     updatePlayers = () => {
-        API.nearPlayers(user.apikey).
+        API.nearPlayers().
             then(this.playersUpdated.bind(this));
         if (this.state.state == 'started') {
             setTimeout(this.updatePlayers.bind(this), 2000);
@@ -153,7 +153,7 @@ export default class Map extends React.Component {
 
     connectPlayer = (id, ev=null) => {
         console.log("connect player", id);
-        API.connectPlayer(id, ev, user.apikey).then(console.log("CONNECTED"));
+        API.connectPlayer(id, ev).then(console.log("CONNECTED"));
     }
 
     start = (e) => {

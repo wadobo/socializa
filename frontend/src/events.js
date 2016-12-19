@@ -16,7 +16,7 @@ class EventRow extends React.Component {
 
     join = (e) => {
         var self = this;
-        API.joinEvent(this.props.ev.pk, user.apikey)
+        API.joinEvent(this.props.ev.pk)
             .then(function() {
                 self.setState({joined: true});
             }).catch(function(error) {
@@ -26,7 +26,7 @@ class EventRow extends React.Component {
 
     leave = (e) => {
         var self = this;
-        API.leaveEvent(this.props.ev.pk, user.apikey)
+        API.leaveEvent(this.props.ev.pk)
             .then(function() {
                 self.setState({joined: false});
             }).catch(function(error) {

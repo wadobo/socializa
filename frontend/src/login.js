@@ -2,6 +2,7 @@ import React from 'react';
 import { hashHistory, Link } from 'react-router'
 import $ from 'jquery';
 
+import API from './api';
 import { login } from './auth';
 
 
@@ -23,8 +24,12 @@ export default class Login extends React.Component {
     }
 
     login = (e) => {
-        login(this.state.email, this.state.password)
-            .then(function() {
+        var email = this.state.email;
+        var password = this.state.password;
+
+        return API.login(email, password)
+            .then(function(resp) {
+                login(email, resp.token, 'token');
                 hashHistory.push('/map');
             }).catch(function(error) {
                 alert(error);
@@ -32,6 +37,12 @@ export default class Login extends React.Component {
     }
 
     render() {
+        let redirect = encodeURIComponent('http://socializa.wadobo.com:8000/oauth2callback');
+        let gapp = '521528522962-569ibib9fih3lo11r3tkr55si8gmsdsg.apps.googleusercontent.com';
+        let guri = 'https://accounts.google.com/o/oauth2/v2/auth?scope=email%20profile&response_type=token&client_id='+gapp+'&redirect_uri='+redirect;
+        // TODO add state parameter to redirect correctly from the oauth2callback
+        // TODO get the token if it's in the header as get parameter
+
         return (
             <div id="login" className="container">
                 <div className="header text-center">
@@ -60,7 +71,7 @@ export default class Login extends React.Component {
                         </a>
                     </div>
                     <div className="col-xs-4">
-                        <a href="#" className="btn btn-default">
+                        <a href={ guri } className="btn btn-default">
                             <i className="fa fa-google-plus" aria-hidden="true"></i>
                         </a>
                     </div>

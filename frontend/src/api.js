@@ -2,6 +2,8 @@ var Promise = require('es6-promise').Promise;
 import 'fetch';
 import "isomorphic-fetch";
 
+import { user } from './auth';
+
 
 function checkStatus(response) {
     if (response.status >= 200 && response.status < 300) {
@@ -19,7 +21,7 @@ function parseJSON(response) {
 }
 
 
-function JSONq(method, data, token) {
+function JSONq(method, data) {
     var d = {
         method: method,
         headers: { 'Content-Type': 'application/json' },
@@ -30,21 +32,28 @@ function JSONq(method, data, token) {
         delete d.body;
     }
 
-    if (token) {
-        d.headers.Authorization = 'Token ' + token;
+    if (user.apikey) {
+        switch (user.authmethod) {
+            case 'token':
+                d.headers.Authorization = 'Token ' + user.apikey;
+                break;
+            case 'google':
+                d.headers.Authorization = 'Bearer google-oauth2 ' + user.apikey;
+                break;
+        }
     }
 
     return d;
 }
 
 
-function JSONPost(data, token) {
-    return JSONq('POST', data, token);
+function JSONPost(data) {
+    return JSONq('POST', data);
 }
 
 
-function JSONGet(token) {
-    return JSONq('GET', {}, token);
+function JSONGet() {
+    return JSONq('GET', {});
 }
 
 
@@ -68,18 +77,18 @@ export default class API {
         return customFetch('/api/token/', data);
     }
 
-    static setPos(lat, lon, token) {
-        var data = JSONPost({ lat: lat, lon: lon }, token);
+    static setPos(lat, lon) {
+        var data = JSONPost({ lat: lat, lon: lon });
         return customFetch('/api/player/set-pos/', data);
     }
 
-    static nearPlayers(token) {
-        var data = JSONGet(token);
+    static nearPlayers() {
+        var data = JSONGet();
         return customFetch('/api/player/near/', data);
     }
 
-    static connectPlayer(id, ev, token) {
-        var data = JSONPost({}, token);
+    static connectPlayer(id, ev) {
+        var data = JSONPost({});
         var url = '/api/player/meeting/'+id+'/';
         if (ev) {
             url += ev + '/';
@@ -87,18 +96,18 @@ export default class API {
         return customFetch(url, data);
     }
 
-    static allEvents(token) {
-        var data = JSONGet(token);
+    static allEvents() {
+        var data = JSONGet();
         return customFetch('/api/event/all/', data);
     }
 
-    static joinEvent(id, token) {
-        var data = JSONPost({}, token);
+    static joinEvent(id) {
+        var data = JSONPost({});
         return customFetch('/api/event/join/'+id+'/', data);
     }
 
-    static leaveEvent(id, token) {
-        var data = JSONq('DELETE', {}, token);
+    static leaveEvent(id) {
+        var data = JSONq('DELETE', {});
         return customFetch('/api/event/unjoin/'+id+'/', data);
     }
 }
