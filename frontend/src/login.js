@@ -11,6 +11,30 @@ export default class Login extends React.Component {
         super(props);
     }
 
+    componentDidMount() {
+        var q = this.getQueryParams();
+        if (q.token) {
+            login(q.email, q.token, 'token');
+            hashHistory.push('/map');
+            document.location.search = '';
+        }
+    }
+
+    getQueryParams = () => {
+        var qs = document.location.search;
+        qs = qs.split('+').join(' ');
+
+        var params = {},
+            tokens,
+            re = /[?&]?([^=]+)=([^&]*)/g;
+
+        while (tokens = re.exec(qs)) {
+            params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
+        }
+
+        return params;
+    }
+
     emailChange = (e) => {
         this.setState({email: e.target.value});
     }
@@ -37,11 +61,13 @@ export default class Login extends React.Component {
     }
 
     render() {
-        let redirect = encodeURIComponent('http://socializa.wadobo.com:8000/oauth2callback');
+        let redirect = encodeURIComponent('https://socializa.wadobo.com/oauth2callback/');
+        // TODO get the gapp from an api call
         let gapp = '521528522962-569ibib9fih3lo11r3tkr55si8gmsdsg.apps.googleusercontent.com';
-        let guri = 'https://accounts.google.com/o/oauth2/v2/auth?scope=email%20profile&response_type=token&client_id='+gapp+'&redirect_uri='+redirect;
-        // TODO add state parameter to redirect correctly from the oauth2callback
-        // TODO get the token if it's in the header as get parameter
+
+        let guri = 'https://accounts.google.com/o/oauth2/v2/auth?scope=email%20profile&response_type=token&client_id='+gapp;
+        guri += '&redirect_uri='+redirect;
+        guri += '&state='+location.href;
 
         return (
             <div id="login" className="container">

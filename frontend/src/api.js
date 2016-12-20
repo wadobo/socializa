@@ -33,14 +33,7 @@ function JSONq(method, data) {
     }
 
     if (user.apikey) {
-        switch (user.authmethod) {
-            case 'token':
-                d.headers.Authorization = 'Token ' + user.apikey;
-                break;
-            case 'google':
-                d.headers.Authorization = 'Bearer google-oauth2 ' + user.apikey;
-                break;
-        }
+        d.headers.Authorization = 'Token ' + user.apikey;
     }
 
     return d;
