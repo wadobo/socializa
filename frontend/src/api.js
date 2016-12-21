@@ -103,4 +103,9 @@ export default class API {
         var data = JSONq('DELETE', {});
         return customFetch('/api/event/unjoin/'+id+'/', data);
     }
+
+    static oauth2apps() {
+        var data = JSONGet();
+        return customFetch('/api/oauth2apps/', data);
+    }
 }

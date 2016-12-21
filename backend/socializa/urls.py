@@ -18,12 +18,13 @@ from django.contrib import admin
 from rest_framework.authtoken import views
 
 from .views import schema_view
-from .views import oauth2callback
+from .views import oauth2callback, oauth2apps
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^docs/', schema_view),
     url(r'^oauth2callback/$', oauth2callback),
+    url(r'^api/oauth2apps/$', oauth2apps),
     url(r'^api/token/', views.obtain_auth_token),
     url(r"^api/social/", include("rest_framework_social_oauth2.urls")),
     url(r"^api/player/", include("player.urls")),

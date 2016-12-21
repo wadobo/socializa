@@ -13,10 +13,20 @@ export default class Login extends React.Component {
 
     componentDidMount() {
         var q = this.getQueryParams();
+        var self = this;
         if (q.token) {
             login(q.email, q.token, 'token');
             hashHistory.push('/map');
             document.location.search = '';
+        } else {
+            API.oauth2apps()
+                .then(function(resp) {
+                    self.setState({
+                        gapp: resp.google,
+                        fapp: resp.facebook,
+                        tapp: resp.twitter
+                    });
+                });
         }
     }
 
@@ -44,7 +54,8 @@ export default class Login extends React.Component {
     }
 
     state = {
-        email: '', password: ''
+        email: '', password: '',
+        gapp: '', tapp: '', fapp: ''
     }
 
     login = (e) => {
@@ -62,8 +73,7 @@ export default class Login extends React.Component {
 
     render() {
         let redirect = encodeURIComponent('https://socializa.wadobo.com/oauth2callback/');
-        // TODO get the gapp from an api call
-        let gapp = '521528522962-569ibib9fih3lo11r3tkr55si8gmsdsg.apps.googleusercontent.com';
+        let gapp = this.state.gapp;
 
         let guri = 'https://accounts.google.com/o/oauth2/v2/auth?scope=email%20profile&response_type=token&client_id='+gapp;
         guri += '&redirect_uri='+redirect;

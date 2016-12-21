@@ -1,9 +1,11 @@
+from django.shortcuts import render
+from django.shortcuts import redirect
+from django.http import JsonResponse
+from django.conf import settings
+
 from rest_framework.decorators import api_view, renderer_classes
 from rest_framework import response, schemas
 from rest_framework_swagger.renderers import OpenAPIRenderer, SwaggerUIRenderer
-
-from django.shortcuts import render
-from django.shortcuts import redirect
 
 from social.apps.django_app.utils import load_backend, load_strategy
 from social.utils import requests
@@ -43,3 +45,13 @@ def oauth2callback(request):
         token, created = Token.objects.get_or_create(user=user)
 
         return redirect(state + '?email=' + user.email + '&token=' + token.key)
+
+
+def oauth2apps(request):
+    data = {
+        'google': settings.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY,
+        'facebook': settings.SOCIAL_AUTH_FACEBOOK_KEY,
+        'twitter': settings.SOCIAL_AUTH_TWITTER_KEY,
+    }
+
+    return JsonResponse(data)
