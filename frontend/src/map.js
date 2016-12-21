@@ -34,6 +34,11 @@ export default class Map extends React.Component {
       this.map.updateSize();
     }
 
+    componentWillUnmount() {
+        this.geolocation.setTracking(false);
+        this.setState({ state: 'stopped' });
+    }
+
     startGeolocation() {
       var view = this.view;
       var map = this.map;
