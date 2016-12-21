@@ -35,8 +35,9 @@ export default class Map extends React.Component {
     }
 
     componentWillUnmount() {
-        this.geolocation.setTracking(false);
         this.setState({ state: 'stopped' });
+        this.geolocation.setTracking(false);
+        clearTimeout(this.updateTimer);
     }
 
     startGeolocation() {
@@ -152,7 +153,8 @@ export default class Map extends React.Component {
         API.nearPlayers().
             then(this.playersUpdated.bind(this));
         if (this.state.state == 'started') {
-            setTimeout(this.updatePlayers.bind(this), 2000);
+            clearTimeout(this.updateTimer);
+            this.updateTimer = setTimeout(this.updatePlayers.bind(this), 2000);
         }
     }
 
@@ -171,7 +173,8 @@ export default class Map extends React.Component {
             stopEvent: false
         });
         this.map.addOverlay(this.popup);
-        setTimeout(this.updatePlayers.bind(this), 500);
+        clearTimeout(this.updateTimer);
+        this.updateTimer = setTimeout(this.updatePlayers.bind(this), 500);
     }
 
     stop = (e) => {
