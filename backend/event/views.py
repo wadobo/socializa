@@ -7,6 +7,8 @@ from django.utils import timezone
 from .models import Event
 from .models import Membership
 from .serializers import EventSerializer
+from clue.views import attachClue
+from clue.views import detachClue
 
 
 def create_member(player, event):
@@ -39,6 +41,7 @@ class JoinEvent(APIView):
         except:
             return Response("Event not exist", status=status.HTTP_400_BAD_REQUEST)
         member, msg, st = create_member(player, event)
+        attachClue(player, event.game)
         return Response(msg, status=st)
 
 join_event = JoinEvent.as_view()
@@ -58,6 +61,7 @@ class UnjoinEvent(APIView):
             member = Membership.objects.get(player=player, event=event).delete()
         except ObjectDoesNotExist:
             return Response("You not join in this event.", status=status.HTTP_400_BAD_REQUEST)
+        detachClue(player, event.game)
         return Response("Unjoined correctly.", status=status.HTTP_200_OK)
 
 unjoin_event = UnjoinEvent.as_view()

@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'player',
     'event',
     'game',
+    'clue'
 ]
 
 MIDDLEWARE = [
