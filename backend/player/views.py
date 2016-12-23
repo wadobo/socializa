@@ -1,17 +1,20 @@
 from django.db.models import Q
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.contrib.gis.measure import D
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from math import cos, pi, sin, sqrt
-from random import random
+from random import choice, random
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from string import ascii_lowercase, digits
 
 from .models import Meeting
 from .models import Player
 from .serializers import PlayerSerializer
+from clue.views import attachClue
 
 
 def distance(pos1, pos2, unit='km'):
@@ -49,7 +52,9 @@ def get_random_pos(coords, distance):
     that distance from coords.
     """
     CONVERT_RADIUS_IN_DEGREES = 111300
-    r = (distance * 1000) / CONVERT_RADIUS_IN_DEGREES
+    KM2M = 1000
+    # divide by 2 because the conversion is not exact and the position could be outside of ratio
+    r = (distance * KM2M / 2) / CONVERT_RADIUS_IN_DEGREES
     u = random()
     v = random()
     w = r * sqrt(u)
@@ -60,24 +65,39 @@ def get_random_pos(coords, distance):
     return coords[0] + x1, coords[1] + y1
 
 
+def get_random_string(length=32, chars=ascii_lowercase+digits):
+    return ''.join([choice(chars) for i in range(length)])
+
+
+def get_random_username(length=32, chars=ascii_lowercase+digits):
+    username = get_random_string(length=length, chars=chars)
+    try:
+        User.objects.get(username=username)
+        return get_random_username(length=length, chars=chars)
+    except User.DoesNotExist:
+        return username
+
+
 class PlayersNear(APIView):
 
-    def createPlayersIA(self, event, player, data):
+    def createPlayersIA(self, event, coords, near_players):
+        from event.models import Membership
         total_need_players = event.game.challenges.count()
-        current_players = len(data)
+        current_players = len(near_players)
         need_player = total_need_players - current_players - 1 # me
+        players = []
         while need_player >= 0:
-            coords = get_random_pos(player.pos.coords, event.get_max_ratio())
-            data.append({
-                'pk': -1,
-                'ia': True,
-                'pos': {
-                    'longitude': str(coords[0]),
-                    'latitude': str(coords[1])
-                }
-            })
+            coords = get_random_pos(coords, event.get_max_ratio())
+            user = User.objects.create_user(
+                    username=get_random_username(),
+                    password=get_random_string())
+            player = Player(user=user, ia=True)
+            player.set_position(coords[0], coords[1])
+            player.save()
+            member = Membership(player=player, event=event)
+            member.save()
+            attachClue(player=player, game=event.game, main=True)
             need_player -= 1
-        return data
 
 
     def get(self, request, event_id=None):
@@ -97,10 +117,12 @@ class PlayersNear(APIView):
             if event:
                 q &= Q(pk__in=event.players.values_list('pk', flat=True))
             near_players = Player.objects.filter(q).exclude(pk=player.pk)
+            if event:
+                self.createPlayersIA(event, player.pos.coords, near_players)
+                near_players = Player.objects.filter(q).exclude(pk=player.pk)
             serializer = PlayerSerializer(near_players, many=True)
             data = serializer.data
-            if event:
-                data = self.createPlayersIA(event, player, data)
+
         else:
             data = []
         return Response(data)
