@@ -16,6 +16,7 @@ class Event(models.Model):
     price = models.DecimalField(max_digits=5, decimal_places=2, default=Decimal('0.00'))
     game = models.ForeignKey(Game, related_name="events", null=True)
     players = models.ManyToManyField(Player, through="Membership")
+    max_ratio_km = models.PositiveIntegerField(default=5, null=True, blank=True)
 
     def status(self):
         return "[{0}/{1}]".format(self.players.count(), self.max_players)

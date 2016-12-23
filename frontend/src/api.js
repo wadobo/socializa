@@ -75,9 +75,13 @@ export default class API {
         return customFetch('/api/player/set-pos/', data);
     }
 
-    static nearPlayers() {
+    static nearPlayers(ev) {
         var data = JSONGet();
-        return customFetch('/api/player/near/', data);
+        var url = '/api/player/near/';
+        if (ev) {
+            url += ev + '/';
+        }
+        return customFetch(url, data);
     }
 
     static connectPlayer(id, ev) {

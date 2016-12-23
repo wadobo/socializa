@@ -5,7 +5,7 @@ from .models import Membership
 
 
 class EventAdmin(admin.ModelAdmin):
-    list_display = ('game', 'status', 'price', 'start_date', 'end_date')
+    list_display = ('name', 'game', 'status', 'price', 'start_date', 'end_date')
 
 
 class MembershipAdmin(admin.ModelAdmin):

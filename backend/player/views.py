@@ -2,6 +2,8 @@ from django.contrib.gis.measure import D
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+from math import cos, pi, sin, sqrt
+from random import random
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -40,9 +42,43 @@ def create_meeting(player1, player2, event_id=None):
     return meeting, msg, st
 
 
+def get_random_pos(coords, distance):
+    """
+    Give a coords and a distance (in km). Generate random position nearer
+    that distance from coords.
+    """
+    CONVERT_RADIUS_IN_DEGREES = 111300
+    r = (distance * 1000) / CONVERT_RADIUS_IN_DEGREES
+    u = random()
+    v = random()
+    w = r * sqrt(u)
+    t = 2 * pi * v
+    x = w * cos(t)
+    x1 = x / cos(coords[1])
+    y1 = w * sin(t)
+    return coords[0] + x1, coords[1] + y1
+
+
 class PlayersNear(APIView):
 
     NEAR_DISTANCE = 5 # km
+
+    def createPlayersIA(self, event, player, data):
+        total_need_players = event.game.challenges.count()
+        current_players = len(data)
+        need_player = total_need_players - current_players - 1 # me
+        while need_player >= 0:
+            coords = get_random_pos(player.pos.coords, event.max_ratio_km or self.NEAR_DISTANCE)
+            data.append({
+                'pk': -1,
+                'pos': {
+                    'longitude': str(coords[0]),
+                    'latitude': str(coords[1])
+                }
+            })
+            need_player -= 1
+        return data
+
 
     def get(self, request, event_id=None):
         if request.user.is_anonymous():
@@ -56,12 +92,15 @@ class PlayersNear(APIView):
 
         if player.pos:
             q = Q()
-            q &= Q(pos__distance_lte=(player.pos, D(km=self.NEAR_DISTANCE)))
+            max_ratio_km = event.max_ratio_km or self.NEAR_DISTANCE if event else self.NEAR_DISTANCE
+            q &= Q(pos__distance_lte=(player.pos, D(km=max_ratio_km)))
             if event:
                 q &= Q(pk__in=event.players.values_list('pk', flat=True))
             near_players = Player.objects.filter(q).exclude(pk=player.pk)
             serializer = PlayerSerializer(near_players, many=True)
             data = serializer.data
+            if event:
+                data = self.createPlayersIA(event, player, data)
         else:
             data = []
         return Response(data)
