@@ -1,5 +1,6 @@
 from decimal import Decimal
 from django.db import models
+from django.conf import settings
 
 from game.models import Game
 from player.models import Player
@@ -16,10 +17,19 @@ class Event(models.Model):
     price = models.DecimalField(max_digits=5, decimal_places=2, default=Decimal('0.00'))
     game = models.ForeignKey(Game, related_name="events", null=True)
     players = models.ManyToManyField(Player, through="Membership")
-    max_ratio_km = models.PositiveIntegerField(default=5, null=True, blank=True)
+    max_ratio_km = models.PositiveIntegerField(default=settings.DEFAULT_MAX_RATIO,
+            null=True, blank=True, help_text='max ratio in km')
+    meeting_distance = models.PositiveIntegerField(default=settings.DEFAULT_MEETING_DISTANCE,
+            null=True, blank=True, help_text='max meeting ditance in m')
 
     def status(self):
         return "[{0}/{1}]".format(self.players.count(), self.max_players)
+
+    def get_max_ratio(self):
+        return self.max_ratio_km if self.max_ratio_km else settings.DEFAULT_MAX_RATIO
+
+    def get_meeting_distance(self):
+        return self.meeting_distance if self.meeting_distance else settings.DEFAULT_MEETING_DISTANCE
 
     def __str__(self):
         return self.name

@@ -1,5 +1,6 @@
-from django.contrib.gis.measure import D
 from django.db.models import Q
+from django.conf import settings
+from django.contrib.gis.measure import D
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from math import cos, pi, sin, sqrt
@@ -61,14 +62,12 @@ def get_random_pos(coords, distance):
 
 class PlayersNear(APIView):
 
-    NEAR_DISTANCE = 5 # km
-
     def createPlayersIA(self, event, player, data):
         total_need_players = event.game.challenges.count()
         current_players = len(data)
         need_player = total_need_players - current_players - 1 # me
         while need_player >= 0:
-            coords = get_random_pos(player.pos.coords, event.max_ratio_km or self.NEAR_DISTANCE)
+            coords = get_random_pos(player.pos.coords, event.get_max_ratio())
             data.append({
                 'pk': -1,
                 'pos': {
@@ -92,7 +91,7 @@ class PlayersNear(APIView):
 
         if player.pos:
             q = Q()
-            max_ratio_km = event.max_ratio_km or self.NEAR_DISTANCE if event else self.NEAR_DISTANCE
+            max_ratio_km = event.get_max_ratio() if event else settings.DEFAULT_MAX_RATIO
             q &= Q(pos__distance_lte=(player.pos, D(km=max_ratio_km)))
             if event:
                 q &= Q(pk__in=event.players.values_list('pk', flat=True))
@@ -110,8 +109,6 @@ near = PlayersNear.as_view()
 
 class MeetingCreate(APIView):
 
-    MEETING_DISTANCE = 10 # m
-
     def post(self, request, player_id, event_id=None):
         if request.user.is_anonymous():
             return Response("Anonymous user", status=status.HTTP_401_UNAUTHORIZED)
@@ -126,7 +123,8 @@ class MeetingCreate(APIView):
                 if not player2.event_set.filter(pk=event_id).first():
                     return Response("Other player not join at this event", status=status.HTTP_400_BAD_REQUEST)
 
-        if distance(player1.pos, player2.pos, unit='m') <= self.MEETING_DISTANCE:
+        max_distance = event.get_meeting_distance() if event else settings.DEFAULT_MEETING_DISTANCE
+        if distance(player1.pos, player2.pos, unit='m') <= max_distance:
             meeting, msg, st = create_meeting(player1, player2, event_id)
             return Response(msg, status=st)
         else:

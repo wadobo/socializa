@@ -231,6 +231,9 @@ SWAGGER_SETTINGS = {
         'OPERATIONS_SORTER': 'alpha',
 }
 
+DEFAULT_MAX_RATIO = 5.0 # km
+DEFAULT_MEETING_DISTANCE = 10.0 # m
+
 try:
     from local_settings import *
 except:
