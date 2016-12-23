@@ -70,6 +70,7 @@ class PlayersNear(APIView):
             coords = get_random_pos(player.pos.coords, event.get_max_ratio())
             data.append({
                 'pk': -1,
+                'ia': True,
                 'pos': {
                     'longitude': str(coords[0]),
                     'latitude': str(coords[1])

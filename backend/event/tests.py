@@ -172,7 +172,10 @@ class PlayerEventTestCase(APITestCase):
         self.assertEqual(response.status_code, 200)
         response = self.c.get('/api/player/near/{0}/'.format(self.EVENT_PK_3), {})
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.json()), 1)
+        players = [d for d in response.json() if d.get('ia') == False]
+        ias = [d for d in response.json() if d.get('ia') == True]
+        self.assertEqual(len(players), 1)
+        self.assertEqual(len(ias), 4)
         self.assertEqual(response.json()[0].get('pk'), self.PLAYER_PK_3)
 
     def test_players_near_in_event_unauth_event(self):

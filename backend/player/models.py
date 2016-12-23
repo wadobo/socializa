@@ -7,6 +7,7 @@ from django.core.exceptions import ValidationError
 class Player(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="player")
     pos = models.PointField(null=True, blank=True)
+    ia = models.BooleanField(default=False)
 
     def set_position(self, lon, lat):
         self.pos = GEOSGeometry('POINT({0} {1})'.format(lon, lat))
