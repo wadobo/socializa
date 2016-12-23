@@ -23,7 +23,7 @@ var htmlreplace = require("gulp-html-replace");
 // External dependencies you do not want to rebundle while developing,
 // but include in your application deployment
 var dependencies = [
-  'react', 'react-dom', 'react-router',
+  'react', 'react-dom', 'react-router', 'qrcode.react',
   'jquery', 'jquery.cookie',
   'bootstrap',
   'openlayers',

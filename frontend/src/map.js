@@ -1,4 +1,5 @@
 import React from 'react';
+import QRCode from 'qrcode.react'
 import { hashHistory } from 'react-router'
 import { Link } from 'react-router'
 import ol from 'openlayers'
@@ -113,7 +114,7 @@ export default class Map extends React.Component {
             if (f.getLength()) {
                 self.popup.setPosition(f.getArray()[0].customData.coords);
                 var id = f.getArray()[0].customData.id;
-                var content = $('<a id="connect" href="#">Connect</a>');
+                var content = $('<button class="btn btn-primary">Connect</button>');
                 content.click(function() {
                     self.connectPlayer(id);
                 });
@@ -158,9 +159,29 @@ export default class Map extends React.Component {
         }
     }
 
+    showQRCode = (code) => {
+        var qrsize = $(document).width() - 80;
+        this.setState({ state: 'qrcode', code: code, qrsize: qrsize });
+    }
+
     connectPlayer = (id, ev=null) => {
+        var self = this;
         console.log("connect player", id);
-        API.connectPlayer(id, ev).then(console.log("CONNECTED"));
+        API.connectPlayer(id, ev)
+            .then(function(resp) {
+                console.log(resp);
+                switch (resp.status) {
+                    case 'connected':
+                        // TODO show clue
+                        break;
+                    case 'step1':
+                        // TODO camera
+                        break;
+                    case 'step2':
+                        self.showQRCode(resp.secret);
+                        break;
+                }
+            });
     }
 
     start = (e) => {
@@ -182,7 +203,7 @@ export default class Map extends React.Component {
         this.setState({ state: 'stopped' });
     }
 
-    render() {
+    mapRender = () => {
         return (
             <div>
                 <div id="socializa-map">
@@ -202,5 +223,20 @@ export default class Map extends React.Component {
 
             </div>
         );
+    }
+
+    mapQR = () => {
+        return (
+            <div id="qrcode">
+                <QRCode value={ this.state.code } size={ this.state.qrsize } />
+            </div>
+        )
+    }
+
+    render() {
+        if (this.state.state == 'qrcode') {
+            return this.mapQR();
+        }
+        return this.mapRender();
     }
 }

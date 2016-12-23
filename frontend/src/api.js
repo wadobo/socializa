@@ -5,6 +5,17 @@ import "isomorphic-fetch";
 import { user } from './auth';
 
 
+function fake(data) {
+    var p = new Promise(
+        function(resolve, reject) {
+            setTimeout(function() { resolve(data); },
+                       Math.random() * 1000);
+        }
+    );
+    return p;
+}
+
+
 function checkStatus(response) {
     if (response.status >= 200 && response.status < 300) {
         return response;
@@ -84,13 +95,40 @@ export default class API {
         return customFetch(url, data);
     }
 
+    // <- connected | camera | qrcode
     static connectPlayer(id, ev) {
         var data = JSONPost({});
         var url = '/api/player/meeting/'+id+'/';
         if (ev) {
             url += ev + '/';
         }
-        return customFetch(url, data);
+        //return customFetch(url, data);
+
+        // TODO: Fake response
+        //var option = parseInt(Math.random() * 1000, 10) % 3;
+        var option = 2;
+        var data = {};
+        switch (option) {
+            case 0:
+                data = { 'status': 'connected', 'clue': '<strong>CLUE!</strong>' };
+                break;
+            case 1:
+                data = { 'status': 'step1' };
+                break;
+            case 2:
+                data = { 'status': 'step2', 'secret': 'socializa!'};
+                break;
+        }
+        return fake(data);
+    }
+
+    //POST captured()
+    // <- connected
+    static captured(code) {
+        var data = JSONPost({});
+        //return customFetch('/api/player/captured/'+ code +'/');
+        // TODO add the challenge clue here
+        return fake({ 'status': 'connected', 'clue': '<strong>CLUE!</strong>' });
     }
 
     static allEvents() {
