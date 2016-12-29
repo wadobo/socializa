@@ -5,11 +5,16 @@
 1. install postgresql
 2. install postgis
 
-3. Create a postgis database. With postgres user:
+3. Create a postgis database. With postgres user
+    
     $ psql -c "create user socializa password 'socializa'"
+    
     $ psql -c "create database socializa owner socializa"
+    
     $ psql -d socializa -c "create extension postgis"
+    
     $ psql -c "create database test_socializa owner socializa" # test db
+    
     $ psql -d test_socializa -c "create extension postgis" # test db
 
 # Others dependencies and problems
