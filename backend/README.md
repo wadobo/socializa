@@ -19,13 +19,11 @@
 
 # Others dependencies and problems
 
-P: If when you install with pip psycopg2, your get: error: Setup script exited with error: command 'x86_64-linux-gnu-gcc' failed with exit status 1
+    P: If when you install with pip psycopg2, your get: error: Setup script exited with error: command 'x86_64-linux-gnu-gcc' failed with exit status 1
+    S: sudo apt-get install build-essential python3-dev libpq-dev libxml2-dev libxslt1-dev libldap2-dev libsasl2-dev libffi-dev
 
-S: sudo apt-get install build-essential python3-dev libpq-dev libxml2-dev libxslt1-dev libldap2-dev libsasl2-dev libffi-dev
-
-P: ImportError: cannot import name 'GDALRaster'
-
-S: sudo apt-get install libgdal-dev
+    P: ImportError: cannot import name 'GDALRaster'
+    S: sudo apt-get install libgdal-dev
 
 # Apply migrations and added world borders
 
