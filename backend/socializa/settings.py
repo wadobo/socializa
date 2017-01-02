@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'social.apps.django_app.default',
     'rest_framework_social_oauth2',
     'rest_framework_swagger',
+    'django_nose',
     'frontend',
     'world',
     'player',
@@ -101,6 +102,7 @@ REST_FRAMEWORK = {
     'TEST_REQUEST_DEFAULT_FORMAT': 'json'
 }
 
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
