@@ -1,6 +1,6 @@
 from decimal import Decimal
-from django.db import models
 from django.conf import settings
+from django.contrib.gis.db import models
 
 from game.models import Game
 from player.models import Player
@@ -11,6 +11,7 @@ class Event(models.Model):
     name = models.CharField(max_length=200, blank=True, null=True)
     world = models.ForeignKey(WorldBorder, on_delete=models.CASCADE, related_name="world",
             blank=True, null=True)
+    place = models.MultiPolygonField(blank=True, null=True)
     start_date = models.DateTimeField(null=True, blank=True)
     end_date = models.DateTimeField(null=True, blank=True)
     max_players = models.PositiveIntegerField(default=10)

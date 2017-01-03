@@ -80,24 +80,28 @@ def get_random_username(length=32, chars=ascii_lowercase+digits):
 
 class PlayersNear(APIView):
 
-    def createPlayersIA(self, event, coords, near_players):
+    def managePlayersIA(self, event, coords, near_players):
         from event.models import Membership
         total_need_players = event.game.challenges.count()
         current_players = len(near_players)
         need_player = total_need_players - current_players - 1 # me
-        players = []
-        while need_player >= 0:
-            coords = get_random_pos(coords, event.get_max_ratio())
-            user = User.objects.create_user(
-                    username=get_random_username(),
-                    password=get_random_string())
-            player = Player(user=user, ia=True)
-            player.set_position(coords[0], coords[1])
-            player.save()
-            member = Membership(player=player, event=event)
-            member.save()
-            attachClue(player=player, game=event.game, main=True)
-            need_player -= 1
+        if need_player < 0: # Removed some IAs
+            while need_player < 0:
+                need_player += 1
+
+        elif need_player > 0: # Add some IAs
+            while need_player >= 0:
+                coords = get_random_pos(coords, event.get_max_ratio())
+                user = User.objects.create_user(
+                        username=get_random_username(),
+                        password=get_random_string())
+                player = Player(user=user, ia=True)
+                player.set_position(coords[0], coords[1])
+                player.save()
+                member = Membership(player=player, event=event)
+                member.save()
+                attachClue(player=player, game=event.game, main=True)
+                need_player -= 1
 
 
     def get(self, request, event_id=None):
@@ -118,7 +122,7 @@ class PlayersNear(APIView):
                 q &= Q(pk__in=event.players.values_list('pk', flat=True))
             near_players = Player.objects.filter(q).exclude(pk=player.pk)
             if event:
-                self.createPlayersIA(event, player.pos.coords, near_players)
+                self.managePlayersIA(event, player.pos.coords, near_players)
                 near_players = Player.objects.filter(q).exclude(pk=player.pk)
             serializer = PlayerSerializer(near_players, many=True)
             data = serializer.data
