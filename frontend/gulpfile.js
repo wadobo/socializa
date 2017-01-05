@@ -18,7 +18,7 @@ var connect = require('gulp-connect');
 var copy = require('gulp-copy');
 var less = require('gulp-less');
 var cssimport = require("gulp-cssimport");
-var htmlreplace = require("gulp-html-replace");
+var removeHTML = require("gulp-remove-html");
 
 // External dependencies you do not want to rebundle while developing,
 // but include in your application deployment
@@ -119,6 +119,7 @@ var cssTask = function (options) {
 
 var copyFilesTask = function (options) {
   var dest = options.dest;
+  gulp.src(["js/*"]).pipe(copy(dest, {prefix: 0}));
   gulp.src(["images/*"]).pipe(copy(dest, {prefix: 0}));
   gulp.src(["manifest.json"]).pipe(copy(dest, {prefix: 0}));
 }
@@ -127,7 +128,10 @@ var htmlReplaceTask = function (options) {
   var dest = options.dest;
   var src = gulp.src('index.html');
   if (options.build != 'app') {
-        src.pipe(htmlreplace({ 'app': '' }));
+        src.pipe(removeHTML({keyword: 'app'}));
+  }
+  if (options.build != 'web') {
+        src.pipe(removeHTML({keyword: 'web'}));
   }
   src.pipe(gulp.dest(dest));
   //gulp.src(["index.html"]).pipe(copy('./build', {prefix: 0}));

@@ -159,9 +159,17 @@ export default class Map extends React.Component {
         }
     }
 
+    capturedQR = (resp) => {
+        alert(resp.text);
+    }
+
     showQRCode = (code) => {
         var qrsize = $(document).width() - 80;
         this.setState({ state: 'qrcode', code: code, qrsize: qrsize });
+    }
+
+    showCamera = () => {
+        window.scanQR(this.capturedQR.bind(this));
     }
 
     connectPlayer = (id, ev=null) => {
@@ -176,6 +184,7 @@ export default class Map extends React.Component {
                         break;
                     case 'step1':
                         // TODO camera
+                        self.showCamera();
                         break;
                     case 'step2':
                         self.showQRCode(resp.secret);

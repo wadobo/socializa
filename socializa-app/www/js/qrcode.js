@@ -1,14 +1,14 @@
-function scanQR() {
-    cordova.plugins.barcodeScanner.scan(
-            function(result) {
-                document.getElementById("qrtext").innerHTML = result.text;
-                alert(JSON.stringify(result.text));
-                localStorage.setItem("LocalData", JSON.stringify(result.text));
-            }, function(error) {
-                document.getElementById("qrcreating").innerHTML = error;
-                alert("ERROR", error);
-            }
-    );
+function scanQR(success, error) {
+    cordova.plugins.barcodeScanner.scan(success, error);
+    //        function(result) {
+    //            document.getElementById("qrtext").innerHTML = result.text;
+    //            alert(JSON.stringify(result.text));
+    //            localStorage.setItem("LocalData", JSON.stringify(result.text));
+    //        }, function(error) {
+    //            document.getElementById("qrcreating").innerHTML = error;
+    //            alert("ERROR", error);
+    //        }
+    //);
 }
 
 function createQR() {

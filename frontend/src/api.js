@@ -106,7 +106,7 @@ export default class API {
 
         // TODO: Fake response
         //var option = parseInt(Math.random() * 1000, 10) % 3;
-        var option = 2;
+        var option = 1;
         var data = {};
         switch (option) {
             case 0:
