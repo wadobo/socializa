@@ -22,6 +22,21 @@ export default class App extends React.Component {
         this.setState(newst);
     }
 
+    componentDidUpdate() {
+        this.bindMenuButton();
+    }
+
+    bindMenuButton = () => {
+        $("#menu-button").click(function() {
+            var open = $("#main-menu").hasClass("open");
+            if (open) {
+                $("#main-menu").removeClass("open");
+            } else {
+                $("#main-menu").addClass("open");
+            }
+        });
+    }
+
     render() {
         const childrenWithProps = React.Children.map(this.props.children,
             (child) => React.cloneElement(child, {
@@ -36,10 +51,10 @@ export default class App extends React.Component {
 
         return (
             <div id="socializa-app">
-                <nav className="navbar navbar-default navbar-fixed-top">
+                <nav id="main-menu" className="navbar navbar-default navbar-fixed-top">
                   <div className="container-fluid">
                     <div className="navbar-header">
-                      <button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#collapse" aria-expanded="false">
+                      <button id="menu-button" type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#collapse" aria-expanded="false">
                         <span className="sr-only">Toggle navigation</span>
                         <span className="icon-bar"></span>
                         <span className="icon-bar"></span>
@@ -52,7 +67,7 @@ export default class App extends React.Component {
 
                     </div>
 
-                    <div className="collapse navbar-collapse" id="collapse">
+                    <div className="width collapse navbar-collapse" id="collapse">
                       <ul className="nav navbar-nav" id="menu">
                           <li><Link to="/map">map</Link></li>
                           <li><Link to="/events">events</Link></li>

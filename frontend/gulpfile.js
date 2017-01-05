@@ -145,7 +145,7 @@ gulp.task('default', function () {
 
   cssTask({
     development: true,
-    src: './styles/**/*.less',
+    src: './styles/app.less',
     dest: './build/app'
   });
 
@@ -179,7 +179,7 @@ gulp.task('deploy', function () {
 
   cssTask({
     development: false,
-    src: './styles/**/*.less',
+    src: './styles/app.less',
     dest: './dist/app'
   });
 
