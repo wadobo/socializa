@@ -75,7 +75,7 @@ class EventTestCase(APITestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json(), 'Maximum number of player in this event')
 
-    def test_unjoin_event(self):
+    def test_unjoin_event_anonymous(self):
         response = self.c.delete('/api/event/unjoin/{0}/'.format(self.EVENT_PK_3), {})
         self.assertEqual(response.status_code, 401)
         self.assertEqual(response.json(), 'Anonymous user')
@@ -132,7 +132,6 @@ class EventTestCase(APITestCase):
         self.assertEqual(len(response.json()), 1)
 
 
-
 class PlayerEventTestCase(APITestCase):
     """
     Inside event.json fixture have:
@@ -163,7 +162,6 @@ class PlayerEventTestCase(APITestCase):
         player5.pos = player3.pos
         player5.save()
 
-
     def tearDown(self):
         self.c = None
 
@@ -172,13 +170,13 @@ class PlayerEventTestCase(APITestCase):
         self.assertEqual(response.status_code, 200)
         response = self.c.get('/api/player/near/{0}/'.format(self.EVENT_PK_3), {})
         self.assertEqual(response.status_code, 200)
-        players = [d for d in response.json() if d.get('ia') == False]
-        ias = [d for d in response.json() if d.get('ia') == True]
+        players = [d for d in response.json() if d.get('ia') is False]
+        ias = [d for d in response.json() if d.get('ia') is True]
         self.assertEqual(len(players), 1)
         self.assertEqual(len(ias), 4)
         self.assertEqual(players[0].get('pk'), self.PLAYER_PK_3)
 
-    def test_players_near_in_event_unauth_event(self):
+    def test_players_near_in_unauth_event(self):
         response = self.c.authenticate(self.username, self.pwd)
         self.assertEqual(response.status_code, 200)
         response = self.c.get('/api/player/near/{0}/'.format(self.EVENT_PK_2), {})

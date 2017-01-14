@@ -1,20 +1,21 @@
+from math import cos, pi, sin, sqrt
+from random import choice, random
+from string import ascii_lowercase, digits
+
 from django.db.models import Q
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.gis.measure import D
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
-from math import cos, pi, sin, sqrt
-from random import choice, random
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from string import ascii_lowercase, digits
 
+from clue.views import attachClue
 from .models import Meeting
 from .models import Player
 from .serializers import PlayerSerializer
-from clue.views import attachClue
 
 
 def distance(pos1, pos2, unit='km'):
