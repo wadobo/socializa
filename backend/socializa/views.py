@@ -1,3 +1,4 @@
+import requests
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.http import JsonResponse
@@ -7,8 +8,7 @@ from rest_framework.decorators import api_view, renderer_classes
 from rest_framework import response, schemas
 from rest_framework_swagger.renderers import OpenAPIRenderer, SwaggerUIRenderer
 
-from social.apps.django_app.utils import load_backend, load_strategy
-from social.utils import requests
+from social_django.utils import load_backend, load_strategy
 from rest_framework import exceptions
 from rest_framework.authtoken.models import Token
 
