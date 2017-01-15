@@ -5,6 +5,7 @@ from string import ascii_lowercase, digits
 from django.db.models import Q
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.contrib.gis.geos import Point
 from django.contrib.gis.measure import D
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
@@ -47,23 +48,26 @@ def create_meeting(player1, player2, event_id=None):
     return meeting, msg, st
 
 
-def get_random_pos(coords, distance):
+def get_random_pos(center, poly, max_ratio):
     """
-    Give a coords and a distance (in km). Generate random position nearer
-    that distance from coords.
+    Give a coords and a polygon (in km). Generate random position inside
+    a polygon.
     """
     CONVERT_RADIUS_IN_DEGREES = 111300
-    KM2M = 1000
     # divide by 2 because the conversion is not exact and the position could be outside of ratio
-    r = (distance * KM2M / 2) / CONVERT_RADIUS_IN_DEGREES
+    r = (max_ratio / 2) / CONVERT_RADIUS_IN_DEGREES
     u = random()
     v = random()
     w = r * sqrt(u)
     t = 2 * pi * v
     x = w * cos(t)
-    x1 = x / cos(coords[1])
+    x1 = x / cos(center.y)
     y1 = w * sin(t)
-    return coords[0] + x1, coords[1] + y1
+    if poly is None or poly.contains(Point(center.x + x1, center.y + y1)):
+        return center.x + x1, center.y + y1
+    else:
+        return get_random_pos(center, poly, max_ratio)
+
 
 
 def get_random_string(length=32, chars=ascii_lowercase+digits):
@@ -81,9 +85,9 @@ def get_random_username(length=32, chars=ascii_lowercase+digits):
 
 class PlayersNear(APIView):
 
-    def managePlayersIA(self, event, coords, near_players):
+    def managePlayersIA(self, ev, near_players):
         from event.models import Membership
-        total_need_players = event.game.challenges.count()
+        total_need_players = ev.game.challenges.count()
         current_players = len(near_players)
         need_player = total_need_players - current_players - 1 # me
         if need_player < 0: # Removed some IAs
@@ -92,39 +96,42 @@ class PlayersNear(APIView):
 
         elif need_player > 0: # Add some IAs
             while need_player >= 0:
-                coords = get_random_pos(coords, event.get_max_ratio())
+                if ev.place is None:
+                    center = self.player.pos
+                else:
+                    center = ev.place.centroid
+                coords = get_random_pos(center, ev.place, ev.vision_distance)
                 user = User.objects.create_user(
                         username=get_random_username(),
                         password=get_random_string())
                 player = Player(user=user, ia=True)
                 player.set_position(coords[0], coords[1])
                 player.save()
-                member = Membership(player=player, event=event)
+                member = Membership(player=player, event=ev)
                 member.save()
-                attachClue(player=player, game=event.game, main=True)
+                attachClue(player=player, game=ev.game, main=True)
                 need_player -= 1
 
 
     def get(self, request, event_id=None):
         if request.user.is_anonymous():
             return Response("Anonymous user", status=status.HTTP_401_UNAUTHORIZED)
-        player = request.user.player
+        self.player = request.user.player
         event = None
         if event_id:
-            event = player.event_set.filter(pk=event_id).first()
+            event = self.player.event_set.filter(pk=event_id).first()
             if event is None:
                 return Response("Unauthorized event", status=status.HTTP_401_UNAUTHORIZED)
 
-        if player.pos:
+        if self.player.pos:
             q = Q()
-            max_ratio_km = event.get_max_ratio() if event else settings.DEFAULT_MAX_RATIO
-            q &= Q(pos__distance_lte=(player.pos, D(km=max_ratio_km)))
             if event:
+                q &= Q(pos__distance_lte=(self.player.pos, D(km=event.vision_distance)))
                 q &= Q(pk__in=event.players.values_list('pk', flat=True))
-            near_players = Player.objects.filter(q).exclude(pk=player.pk)
+            near_players = Player.objects.filter(q).exclude(pk=self.player.pk)
             if event:
-                self.managePlayersIA(event, player.pos.coords, near_players)
-                near_players = Player.objects.filter(q).exclude(pk=player.pk)
+                self.managePlayersIA(event, near_players)
+                near_players = Player.objects.filter(q).exclude(pk=self.player.pk)
             serializer = PlayerSerializer(near_players, many=True)
             data = serializer.data
 

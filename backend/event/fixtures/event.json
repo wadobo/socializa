@@ -4,12 +4,14 @@
   "pk": 1,
   "fields": {
     "name": "general",
-    "world": null,
+    "place": "SRID=4326;MULTIPOLYGON (((-6.9412994384766 37.284451425076, -6.9594955444336 37.265911996365, -6.9498825073242 37.231579720974, -6.9172668457032 37.259388864041, -6.9412994384766 37.284451425076)))",
     "start_date": "2016-10-05T09:00:00Z",
     "end_date": "2016-10-05T12:00:00Z",
     "max_players": 0,
     "price": "0.00",
-    "game": 1
+    "game": 1,
+    "vision_distance": 1000,
+    "meeting_distance": 10
   }
 },
 {
@@ -17,12 +19,14 @@
   "pk": 2,
   "fields": {
     "name": "event 2",
-    "world": null,
+    "place": "SRID=4326;MULTIPOLYGON (((-6.9412994384766 37.284451425076, -6.9594955444336 37.265911996365, -6.9498825073242 37.231579720974, -6.9172668457032 37.259388864041, -6.9412994384766 37.284451425076)))",
     "start_date": "2016-10-05T09:00:00Z",
     "end_date": "2016-10-05T12:00:00Z",
     "max_players": 3,
     "price": "0.00",
-    "game": 2
+    "game": 2,
+    "vision_distance": 1000,
+    "meeting_distance": 10
   }
 },
 {
@@ -30,12 +34,13 @@
   "pk": 3,
   "fields": {
     "name": "event 3",
-    "world": null,
     "start_date": "2016-10-05T12:00:00Z",
     "end_date": "2016-10-05T20:00:00Z",
     "max_players": 10,
     "price": "1.00",
-    "game": 3
+    "game": 3,
+    "vision_distance": 1000,
+    "meeting_distance": 10
   }
 },
 {

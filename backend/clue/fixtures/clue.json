@@ -4,7 +4,6 @@
   "pk": 1,
   "fields": {
     "name": "general",
-    "world": null,
     "start_date": "2016-10-05T09:00:00Z",
     "end_date": "2016-10-05T12:00:00Z",
     "max_players": 5,

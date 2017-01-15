@@ -12,11 +12,12 @@ class PlayerTestCase(APITestCase):
     - player1 and player4: distance < 5 km
     - player1 and player5: distance > 5 km
     - applications: facebook, twitter
+    - All player inside place
     """
     fixtures = ['player-test.json']
     PLAYER2_PK = 2
     PLAYER5_PK = 5
-    PLAYERS_NEAR_PLAYER1 = 2
+    PLAYERS_NEAR_PLAYER1 = 4 # All player inside place
 
     def setUp(self):
         self.username = 'test1'
