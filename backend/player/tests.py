@@ -7,17 +7,16 @@ class PlayerTestCase(APITestCase):
     """
     Inside fixture have 5 players:
     - admin -> pk=1; playerX -> pk=X+1
-    - player1 and player2: distance < 10 m
-    - player1 and player3: distance < 1 km
-    - player1 and player4: distance < 5 km
-    - player1 and player5: distance > 5 km
+    - player1 and player2: distance < 10 m. IS NEAR
+    - player1 and player3: distance < 1 km. IS NEAR
+    - player1 and player4: distance < 5 km. IS FAR
+    - player5: distance < 1 km, but outside event.place. IS NEAR
     - applications: facebook, twitter
-    - All player inside place
     """
     fixtures = ['player-test.json']
     PLAYER2_PK = 2
     PLAYER5_PK = 5
-    PLAYERS_NEAR_PLAYER1 = 4 # All player inside place
+    PLAYERS_NEAR_PLAYER1 = 3
 
     def setUp(self):
         self.username = 'test1'

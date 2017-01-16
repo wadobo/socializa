@@ -22,9 +22,9 @@ class EventTestCase(APITestCase):
     fixtures = ['player-test.json', 'event.json']
     EVENT_PK_2 = 2
     EVENT_PK_3 = 3
-    EVENT_PK_4 = 4
+    EVENT_PK_5 = 5
     MAX_PLAYER_EVENT_2 = 3
-    PLAYER5_JOINED_EVENT = 2
+    PLAYER5_JOINED_EVENT = 3
 
     def setUp(self):
         self.username = 'test1'
@@ -96,7 +96,7 @@ class EventTestCase(APITestCase):
     def test_unjoin_event_no_exist(self):
         response = self.c.authenticate(self.username, self.pwd)
         self.assertEqual(response.status_code, 200)
-        response = self.c.delete('/api/event/unjoin/{0}/'.format(self.EVENT_PK_4), {})
+        response = self.c.delete('/api/event/unjoin/{0}/'.format(self.EVENT_PK_5), {})
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json(), 'Event not exist')
 
@@ -144,37 +144,56 @@ class PlayerEventTestCase(APITestCase):
     - membership:
         player 3 ('test3') in event 3
         player 5 ('test5') in event 1 and 3
+        all player are in event 4: 4 inside and 1 outside place
+        In event 3:
+            player 1 is near to player 2 and player 3
+            player 1 is near to player 5 but player 5 is outside place
+            player 1 is far player 4
     """
     fixtures = ['player-test.json', 'event.json']
     EVENT_PK_1 = 1
     EVENT_PK_2 = 2
     EVENT_PK_3 = 3
+    EVENT_PK_4 = 4
+    PLAYER_PK_2 = 2
     PLAYER_PK_3 = 3
     PLAYER_PK_5 = 5
+    NEAR_PLAYER_1_EVENT_4 = 2
+    NEAR_PLAYER_4_EVENT_4 = 0
+    NEAR_PLAYER_5_EVENT_4 = 0 # outside event
 
     def setUp(self):
+        self.username1 = 'test1'
+        self.username4 = 'test4'
         self.username = 'test5'
         self.pwd = 'qweqweqwe'
         self.c = JClient()
-        # Position of player 3 is the same player 5: near should work
-        player3 = Player.objects.get(pk=3)
-        player5 = Player.objects.get(pk=5)
-        player5.pos = player3.pos
-        player5.save()
 
     def tearDown(self):
         self.c = None
 
     def test_players_near_in_event(self):
-        response = self.c.authenticate(self.username, self.pwd)
+        response = self.c.authenticate(self.username1, self.pwd)
         self.assertEqual(response.status_code, 200)
-        response = self.c.get('/api/player/near/{0}/'.format(self.EVENT_PK_3), {})
+        response = self.c.get('/api/player/near/{0}/'.format(self.EVENT_PK_4), {})
         self.assertEqual(response.status_code, 200)
         players = [d for d in response.json() if d.get('ia') is False]
-        ias = [d for d in response.json() if d.get('ia') is True]
-        self.assertEqual(len(players), 1)
-        self.assertEqual(len(ias), 4)
-        self.assertEqual(players[0].get('pk'), self.PLAYER_PK_3)
+        self.assertEqual(len(players), self.NEAR_PLAYER_1_EVENT_4)
+
+    def test_players_near_in_event2(self):
+        response = self.c.authenticate(self.username4, self.pwd)
+        self.assertEqual(response.status_code, 200)
+        response = self.c.get('/api/player/near/{0}/'.format(self.EVENT_PK_4), {})
+        self.assertEqual(response.status_code, 200)
+        players = [d for d in response.json() if d.get('ia') is False]
+        self.assertEqual(len(players), self.NEAR_PLAYER_4_EVENT_4)
+
+    def test_players_near_in_event3(self):
+        response = self.c.authenticate(self.username, self.pwd)
+        self.assertEqual(response.status_code, 200)
+        response = self.c.get('/api/player/near/{0}/'.format(self.EVENT_PK_4), {})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), 'Your player is outside of place.')
 
     def test_players_near_in_unauth_event(self):
         response = self.c.authenticate(self.username, self.pwd)
@@ -183,9 +202,9 @@ class PlayerEventTestCase(APITestCase):
         self.assertEqual(response.status_code, 401)
 
     def test_players_meeting_in_event(self):
-        response = self.c.authenticate(self.username, self.pwd)
+        response = self.c.authenticate(self.username1, self.pwd)
         self.assertEqual(response.status_code, 200)
-        response = self.c.post('/api/player/meeting/{0}/{1}/'.format(self.PLAYER_PK_3, self.EVENT_PK_3), {})
+        response = self.c.post('/api/player/meeting/{0}/{1}/'.format(self.PLAYER_PK_2, self.EVENT_PK_4), {})
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json(), 'Meeting created')
 
