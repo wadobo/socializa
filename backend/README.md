@@ -23,12 +23,14 @@
     P: ImportError: cannot import name 'GDALRaster'
     S: sudo apt-get install libgdal-dev
 
-# Apply migrations and added world borders
+# Apply migrations
 
     $ ./manage.py migrate
-    $ ./manage.py shell
-    shell: from world import load
-    shell: load.run()
+
+# Install rabbitmq-server and run celery
+
+    $ sudo apt-get install rabbitmq-server
+    $ celery -A socializa worker -l info -B -S Django
 
 # For run test
 

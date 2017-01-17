@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'rest_framework_social_oauth2',
     'rest_framework_swagger',
     'django_nose',
+    'django_celery_beat',
+    'django_celery_results',
     'frontend',
     'world',
     'player',
@@ -234,6 +236,12 @@ SWAGGER_SETTINGS = {
         'APIS_SORTER': 'alpha',
         'OPERATIONS_SORTER': 'alpha',
 }
+
+# For celery
+CELERY_BROKER_URL = 'amqp://localhost'
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
 
 DEFAULT_VISION_DISTANCE = 1000 # m
 DEFAULT_MEETING_DISTANCE = 10 # m
