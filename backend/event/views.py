@@ -1,14 +1,14 @@
 from django.core.exceptions import ObjectDoesNotExist
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django.utils import timezone
 
+from clue.views import attachClue
+from clue.views import detachClue
 from .models import Event
 from .models import Membership
 from .serializers import EventSerializer
-from clue.views import attachClue
-from clue.views import detachClue
 
 
 def create_member(player, event):
@@ -44,8 +44,6 @@ class JoinEvent(APIView):
         attachClue(player, event.game)
         return Response(msg, status=st)
 
-join_event = JoinEvent.as_view()
-
 
 class UnjoinEvent(APIView):
 
@@ -58,13 +56,11 @@ class UnjoinEvent(APIView):
         except ObjectDoesNotExist:
             return Response("Event not exist", status=status.HTTP_400_BAD_REQUEST)
         try:
-            member = Membership.objects.get(player=player, event=event).delete()
+            Membership.objects.get(player=player, event=event).delete()
         except ObjectDoesNotExist:
             return Response("You not join in this event.", status=status.HTTP_400_BAD_REQUEST)
         detachClue(player, event.game)
         return Response("Unjoined correctly.", status=status.HTTP_200_OK)
-
-unjoin_event = UnjoinEvent.as_view()
 
 
 class MyEvents(APIView):
@@ -76,8 +72,6 @@ class MyEvents(APIView):
         serializer = EventSerializer(events, many=True)
         data = serializer.data
         return Response(data)
-
-my_events = MyEvents.as_view()
 
 
 class AllEvents(APIView):
@@ -92,4 +86,8 @@ class AllEvents(APIView):
         data = serializer.data
         return Response(data)
 
+
+join_event = JoinEvent.as_view()
+unjoin_event = UnjoinEvent.as_view()
+my_events = MyEvents.as_view()
 all_events = AllEvents.as_view()
