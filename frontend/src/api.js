@@ -126,9 +126,16 @@ export default class API {
     // <- connected
     static captured(code) {
         var data = JSONPost({});
-        //return customFetch('/api/player/captured/'+ code +'/');
+        //return customFetch('/api/player/captured/'+ code +'/', data);
         // TODO add the challenge clue here
         return fake({ 'status': 'connected', 'clue': '<strong>CLUE!</strong>' });
+    }
+
+    //GET qrclue
+    static qrclue(player_id) {
+        var data = JSONGet();
+        //return customFetch('/api/player/qrclue/'+ player_id +'/');
+        return fake({ 'status': 'waiting' });
     }
 
     static allEvents() {
