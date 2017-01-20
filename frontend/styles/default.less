@@ -36,3 +36,27 @@ body { padding-top: 50px; }
     .transition-duration(.35s);
     .transition-timing-function(ease);
 }
+
+#overlay {
+    background-color: white;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right:0;
+    bottom: 0;
+    z-index: 1000;
+    display: none;
+    padding-top: 70px;
+}
+
+#overlay.open {
+    display: block;
+}
+
+#qr-video {
+    display: none;
+}
+
+#qr-canvas {
+    width: 100%;
+}

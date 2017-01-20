@@ -159,8 +159,12 @@ export default class Map extends React.Component {
         }
     }
 
+    connected = (resp) => {
+        alert("Connected!");
+    }
+
     capturedQR = (resp) => {
-        alert(resp.text);
+        this.connected(resp.text);
     }
 
     showQRCode = (code) => {
@@ -180,10 +184,9 @@ export default class Map extends React.Component {
                 console.log(resp);
                 switch (resp.status) {
                     case 'connected':
-                        // TODO show clue
+                        self.connected();
                         break;
                     case 'step1':
-                        // TODO camera
                         self.showCamera();
                         break;
                     case 'step2':

@@ -82,6 +82,8 @@ export default class App extends React.Component {
 
 
                 <div>{childrenWithProps}</div>
+
+                <div id="overlay"></div>
             </div>
         );
     }
