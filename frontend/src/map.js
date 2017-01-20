@@ -207,7 +207,7 @@ export default class Map extends React.Component {
     showCamera = (id, ev) => {
         var self = this;
         window.scanQR(function(resp) {
-            this.capturedQR.bind(this)(id, ev, resp);
+            self.capturedQR.bind(self)(id, ev, resp);
         });
     }
 
