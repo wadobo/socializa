@@ -164,10 +164,9 @@ export default class Map extends React.Component {
         alert("Connected: " + resp);
     }
 
-    capturedQR = (resp) => {
+    capturedQR = (id, ev, resp) => {
         var self = this;
-        this.connected(resp.text);
-        API.captured(resp.text)
+        API.captured(id, ev, resp.text)
             .then(function(resp) {
                 self.connected(resp.clue);
             })
@@ -176,14 +175,14 @@ export default class Map extends React.Component {
             });
     }
 
-    qrcodePolling = (id) => {
+    qrcodePolling = (id, ev) => {
         var self = this;
         API.qrclue(id)
             .then(function(resp) {
                 if (resp.status == 'waiting') {
                     clearTimeout(self.qrcodeTimer);
                     self.qrcodeTimer = setTimeout(function() {
-                        self.qrcodePolling.bind(self)(id)
+                        self.qrcodePolling.bind(self)(id, ev);
                     }, 1000);
                 } else if (resp.status == 'contected') {
                     self.connected(resp.clue);
@@ -194,19 +193,22 @@ export default class Map extends React.Component {
             });
     }
 
-    showQRCode = (id, code) => {
+    showQRCode = (id, ev, code) => {
         var self = this;
         var qrsize = $(document).width() - 80;
         this.setState({ state: 'qrcode', code: code, qrsize: qrsize });
 
         clearTimeout(this.qrcodeTimer);
         this.qrcodeTimer = setTimeout(function() {
-            self.qrcodePolling.bind(self)(id)
+            self.qrcodePolling.bind(self)(id, ev);
         }, 500);
     }
 
-    showCamera = () => {
-        window.scanQR(this.capturedQR.bind(this));
+    showCamera = (id, ev) => {
+        var self = this;
+        window.scanQR(function(resp) {
+            this.capturedQR.bind(this)(id, ev, resp);
+        });
     }
 
     connectPlayer = (id, ev=null) => {
@@ -220,10 +222,10 @@ export default class Map extends React.Component {
                         self.connected(resp.clue);
                         break;
                     case 'step1':
-                        self.showCamera();
+                        self.showCamera(id, ev);
                         break;
                     case 'step2':
-                        self.showQRCode(id, resp.secret);
+                        self.showQRCode(id, ev, resp.secret);
                         break;
                 }
             });

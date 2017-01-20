@@ -99,9 +99,7 @@ export default class API {
     static connectPlayer(id, ev) {
         var data = JSONPost({});
         var url = '/api/player/meeting/'+id+'/';
-        if (ev) {
-            url += ev + '/';
-        }
+        if (ev) url += ev + '/';
         //return customFetch(url, data);
 
         // TODO: Fake response
@@ -124,17 +122,23 @@ export default class API {
 
     //POST captured()
     // <- connected
-    static captured(code) {
+    static captured(id, ev, code) {
         var data = JSONPost({});
-        //return customFetch('/api/player/captured/'+ code +'/', data);
+        var url = '/api/player/meeting/'+id+'/';
+        if (ev) url += ev + '/';
+        url += 'captured/' + code;
+        //return customFetch(url, data);
         // TODO add the challenge clue here
         return fake({ 'status': 'connected', 'clue': '<strong>CLUE!</strong>' });
     }
 
     //GET qrclue
-    static qrclue(player_id) {
+    static qrclue(id, ev) {
         var data = JSONGet();
-        //return customFetch('/api/player/qrclue/'+ player_id +'/');
+        var url = '/api/player/meeting/'+id+'/';
+        if (ev) url += ev + '/';
+        url += 'qrclue/';
+        //return customFetch(url, data);
         return fake({ 'status': 'waiting' });
     }
 
