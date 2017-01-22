@@ -2,7 +2,7 @@ import React from 'react';
 import { hashHistory } from 'react-router'
 import { Link } from 'react-router'
 
-import { setUser, user, logout } from './auth';
+import { storeUser, user, logout } from './auth';
 import API from './api';
 import moment from 'moment';
 
@@ -137,11 +137,13 @@ export default class Events extends React.Component {
 
     play = (e) => {
         user.activeEvent = e;
+        storeUser();
         this.setState({ active: user.activeEvent });
     }
 
     unplay = () => {
         user.activeEvent = null;
+        storeUser();
         this.setState({ active: user.activeEvent });
     }
 

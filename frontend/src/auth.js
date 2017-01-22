@@ -59,6 +59,11 @@ export function login(email, token, method) {
 };
 
 
+export function storeUser() {
+    localStorage['socializa-user'] = JSON.stringify(user);
+};
+
+
 export function logout() {
     localStorage['socializa-user'] = ''
     user = $.extend({}, defuser);
