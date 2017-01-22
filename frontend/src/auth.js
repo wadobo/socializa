@@ -5,6 +5,7 @@ let defuser = {
     username: '',
     apikey: '',
     isAuthenticated: false,
+    activeEvent: null,
     interests: []
 };
 
@@ -14,6 +15,7 @@ export let user = {
     apikey: '',
     authmethod: 'token',
     isAuthenticated: false,
+    activeEvent: null,
     interests: []
 };
 

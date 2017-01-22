@@ -76,6 +76,22 @@ class EventRow extends React.Component {
         )
     }
 
+    playButton = (ev) => {
+        if (this.props.active == ev) {
+            return (
+                <button onClick={ this.props.unplay } className="btn btn-primary">
+                    <i className="fa fa-close"></i> <i className="fa fa-gamepad"></i>
+                </button>
+            )
+        }
+
+        return (
+            <button onClick={ this.props.play } className="btn btn-default">
+                <i className="fa fa-gamepad"></i>
+            </button>
+        )
+    }
+
     render() {
         return (
             <div className="event">
@@ -84,10 +100,14 @@ class EventRow extends React.Component {
                         { this.joinButton(this.props.ev) }
                     </div>
 
-                    <div className="col-xs-8">
+                    <div className="col-xs-6">
                         <h2>{ this.props.ev.name }</h2>
                         <div className="start label label-default">{ moment(this.props.ev.start_date).format('lll') }</div>
                         <div className="end label label-danger">{ moment(this.props.ev.end_date).format('lll') }</div>
+                    </div>
+
+                    <div className="col-xs-2">
+                        { this.playButton(this.props.ev) }
                     </div>
                 </div>
 
@@ -100,7 +120,7 @@ class EventRow extends React.Component {
 
 
 export default class Events extends React.Component {
-    state = { user: user, events: [] }
+    state = { user: user, events: [], active: user.activeEvent }
 
     componentDidMount() {
         this.updateEvents();
@@ -115,10 +135,29 @@ export default class Events extends React.Component {
             });
     }
 
+    play = (e) => {
+        console.log("play", e);
+        user.activeEvent = e;
+        this.setState({ active: user.activeEvent });
+    }
+
+    unplay = () => {
+        console.log("unplay");
+        user.activeEvent = null;
+        this.setState({ active: user.activeEvent });
+    }
+
     render() {
+        var self = this;
         return (
             <div id="events" className="container">
-                {this.state.events.map(function(ev, i){ return <EventRow ev={ev} key={i} />; })}
+                {this.state.events.map(function(ev, i){
+                    function play() { self.play(ev); }
+                    return <EventRow ev={ev} key={i}
+                                     active={self.state.active}
+                                     play={play.bind(self)}
+                                     unplay={self.unplay.bind(self)} />;
+                 })}
             </div>
         );
     }

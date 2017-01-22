@@ -43,6 +43,9 @@ export default class App extends React.Component {
                 setAppState: this.setAppState
             })
         );
+        if (!childrenWithProps) {
+            hashHistory.push('/map');
+        }
 
         $('.nav a').on('click', function(){
             // hidding the navbar
