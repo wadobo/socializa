@@ -72,12 +72,12 @@ export default class App extends React.Component {
 
                     <div className="width collapse navbar-collapse" id="collapse">
                       <ul className="nav navbar-nav" id="menu">
-                          <li><Link to="/map">map</Link></li>
-                          <li><Link to="/events">events</Link></li>
-                          <li><Link to="/profile">profile</Link></li>
+                          <li><Link to="/map"> <i className="fa fa-fw fa-map-marker"></i> map</Link></li>
+                          <li><Link to="/events"> <i className="fa fa-fw fa-gamepad"></i> events</Link></li>
+                          <li><Link to="/profile"> <i className="fa fa-fw fa-user"></i> profile</Link></li>
                       </ul>
                       <ul className="nav navbar-nav navbar-right">
-                        <li><a href="#" onClick={ this.logout }>Logout</a></li>
+                        <li><a href="#" onClick={ this.logout }> <i className="fa fa-fw fa-close"></i> Logout</a></li>
                       </ul>
                     </div>
                   </div>
