@@ -12,7 +12,11 @@ export default class Map extends React.Component {
     state = { user: user, state: 'stopped' }
 
     componentDidMount() {
-      this.props.setAppState({ title: 'Map' });
+      let title = 'Map';
+      if (user.activeEvent) {
+        title = title + ' - ' + user.activeEvent.name;
+      }
+      this.props.setAppState({ 'title': title });
 
       this.view = new ol.View({
         center: ol.proj.fromLonLat([37.41, 8.82]),
@@ -117,7 +121,7 @@ export default class Map extends React.Component {
                 var id = f.getArray()[0].customData.id;
                 var content = $('<button class="btn btn-primary">Connect</button>');
                 content.click(function() {
-                    self.connectPlayer(id);
+                    self.connectPlayer(id, user.activeEvent);
                 });
 
                 $(element).popover({
@@ -152,7 +156,8 @@ export default class Map extends React.Component {
     }
 
     updatePlayers = () => {
-        API.nearPlayers().
+        var ev = user.activeEvent ? user.activeEvent.pk : user.activeEvent;
+        API.nearPlayers(ev).
             then(this.playersUpdated.bind(this));
         if (this.state.state == 'started') {
             clearTimeout(this.updateTimer);
@@ -177,7 +182,7 @@ export default class Map extends React.Component {
 
     qrcodePolling = (id, ev) => {
         var self = this;
-        API.qrclue(id)
+        API.qrclue(id, ev)
             .then(function(resp) {
                 if (resp.status == 'waiting') {
                     clearTimeout(self.qrcodeTimer);
@@ -213,6 +218,7 @@ export default class Map extends React.Component {
 
     connectPlayer = (id, ev=null) => {
         var self = this;
+        ev = ev ? ev.pk : ev;
         console.log("connect player", id);
         API.connectPlayer(id, ev)
             .then(function(resp) {

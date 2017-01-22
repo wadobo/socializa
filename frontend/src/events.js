@@ -77,7 +77,7 @@ class EventRow extends React.Component {
     }
 
     playButton = (ev) => {
-        if (this.props.active == ev) {
+        if (this.props.active && this.props.active.pk == ev.pk) {
             return (
                 <button onClick={ this.props.unplay } className="btn btn-primary">
                     <i className="fa fa-close"></i> <i className="fa fa-gamepad"></i>
@@ -136,13 +136,11 @@ export default class Events extends React.Component {
     }
 
     play = (e) => {
-        console.log("play", e);
         user.activeEvent = e;
         this.setState({ active: user.activeEvent });
     }
 
     unplay = () => {
-        console.log("unplay");
         user.activeEvent = null;
         this.setState({ active: user.activeEvent });
     }
