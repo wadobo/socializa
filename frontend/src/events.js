@@ -46,6 +46,10 @@ export class EventRow extends React.Component {
             }).catch(function(error) {
                 alert(error);
             });
+
+        if (this.props.active && this.props.active.pk == this.props.ev.pk) {
+            this.props.unplay();
+        }
     }
 
     price = (ev) => {
@@ -91,6 +95,10 @@ export class EventRow extends React.Component {
     }
 
     playButton = (ev) => {
+        if (!this.state.joined) {
+            return (<span></span>);
+        }
+
         if (this.props.active && this.props.active.pk == ev.pk) {
             return (
                 <button onClick={ this.props.unplay } className="btn btn-primary">
@@ -185,8 +193,10 @@ export default class Events extends React.Component {
     }
 
     unplay = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
 
         user.activeEvent = null;
         storeUser();
