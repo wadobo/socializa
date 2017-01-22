@@ -23,6 +23,9 @@ export class EventRow extends React.Component {
     }
 
     join = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
         var self = this;
         API.joinEvent(this.props.ev.pk)
             .then(function() {
@@ -33,6 +36,9 @@ export class EventRow extends React.Component {
     }
 
     leave = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
         var self = this;
         API.leaveEvent(this.props.ev.pk)
             .then(function() {
@@ -168,14 +174,20 @@ export default class Events extends React.Component {
         this.props.setAppState({ title: title });
     }
 
-    play = (e) => {
-        user.activeEvent = e;
+    play = (e, ev) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        user.activeEvent = ev;
         storeUser();
         this.setState({ active: user.activeEvent });
         this.retitle();
     }
 
-    unplay = () => {
+    unplay = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
         user.activeEvent = null;
         storeUser();
         this.setState({ active: user.activeEvent });
@@ -187,7 +199,7 @@ export default class Events extends React.Component {
         return (
             <div id="events" className="container">
                 {this.state.events.map(function(ev, i){
-                    function play() { self.play(ev); }
+                    function play(e) { self.play(e, ev); }
                     return <EventRow ev={ev} key={i}
                                      active={self.state.active}
                                      play={play.bind(self)}
