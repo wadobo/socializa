@@ -37,6 +37,23 @@ export default class App extends React.Component {
         });
     }
 
+    activeEvent = () => {
+        if (!user.activeEvent) {
+            return (<span></span>);
+        }
+        var ev = user.activeEvent;
+
+        var link = "/event/" + ev.pk;
+        return (
+            <li>
+                <Link to={ link }>
+                    <i className="fa fa-fw fa-dot-circle-o"></i>
+                    { ev.name }
+                </Link>
+            </li>
+        );
+    }
+
     render() {
         const childrenWithProps = React.Children.map(this.props.children,
             (child) => React.cloneElement(child, {
@@ -72,6 +89,7 @@ export default class App extends React.Component {
 
                     <div className="width collapse navbar-collapse" id="collapse">
                       <ul className="nav navbar-nav" id="menu">
+                          { this.activeEvent() }
                           <li><Link to="/map"> <i className="fa fa-fw fa-map-marker"></i> map</Link></li>
                           <li><Link to="/events"> <i className="fa fa-fw fa-gamepad"></i> events</Link></li>
                           <li><Link to="/profile"> <i className="fa fa-fw fa-user"></i> profile</Link></li>

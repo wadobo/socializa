@@ -7,11 +7,19 @@ import API from './api';
 import moment from 'moment';
 
 
-class EventRow extends React.Component {
-    state = { joined: false }
+export class EventRow extends React.Component {
+    state = { joined: false, expand: false }
 
     componentWillMount() {
       this.setState({ joined: this.props.ev.joined });
+    }
+
+    expand = (e) => {
+        if (this.state.expand) {
+            this.setState({ expand: false });
+        } else {
+            this.setState({ expand: true });
+        }
     }
 
     join = (e) => {
@@ -92,9 +100,24 @@ class EventRow extends React.Component {
         )
     }
 
+    renderDesc() {
+        if (!this.props.expand && !this.state.expand) {
+            return (<span></span>)
+        }
+
+        return (
+            <div className="row"><div className="col-xs-12">
+            <div className="jumbotron">
+                <h2>{ this.props.ev.game.name }</h2>
+                <p>{ this.props.ev.game.desc }</p>
+            </div>
+            </div></div>
+        );
+    }
+
     render() {
         return (
-            <div className="event">
+            <div className="event" onClick={ this.expand.bind(this) }>
                 <div className="row">
                     <div className="col-xs-2">
                         { this.joinButton(this.props.ev) }
@@ -111,6 +134,8 @@ class EventRow extends React.Component {
                     </div>
                 </div>
 
+                { this.renderDesc() }
+
                 { this.price(this.props.ev) }
                 { this.maxp(this.props.ev) }
             </div>
@@ -124,7 +149,7 @@ export default class Events extends React.Component {
 
     componentDidMount() {
         this.updateEvents();
-        this.props.setAppState({ title: 'Events' });
+        this.retitle();
     }
 
     updateEvents = () => {
@@ -135,16 +160,26 @@ export default class Events extends React.Component {
             });
     }
 
+    retitle = () => {
+        var title = 'Events';
+        if (user.activeEvent) {
+          title = title + ' - ' + user.activeEvent.name;
+        }
+        this.props.setAppState({ title: title });
+    }
+
     play = (e) => {
         user.activeEvent = e;
         storeUser();
         this.setState({ active: user.activeEvent });
+        this.retitle();
     }
 
     unplay = () => {
         user.activeEvent = null;
         storeUser();
         this.setState({ active: user.activeEvent });
+        this.retitle();
     }
 
     render() {

@@ -9,6 +9,7 @@ import Register from './register';
 import Map from './map';
 import Profile from './profile';
 import Events from './events';
+import Event from './event';
 
 import { requireAuth } from './auth';
 
@@ -21,6 +22,7 @@ ReactDOM.render((
         <Route path="map" component={Map}/>
         <Route path="profile" component={Profile}/>
         <Route path="events" component={Events}/>
+        <Route path="event/:pk" component={Event}/>
     </Route>
   </Router>
 ), document.getElementById('content'))
