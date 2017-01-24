@@ -161,4 +161,9 @@ export default class API {
         var data = JSONGet();
         return customFetch('/api/oauth2apps/', data);
     }
+
+    static clues(gameid) {
+        var data = JSONGet();
+        return customFetch('/api/clue/my-clues/'+gameid+'/', data);
+    }
 }
