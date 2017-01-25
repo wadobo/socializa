@@ -9,7 +9,7 @@ export default class Profile extends React.Component {
     state = { user: user }
 
     componentDidMount() {
-        this.props.setAppState({ title: 'Profile' });
+        this.props.setAppState({ title: 'Profile', active: 'profile' });
     }
 
     save = (e) => {

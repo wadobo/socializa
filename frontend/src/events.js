@@ -179,7 +179,7 @@ export default class Events extends React.Component {
         if (user.activeEvent) {
           title = title + ' - ' + user.activeEvent.name;
         }
-        this.props.setAppState({ title: title });
+        this.props.setAppState({ title: title, active: 'events' });
     }
 
     play = (e, ev) => {

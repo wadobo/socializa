@@ -16,7 +16,7 @@ export default class Map extends React.Component {
       if (user.activeEvent) {
         title = title + ' - ' + user.activeEvent.name;
       }
-      this.props.setAppState({ 'title': title });
+      this.props.setAppState({ 'title': title, 'active': 'map' });
 
       this.view = new ol.View({
         center: ol.proj.fromLonLat([37.41, 8.82]),

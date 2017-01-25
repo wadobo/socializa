@@ -60,7 +60,7 @@ export default class Event extends React.Component {
         if (this.state.ev) {
           title = title + ' - ' + this.state.name;
         }
-        this.props.setAppState({ title: title });
+        this.props.setAppState({ title: title, active: 'event' });
     }
 
     tryToSolve = () => {
