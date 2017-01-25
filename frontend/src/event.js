@@ -8,6 +8,8 @@ import moment from 'moment';
 
 import { EventRow } from './events';
 
+import Loading from './loading';
+
 export class ClueRow extends React.Component {
     render() {
         return (
@@ -21,7 +23,12 @@ export class ClueRow extends React.Component {
 
 
 export default class Event extends React.Component {
-    state = { user: user, ev: null, clues: null }
+    state = {
+        user: user,
+        ev: null,
+        clues: null,
+        state: 'loading' // loading | event | solving
+    }
 
     componentDidMount() {
         this.updateEvents();
@@ -34,6 +41,7 @@ export default class Event extends React.Component {
             .then(function(clues) {
                 console.log(clues);
                 self.setState({ clues: clues });
+                self.setState({ state: 'event' });
             });
     }
 
@@ -54,24 +62,43 @@ export default class Event extends React.Component {
         this.props.setAppState({ title: title });
     }
 
-    renderEvent = () => {
-        if (!this.state.ev) {
-            return <span></span>;
-        }
-        var ev = this.state.ev;
+    tryToSolve = () => {
+        console.log("TODO: show a popup with an input for the text");
+    }
 
+    renderSolveButton = () => {
+        // TODO if it's solved, we'll show the response here
         return (
-            <div className="event-desc">
-                <EventRow ev={ev} expand={true} />
+            <button onClick={ this.tryToSolve } className="btn btn-primary btn-fixed-bottom">
+                Solve
+            </button>
+        )
+    }
 
-                <h2>Clues</h2>
+    renderEvent = () => {
+        switch (this.state.state) {
+            case 'loading':
+                return <Loading />;
+                break;
+            case 'event': {
+                var ev = this.state.ev;
 
-                {this.state.clues && this.state.clues.map(function(clue, i) {
-                    return <ClueRow ev={ev} clue={clue}/>;
-                 })}
+                return (
+                    <div className="event-desc">
+                        <EventRow ev={ev} expand={true} />
 
-            </div>
-        );
+                        <h2>Clues</h2>
+
+                        {this.state.clues && this.state.clues.map(function(clue, i) {
+                            return <ClueRow ev={ev} clue={clue}/>;
+                         })}
+
+                         { this.renderSolveButton() }
+                    </div>
+                );
+                break;
+            }
+        }
     }
 
     render() {
