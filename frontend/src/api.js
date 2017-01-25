@@ -171,4 +171,11 @@ export default class API {
         var data = JSONGet();
         return customFetch('/api/clue/my-clues/'+gameid+'/', data);
     }
+
+    // TODO: fake
+    static solve(gameid, solution) {
+        var data = JSONPost({ 'solution': solution });
+        //return customFetch('/api/game/solve/'+gameid+'/', data);
+        return fake({ message: 'Conglatulations!' });
+    }
 }
