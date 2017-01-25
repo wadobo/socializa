@@ -147,6 +147,11 @@ export default class API {
         return customFetch('/api/event/all/', data);
     }
 
+    static EventDetail(id) {
+        var data = JSONGet();
+        return customFetch('/api/event/'+id+'/', data);
+    }
+
     static joinEvent(id) {
         var data = JSONPost({});
         return customFetch('/api/event/join/'+id+'/', data);

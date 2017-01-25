@@ -39,16 +39,10 @@ export default class Event extends React.Component {
 
     updateEvents = () => {
         var self = this;
-        // TODO change this to get only one event, not all
-        API.allEvents(user.apikey)
-            .then(function(events) {
-                var ev = null;
-                events.forEach(function(e) {
-                    if (e.pk == self.props.params.pk) {
-                        self.setState({ ev: e });
-                        self.updateClues();
-                    }
-                });
+        API.EventDetail(self.props.params.pk)
+            .then(function(ev) {
+                self.setState({ ev: ev });
+                self.updateClues();
             });
     }
 

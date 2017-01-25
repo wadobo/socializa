@@ -168,7 +168,7 @@ export default class Events extends React.Component {
 
     updateEvents = () => {
         var self = this;
-        API.allEvents(user.apikey)
+        API.allEvents()
             .then(function(events) {
                 self.setState({ events: events });
             });
