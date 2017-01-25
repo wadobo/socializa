@@ -8,4 +8,5 @@ urlpatterns = [
     url(r'^unjoin/(?P<event_id>\d+)/$', views.unjoin_event, name="unjoin_event"),
     url(r'^my-events/$', views.my_events, name="my_events"),
     url(r'^all/$', views.all_events, name="all_events"),
+    url(r'^(?P<event_id>\d+)/$', views.event_detail, name="event_detail"),
 ]

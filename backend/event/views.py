@@ -87,7 +87,23 @@ class AllEvents(APIView):
         return Response(data)
 
 
+class EventDetail(APIView):
+
+    def get(self, request, event_id):
+        """ Get the event by id. """
+        if request.user.is_anonymous():
+            return Response("Anonymous user", status=status.HTTP_401_UNAUTHORIZED)
+        try:
+            event = Event.objects.get(pk=event_id)
+        except:
+            return Response("Event not exist", status=status.HTTP_400_BAD_REQUEST)
+        serializer = EventSerializer(event, many=False, context={'player': request.user.player})
+        data = serializer.data
+        return Response(data)
+
+
 join_event = JoinEvent.as_view()
 unjoin_event = UnjoinEvent.as_view()
 my_events = MyEvents.as_view()
 all_events = AllEvents.as_view()
+event_detail = EventDetail.as_view()

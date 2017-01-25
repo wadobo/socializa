@@ -131,6 +131,23 @@ class EventTestCase(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), 1)
 
+    def test_get_event_detail(self):
+        response = self.c.authenticate('test5', self.pwd)
+        self.assertEqual(response.status_code, 200)
+        # Edit an event for tomorrow
+        self.event.start_date = timezone.now() + timezone.timedelta(days=1)
+        self.event.end_date = timezone.now() + timezone.timedelta(days=2)
+        self.event.save()
+
+        pk = self.event.pk
+        response = self.c.get('/api/event/%s/' % pk, {})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['pk'], pk)
+
+        # event that doesn't exist
+        response = self.c.get('/api/event/523/', {})
+        self.assertEqual(response.status_code, 400)
+
 
 class PlayerEventTestCase(APITestCase):
     """
