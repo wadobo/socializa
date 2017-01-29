@@ -1,3 +1,7 @@
+from random import choice
+from string import ascii_uppercase, digits
+
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import GEOSGeometry
@@ -24,15 +28,33 @@ class Player(models.Model):
         return self.user.username
 
 
+MEETING_STATUS = (
+    ('connected', 'connected'),
+    ('step1', 'step1'),
+    ('step2', 'step2'),
+    ('waiting', 'waiting'),
+)
+
+
 class Meeting(models.Model):
     player1 = models.ForeignKey(Player, on_delete=models.CASCADE, related_name="player1")
     player2 = models.ForeignKey(Player, on_delete=models.CASCADE, related_name="player2")
     event_id = models.IntegerField(null=True, blank=True, default=None)
+    status = models.CharField(max_length=16, choices=MEETING_STATUS, default='connected')
+    secret = models.CharField(max_length=settings.QR_LENGTH, null=True, blank=True, default=None)
 
     def clean_fields(self, *args, **kwargs):
         super(Meeting, self).clean_fields(*args, **kwargs)
         if self.player1 == self.player2:
-            raise ValidationError({'player2': ["narcissistic: you cannot connect with yourself",]})
+            raise ValidationError({'player2': ["narcissistic: you cannot connect with yourself"]})
+
+    def generate_secret(self):
+        """ generate a secret for convert in QR and change to status 'step2' """
+        chars = ascii_uppercase + digits
+        length = settings.QR_LENGTH
+        self.secret = ''.join([choice(chars) for i in range(length)])
+        self.status = 'step2'
+        self.save()
 
     def __str__(self):
         return "{0} - {1}".format(self.player1, self.player2)

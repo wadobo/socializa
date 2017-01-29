@@ -223,7 +223,7 @@ class PlayerEventTestCase(APITestCase):
         self.assertEqual(response.status_code, 200)
         response = self.c.post('/api/player/meeting/{0}/{1}/'.format(self.PLAYER_PK_2, self.EVENT_PK_4), {})
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.json(), 'Meeting created')
+        self.assertEqual(response.json(), {'status': 'step1'})
 
     def test_players_meeting_in_event_unauth_event(self):
         response = self.c.authenticate(self.username, self.pwd)

@@ -1,6 +1,12 @@
 from rest_framework.test import APITestCase
 
+from clue.models import Clue
+from game.serializers import ChallengeSerializer
 from player.test_client import JClient
+from player.models import Meeting
+from player.models import Player
+
+
 
 
 class PlayerTestCase(APITestCase):
@@ -49,13 +55,6 @@ class PlayerTestCase(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), 'User is far for meeting')
 
-    def test_meeting_with_login_near(self):
-        response = self.c.authenticate(self.username, self.pwd)
-        self.assertEqual(response.status_code, 200)
-        response = self.c.post('/api/player/meeting/{0}/'.format(self.PLAYER2_PK), {})
-        self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.json(), 'Meeting created')
-
     def test_change_position_unauthorized(self):
         response = self.c.post('/api/player/set-pos/', {'lat': '-6', 'lon': '37'})
         self.assertEqual(response.status_code, 401)
@@ -85,3 +84,139 @@ class PlayerTestCase(APITestCase):
         self.assertEqual(response.status_code, 400)
         response = self.c.post('/api/player/set-pos/', {'lat': '', 'lon': '37'})
         self.assertEqual(response.status_code, 400)
+
+
+class MeetingTestCase(APITestCase):
+    """
+
+    """
+    fixtures = ['meeting-test.json']
+    PLAYER2_PK = 2
+
+    def setUp(self):
+        self.pwd = 'qweqweqwe'
+        self.c = JClient()
+
+    def tearDown(self):
+        self.c = None
+
+    def get_username(self, pk):
+        return Player.objects.get(pk=pk).user.username
+
+    def get_challenge_from_player(self, pk, event=1):
+        clue = Clue.objects.get(player=pk, main=True, event=event)
+        return ChallengeSerializer(clue.challenge).data
+
+    def test_meeting_player1_not_in_event(self):
+        """ player1 not in event """
+        player1 = 6
+        player2 = 1
+        event = 1
+        response = self.c.authenticate(self.get_username(player1), self.pwd)
+        self.assertEqual(response.status_code, 200)
+        response = self.c.post('/api/player/meeting/{0}/{1}/'.format(player2, event), {})
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.json(), "Unauthorized event")
+
+    def test_meeting_player2_not_in_event(self):
+        """ player2 not in event """
+        player1 = 1
+        player2 = 6
+        event = 1
+        response = self.c.authenticate(self.get_username(player1), self.pwd)
+        self.assertEqual(response.status_code, 200)
+        response = self.c.post('/api/player/meeting/{0}/{1}/'.format(player2, event), {})
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json(), "Other player not join at this event")
+
+    def test_meeting_near_step1_ia(self):
+        """ player1 near player2 (IA) """
+        player1 = 1
+        player2 = 2
+        event = 1
+        response = self.c.authenticate(self.get_username(player1), self.pwd)
+        self.assertEqual(response.status_code, 200)
+        response = self.c.post('/api/player/meeting/{0}/{1}/'.format(player2, event), {})
+        self.assertEqual(response.status_code, 201)
+        res = {'clue': self.get_challenge_from_player(player2)}
+        res.update({'status': 'connected'})
+        self.assertEqual(response.json(), res)
+
+    def test_meeting_near_step1_no_ia(self):
+        """ no meeting between player1 and player3. player1 near player3. """
+        player1 = 1
+        player2 = 3
+        event = 1
+        response = self.c.authenticate(self.get_username(player1), self.pwd)
+        self.assertEqual(response.status_code, 200)
+        response = self.c.post('/api/player/meeting/{0}/{1}/'.format(player2, event), {})
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.json(), {'status': 'step1'})
+
+    def test_meeting_near_step2(self):
+        """ meeting between player3 and player4 with status step1. player3 near player4. """
+        player1 = 4
+        player2 = 3
+        event = 1
+        response = self.c.authenticate(self.get_username(player1), self.pwd)
+        self.assertEqual(response.status_code, 200)
+        response = self.c.post('/api/player/meeting/{0}/{1}/'.format(player2, event), {})
+        self.assertEqual(response.status_code, 200)
+        secret = Meeting.objects.get(player1=player2, player2=player1, event_id=event).secret
+        self.assertEqual(response.json(), {'status': 'step2', 'secret': secret})
+
+    def test_meeting_near_invalid_code(self):
+        """ meeting between player5 and player4 with status step2. player4 near player5. """
+        player1 = 4
+        player2 = 5
+        event = 1
+        secret = 'INCORRECT'
+        response = self.c.authenticate(self.get_username(player1), self.pwd)
+        self.assertEqual(response.status_code, 200)
+        response = self.c.post('/api/player/meeting/{0}/{1}/captured/{2}/'.format(player2, event, secret), {})
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json(), "Invalid secret")
+
+    def test_meeting_near_valid_code(self):
+        """ meeting between player5 and player4 with status step2. player4 near player5. """
+        player1 = 4
+        player2 = 5
+        event = 1
+        secret = '0123456789ABCDEF'
+        response = self.c.authenticate(self.get_username(player1), self.pwd)
+        self.assertEqual(response.status_code, 200)
+        response = self.c.post('/api/player/meeting/{0}/{1}/captured/{2}/'.format(player2, event, secret), {})
+        self.assertEqual(response.status_code, 200)
+        res = {'clue': self.get_challenge_from_player(player2)}
+        res.update({'status': 'connected'})
+        self.assertEqual(response.json(), res)
+
+    def test_meeting_near_polling_waiting(self):
+        """ meeting between player4 and player5 with status step2. player4 near player5. """
+        player1 = 5
+        player2 = 4
+        event = 1
+        response = self.c.authenticate(self.get_username(player1), self.pwd)
+        self.assertEqual(response.status_code, 200)
+        response = self.c.get('/api/player/meeting/{0}/{1}/qrclue/'.format(player2, event), {})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), {'status': 'waiting'})
+
+    def test_meeting_near_polling_correct(self):
+        """ meeting between player4 and player5 with status step2. player4 near player5. """
+        player1 = 5
+        player2 = 4
+        event = 1
+        meeting = Meeting.objects.filter(player1=player2, player2=player1, event_id=event).first()
+        prev_status = meeting.status
+        meeting.status = 'connected'
+        meeting.save()
+        response = self.c.authenticate(self.get_username(player1), self.pwd)
+        self.assertEqual(response.status_code, 200)
+        response = self.c.get('/api/player/meeting/{0}/{1}/qrclue/'.format(player2, event), {})
+        self.assertEqual(response.status_code, 200)
+        res = {'clue': self.get_challenge_from_player(player2)}
+        res.update({'status': 'connected'})
+        self.assertEqual(response.json(), res)
+        meeting.status = prev_status
+        meeting.save()

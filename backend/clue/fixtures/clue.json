@@ -102,7 +102,8 @@
     "player": 1,
     "challenge": 1,
     "main": true,
-    "status": "solved"
+    "status": "solved",
+    "event": 1
   }
 },
 {
@@ -112,7 +113,8 @@
     "player": 1,
     "challenge": 2,
     "main": false,
-    "status": "acquired"
+    "status": "acquired",
+    "event": 1
   }
 }
 ]

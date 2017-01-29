@@ -245,6 +245,7 @@ CELERY_TASK_SERIALIZER = 'json'
 
 DEFAULT_VISION_DISTANCE = 1000 # m
 DEFAULT_MEETING_DISTANCE = 10 # m
+QR_LENGTH = 16
 
 try:
     from local_settings import *
