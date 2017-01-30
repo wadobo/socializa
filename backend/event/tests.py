@@ -2,6 +2,7 @@ from django.utils import timezone
 from rest_framework.test import APITestCase
 
 from .models import Event
+from .models import Membership
 from player.models import Player
 from player.test_client import JClient
 
@@ -35,6 +36,9 @@ class EventTestCase(APITestCase):
     def tearDown(self):
         self.c = None
         self.event.players.clear()
+
+    def get_username_by_player(self, pk):
+        return Player.objects.get(pk=pk).user.username
 
     def test_join_an_event_unauthorized(self):
         response = self.c.post('/api/event/join/{0}/'.format(self.EVENT_PK_2), {})
@@ -147,6 +151,63 @@ class EventTestCase(APITestCase):
         # event that doesn't exist
         response = self.c.get('/api/event/523/', {})
         self.assertEqual(response.status_code, 400)
+
+    def test_solve_event_unauthorized(self):
+        """ User try solve event with event_id unauthorized. """
+        event_id = 1
+        player = 3
+        data = {'solution': 'solution'}
+        response = self.c.authenticate(self.get_username_by_player(player), self.pwd)
+        self.assertEqual(response.status_code, 200)
+        response = self.c.post('/api/event/solve/{0}/'.format(event_id), data)
+        self.assertEqual(response.status_code, 401)
+
+    def test_solve_event_no_data(self):
+        """ Event's solution is incorrect. """
+        event_id = 3
+        player = 3
+        data = {}
+        response = self.c.authenticate(self.get_username_by_player(player), self.pwd)
+        self.assertEqual(response.status_code, 200)
+        response = self.c.post('/api/event/solve/{0}/'.format(event_id), data)
+        self.assertEqual(response.status_code, 400)
+
+    def test_solve_event_empty(self):
+        """ Event's solution is incorrect. """
+        event_id = 3
+        player = 3
+        data = {'solution': ''}
+        response = self.c.authenticate(self.get_username_by_player(player), self.pwd)
+        self.assertEqual(response.status_code, 200)
+        response = self.c.post('/api/event/solve/{0}/'.format(event_id), data)
+        self.assertEqual(response.status_code, 400)
+
+    def test_solve_event_incorrect(self):
+        """ Event's solution is incorrect. """
+        event_id = 3
+        player = 3
+        data = {'solution': 'solution'}
+        response = self.c.authenticate(self.get_username_by_player(player), self.pwd)
+        self.assertEqual(response.status_code, 200)
+        response = self.c.post('/api/event/solve/{0}/'.format(event_id), data)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), {'status': "incorrect"})
+
+    def test_solve_event_correct(self):
+        """ Event's solution is correct. """
+        event_id = 3
+        player = 3
+        event = Event.objects.get(pk=event_id)
+        solution = event.game.solution
+        data = {'solution': solution}
+        response = self.c.authenticate(self.get_username_by_player(player), self.pwd)
+        self.assertEqual(response.status_code, 200)
+        response = self.c.post('/api/event/solve/{0}/'.format(event_id), data)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), {'status': "correct"})
+        player = Player.objects.get(pk=player)
+        membership_status = Membership.objects.filter(event=event, player=player).first().status
+        self.assertEqual(membership_status, 'solved')
 
 
 class PlayerEventTestCase(APITestCase):

@@ -12,6 +12,18 @@
   }
 },
 {
+  "model": "event.event",
+  "pk": 2,
+  "fields": {
+    "name": "event test 2",
+    "start_date": "2016-10-05T09:00:00Z",
+    "end_date": "2016-10-05T12:00:00Z",
+    "max_players": 1,
+    "price": "0.00",
+    "game": 2
+  }
+},
+{
   "model": "game.challenge",
   "pk": 1,
   "fields": {
@@ -75,6 +87,15 @@
   }
 },
 {
+  "model": "game.challenge",
+  "pk": 8,
+  "fields": {
+    "name": "clue 1",
+    "desc": "the solution is in the solution",
+    "solution": "solution"
+  }
+},
+{
   "model": "game.game",
   "pk": 1,
   "fields": {
@@ -83,6 +104,18 @@
     "solution": "aleman - verde - pecesito - café - prince - casa 4",
     "challenges": [
       1, 2, 3, 4, 5, 6, 7
+    ]
+  }
+},
+{
+  "model": "game.game",
+  "pk": 2,
+  "fields": {
+    "name": "Easy Game",
+    "desc": "Resolve different challenges",
+    "solution": "solution",
+    "challenges": [
+      8
     ]
   }
 },
@@ -96,13 +129,31 @@
   }
 },
 {
+  "model": "event.membership",
+  "pk": 2,
+  "fields": {
+    "player": 1,
+    "event": 2,
+    "status": "payed"
+  }
+},
+{
+  "model": "event.membership",
+  "pk": 3,
+  "fields": {
+    "player": 2,
+    "event": 2,
+    "status": "payed"
+  }
+},
+{
   "model": "clue.clue",
   "pk": 1,
   "fields": {
     "player": 1,
     "challenge": 1,
     "main": true,
-    "status": "solved",
+    "status": "acquired",
     "event": 1
   }
 },
@@ -115,6 +166,17 @@
     "main": false,
     "status": "acquired",
     "event": 1
+  }
+},
+{
+  "model": "clue.clue",
+  "pk": 3,
+  "fields": {
+    "player": 2,
+    "challenge": 8,
+    "main": true,
+    "status": "acquired",
+    "event": 2
   }
 }
 ]

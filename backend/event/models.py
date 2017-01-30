@@ -54,6 +54,7 @@ MEMBERSHIP_STATUS = (
     ('paying', 'paying'),
     ('payed', 'payed'),
     ('cancelled', 'cancelled'),
+    ('solved', 'solved'),
 )
 
 
