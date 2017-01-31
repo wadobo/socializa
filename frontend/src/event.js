@@ -44,6 +44,10 @@ export default class Event extends React.Component {
             .then(function(clues) {
                 self.setState({ clues: clues });
                 self.setState({ state: 'event' });
+                var ev = self.state.ev;
+                if (ev.solved) {
+                    self.setState({ 'state': 'solved', 'solution': ev.solved});
+                }
             });
     }
 
@@ -52,7 +56,6 @@ export default class Event extends React.Component {
         API.EventDetail(self.props.params.pk)
             .then(function(ev) {
                 self.setState({ ev: ev });
-                // TODO update solution state if event is solved
                 self.updateClues();
             });
     }
