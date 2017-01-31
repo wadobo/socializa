@@ -10,6 +10,9 @@ import { EventRow } from './events';
 
 import Loading from './loading';
 
+// TODO, solve a clue. Clues can also be solved, but for now we don't
+// support this.
+
 export class ClueRow extends React.Component {
     render() {
         return (
@@ -20,7 +23,6 @@ export class ClueRow extends React.Component {
         )
     }
 }
-
 
 export default class Event extends React.Component {
     state = {
@@ -71,13 +73,18 @@ export default class Event extends React.Component {
         var self = this;
         var solution = document.querySelector(".solve-input").value;
         this.setState({ state: 'solving-loading' });
-        API.solve(this.state.ev.game.pk, solution)
+        API.solve(this.state.ev.pk, solution)
             .then(function(resp) {
-                self.setState({ state: 'solved', solution: solution });
-                alert(resp.message);
+                if (resp.status == 'correct') {
+                    self.setState({ state: 'solved', solution: solution });
+                    alert('Conglatulations!');
+                } else {
+                    self.setState({ state: 'solving' });
+                    alert('Wrong answer. Try again');
+                }
             }).catch(function(err) {
                 self.setState({ state: 'solving' });
-                alert(err.message);
+                alert('Unknown error!');
             });
     }
 

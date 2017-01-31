@@ -172,10 +172,13 @@ export default class API {
         return customFetch('/api/clue/my-clues/'+gameid+'/', data);
     }
 
-    // TODO: fake
-    static solve(gameid, solution) {
+    static solve_clue(clueid, solution) {
         var data = JSONPost({ 'solution': solution });
-        //return customFetch('/api/game/solve/'+gameid+'/', data);
-        return fake({ message: 'Conglatulations!' });
+        return customFetch('/api/clue/solve/'+clueid+'/', data);
+    }
+
+    static solve(eventid, solution) {
+        var data = JSONPost({ 'solution': solution });
+        return customFetch('/api/event/solve/'+eventid+'/', data);
     }
 }
