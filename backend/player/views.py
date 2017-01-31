@@ -230,8 +230,8 @@ class SetPosition(APIView):
         if request.user.is_anonymous():
             return Response("Anonymous user", status=rf_status.HTTP_401_UNAUTHORIZED)
         player = request.user.player
-        lat = request.POST.get('lat', None) or request.data.get('lat', None)
-        lon = request.POST.get('lon', None) or request.data.get('lon', None)
+        lat = request.data.get('lat', None)
+        lon = request.data.get('lon', None)
         try:
             player.set_position(lon, lat)
         except:

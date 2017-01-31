@@ -118,7 +118,7 @@ class SolveEvent(APIView):
         if not membership:
             return Response("Unauthorized event", status=rf_status.HTTP_401_UNAUTHORIZED)
 
-        solution = request.POST.get('solution', None)
+        solution = request.data.get('solution', None)
         correct_solution = event.game.solution
         if not solution or not correct_solution:
             return Response("Bad request", status=rf_status.HTTP_400_BAD_REQUEST)

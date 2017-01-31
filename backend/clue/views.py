@@ -55,7 +55,7 @@ class SolveClue(APIView):
         if not clue:
             return Response("Clue not exist", status=rf_status.HTTP_401_UNAUTHORIZED)
 
-        solution = request.POST.get('solution', None)
+        solution = request.data.get('solution', None)
         correct_solution = clue.challenge.solution
         if not solution or not correct_solution:
             return Response("Bad request", status=rf_status.HTTP_400_BAD_REQUEST)
