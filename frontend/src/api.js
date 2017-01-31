@@ -95,29 +95,12 @@ export default class API {
         return customFetch(url, data);
     }
 
-    // <- connected | camera | qrcode
+    // <- connected | step1 | step2
     static connectPlayer(id, ev) {
         var data = JSONPost({});
         var url = '/api/player/meeting/'+id+'/';
         if (ev) url += ev + '/';
-        //return customFetch(url, data);
-
-        // TODO: Fake response
-        //var option = parseInt(Math.random() * 1000, 10) % 3;
-        var option = 1;
-        var data = {};
-        switch (option) {
-            case 0:
-                data = { 'status': 'connected', 'clue': '<strong>CLUE!</strong>' };
-                break;
-            case 1:
-                data = { 'status': 'step1' };
-                break;
-            case 2:
-                data = { 'status': 'step2', 'secret': 'socializa!'};
-                break;
-        }
-        return fake(data);
+        return customFetch(url, data);
     }
 
     //POST captured()
@@ -127,9 +110,7 @@ export default class API {
         var url = '/api/player/meeting/'+id+'/';
         if (ev) url += ev + '/';
         url += 'captured/' + code;
-        //return customFetch(url, data);
-        // TODO add the challenge clue here
-        return fake({ 'status': 'connected', 'clue': '<strong>CLUE!</strong>' });
+        return customFetch(url, data);
     }
 
     //GET qrclue
@@ -138,8 +119,7 @@ export default class API {
         var url = '/api/player/meeting/'+id+'/';
         if (ev) url += ev + '/';
         url += 'qrclue/';
-        //return customFetch(url, data);
-        return fake({ 'status': 'waiting' });
+        return customFetch(url, data);
     }
 
     static allEvents() {
