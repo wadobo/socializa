@@ -55,13 +55,13 @@ export class EventRow extends React.Component {
     price = (ev) => {
         if (parseFloat(ev.price)) {
             return (
-                <div className="badge price">
+                <div className="badge price pull-right">
                     <i className="fa fa-money"></i> { parseFloat(ev.price) }
                 </div>
             )
         }
         return (
-            <div className="badge price free">
+            <div className="badge price free pull-right">
                 free
             </div>
         )
@@ -70,7 +70,7 @@ export class EventRow extends React.Component {
     maxp = (ev) => {
         if (parseInt(ev.max_players)) {
             return (
-                <div className="max badge">
+                <div className="max badge pull-right">
                     <i className="fa fa-users"></i> { ev.max_players }
                 </div>
             )
@@ -81,15 +81,15 @@ export class EventRow extends React.Component {
     joinButton = (ev) => {
         if (this.state.joined) {
             return (
-                <button onClick={ this.leave } className="btn btn-danger">
-                    Leave
+                <button onClick={ this.leave } className="btn btn-danger btn-circle">
+                    <i className="fa fa-sign-in"></i>
                 </button>
             )
         }
 
         return (
-            <button onClick={ this.join } className="btn btn-success">
-                Join
+            <button onClick={ this.join } className="btn btn-success btn-circle">
+                <i className="fa fa-sign-out"></i>
             </button>
         )
     }
@@ -101,31 +101,40 @@ export class EventRow extends React.Component {
 
         if (this.props.active && this.props.active.pk == ev.pk) {
             return (
-                <button onClick={ this.props.unplay } className="btn btn-primary">
-                    <i className="fa fa-close"></i> <i className="fa fa-gamepad"></i>
+                <button onClick={ this.props.unplay } className="btn btn-primary btn-circle pull-right">
+                    <i className="fa fa-gamepad"></i>
                 </button>
             )
         }
 
         return (
-            <button onClick={ this.props.play } className="btn btn-default">
+            <button onClick={ this.props.play } className="btn btn-default btn-circle pull-right">
                 <i className="fa fa-gamepad"></i>
             </button>
         )
     }
 
+    shortDesc() {
+        if (!this.props.expand && !this.state.expand) {
+            return (<p className="text-muted small">{ this.props.ev.game.name }</p>)
+        }
+
+        return (<div></div>);
+    }
+
+
     renderDesc() {
         if (!this.props.expand && !this.state.expand) {
-            return (<span></span>)
+            return (<div></div>);
         }
 
         return (
-            <div className="row"><div className="col-xs-12">
-            <div className="jumbotron">
-                <h2>{ this.props.ev.game.name }</h2>
-                <p>{ this.props.ev.game.desc }</p>
+            <div className="eventdesc">
+                <div className="jumbotron">
+                    <h2>{ this.props.ev.game.name }</h2>
+                    <p>{ this.props.ev.game.desc }</p>
+                </div>
             </div>
-            </div></div>
         );
     }
 
@@ -133,25 +142,34 @@ export class EventRow extends React.Component {
         return (
             <div className="event" onClick={ this.expand.bind(this) }>
                 <div className="row">
-                    <div className="col-xs-2">
+                    <div className="col-xs-1">
                         { this.joinButton(this.props.ev) }
                     </div>
-
-                    <div className="col-xs-6">
-                        <h2>{ this.props.ev.name }</h2>
-                        <div className="start label label-default">{ moment(this.props.ev.start_date).format('lll') }</div>
-                        <div className="end label label-danger">{ moment(this.props.ev.end_date).format('lll') }</div>
+                    <div className="col-xs-10">
+                        <div className="eventname">
+                            <h2>{ this.props.ev.name }</h2>
+                            { this.shortDesc() }
+                        </div>
                     </div>
-
-                    <div className="col-xs-2">
+                    <div className="col-xs-1">
                         { this.playButton(this.props.ev) }
                     </div>
                 </div>
+                <div className="row">
+                    <div className="col-xs-12">
+                        { this.renderDesc() }
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-xs-12">
+                        <div className="start label label-default">{ moment(this.props.ev.start_date).format('lll') }</div>
+                        <div className="end label label-danger">{ moment(this.props.ev.end_date).format('lll') }</div>
+                        { this.price(this.props.ev) }
+                        { this.maxp(this.props.ev) }
+                    </div>
+                </div>
 
-                { this.renderDesc() }
 
-                { this.price(this.props.ev) }
-                { this.maxp(this.props.ev) }
             </div>
         )
     }
@@ -207,7 +225,7 @@ export default class Events extends React.Component {
     render() {
         var self = this;
         return (
-            <div id="events" className="container">
+            <div id="events" className="container-fluid container-fw">
                 {this.state.events.map(function(ev, i){
                     function play(e) { self.play(e, ev); }
                     return <EventRow ev={ev} key={i}
