@@ -32,11 +32,15 @@ export default class NavBar extends React.Component {
             <div id="main-menu">
                 <div id="menu-bar">
                     <div id="menu-button" onClick={this.openmenu}>
-                        <i className="fa fa-fw fa-bars"></i>
+                        {this.state.open ? (
+                            <i className="fa fa-fw fa-close"></i>
+                        ) : (
+                            <i className="fa fa-fw fa-bars"></i>
+                        )}
                     </div>
                     <span className="socializa-title">{this.props.title}</span>
                 </div>
-                <div id="menu" className={ this.state.open ? "open" : "" }>
+                <div id="menu" onClick={ this.openmenu } className={ this.state.open ? "open" : "" }>
                   <ul>
                       { this.activeEvent() }
                       <li className={ act == 'map' ? "active" : "" }><Link to="/map"> <i className="fa fa-fw fa-map-marker"></i> map</Link></li>
