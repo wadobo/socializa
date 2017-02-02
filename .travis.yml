@@ -1,7 +1,16 @@
+dist: trusty
+sudo: required
+
 services:
   - postgresql
 addons:
-    postgresql: "9.4"
+    postgresql: "9.5"
+    apt:
+      packages:
+        - postgresql-9.5-postgis-2.3
+    sonarqube:
+        branches:
+          - master
 before_script:
   - psql -U postgres -c "create user socializa password 'socializa'"
   - psql -U postgres -c "create database test_socializa owner socializa"
@@ -14,6 +23,9 @@ install:
   - pip install coveralls
 script:
   - cd backend
-  - python manage.py test --keepdb
-  - coverage run --source='.' manage.py test --keepdb
+  - pylint -f parseable --ignore-patterns="env/" * | tee pylint.out
+  - coverage run --branch --source=. ./manage.py test --keepdb --with-xunit
+  - coverage xml
+  - cd ..
+  - sonar-scanner
 after_success: coveralls
