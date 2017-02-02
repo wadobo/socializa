@@ -8,7 +8,7 @@ from .serializers import ClueSerializer
 from game.models import Game
 
 
-def attachClue(player, event, main=False):
+def attach_clue(player, event, main=False):
     game = event.game
     challenges = game.challenges.all()
     challenges_attach = Clue.objects.filter(challenge__in=challenges, main=True).values_list('pk', flat=True)
@@ -20,7 +20,7 @@ def attachClue(player, event, main=False):
         clue.save()
 
 
-def detachClue(player, event, main=False):
+def detach_clue(player, event, main=False):
     game = event.game
     challenges = game.challenges.all()
     clue = Clue.objects.filter(player=player, challenge__in=challenges, main=True, event=event)

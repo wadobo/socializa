@@ -4,8 +4,8 @@ from rest_framework import status as rf_status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from clue.views import attachClue
-from clue.views import detachClue
+from clue.views import attach_clue
+from clue.views import detach_clue
 from .models import Event
 from .models import Membership
 from .serializers import EventSerializer
@@ -41,7 +41,7 @@ class JoinEvent(APIView):
         except:
             return Response("Event not exist", status=rf_status.HTTP_400_BAD_REQUEST)
         member, msg, status = create_member(player, event)
-        attachClue(player, event)
+        attach_clue(player, event)
         return Response(msg, status=status)
 
 
@@ -59,7 +59,7 @@ class UnjoinEvent(APIView):
             Membership.objects.get(player=player, event=event).delete()
         except ObjectDoesNotExist:
             return Response("You not join in this event.", status=rf_status.HTTP_400_BAD_REQUEST)
-        detachClue(player, event)
+        detach_clue(player, event)
         return Response("Unjoined correctly.", status=rf_status.HTTP_200_OK)
 
 
