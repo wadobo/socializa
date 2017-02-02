@@ -13,4 +13,4 @@ psycopg2==2.6.2
 pylint==1.6.5
 radon==1.4.2
 social-auth-app-django==1.0.1
-social-auth-core==1.0.1
+social-auth-core==1.1.0
