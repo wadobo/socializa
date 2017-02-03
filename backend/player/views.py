@@ -269,7 +269,12 @@ class Profile(APIView):
             p.about = data['about']
         if 'interests' in data:
             PlayerInterests.objects.filter(user=p).delete()
-            for i in data.getlist('interests'):
+            newints = []
+            if hasattr(data, 'getlist'):
+                newints = data.getlist('interests')
+            else:
+                newints = data.get('interests')
+            for i in newints:
                 p.interests.create(text=i)
 
         p.save()
