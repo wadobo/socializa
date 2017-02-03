@@ -161,4 +161,14 @@ export default class API {
         var data = JSONPost({ 'solution': solution });
         return customFetch('/api/event/solve/'+eventid+'/', data);
     }
+
+    static getProfile() {
+        var data = JSONGet();
+        return customFetch('/api/player/profile/', data);
+    }
+
+    static setProfile(data) {
+        var data = JSONPost(data);
+        return customFetch('/api/player/profile/', data);
+    }
 }

@@ -3,41 +3,61 @@ import { hashHistory } from 'react-router'
 import { Link } from 'react-router'
 
 import { setUser, user, logout } from './auth';
+import Loading from './loading';
+import API from './api';
 
 
 export default class Profile extends React.Component {
-    state = { user: user }
+    state = { user: user, player: null }
 
     componentDidMount() {
         this.props.setAppState({ title: 'Profile', active: 'profile' });
+        this.updateProfile();
+    }
+
+    updateProfile = () => {
+        var self = this;
+        API.getProfile()
+            .then(function(player) {
+                self.setState({ player: player });
+            });
     }
 
     save = (e) => {
-        // TODO update user info
+        var p = this.state.player;
+        API.setProfile(p)
+            .then(function() {
+                hashHistory.push('/map');
+            });
+
         setUser(this.state.user);
-        hashHistory.push('/map');
+        // this show loading
+        this.setState({player: null});
     }
 
     aboutChange = (e) => {
-        user.about = e.target.value;
-        this.setState({user: user});
+        var p = this.state.player;
+        p.about = e.target.value;
+        this.setState({player: p});
     }
 
     addInterest = (e) => {
-        if (user.interests == undefined) {
-            user.interests = [];
+        var p = this.state.player;
+        if (p.interests == undefined) {
+            p.interests = [];
         }
 
         var v = document.querySelector('#interest');
 
-        user.interests.push(v.value);
+        p.interests.push(v.value);
         v.value = '';
-        this.setState({user: user});
+        this.setState({player: p});
     }
 
     removeInterest = (i, e) => {
-        user.interests.splice(i, 1);
-        this.setState({user: user});
+        var p = this.state.player;
+        p.interests.splice(i, 1);
+        this.setState({player: p});
     }
 
     changePassword = (e) => {
@@ -55,10 +75,14 @@ export default class Profile extends React.Component {
     }
 
     render() {
+        if (!this.state.player) {
+            return <Loading />;
+        }
+
         return (
             <div id="profile" className="container">
                 <h3>About you</h3>
-                <textarea className="form-control" placeholder="about you" onChange={ this.aboutChange } value={ this.state.user.about }/>
+                <textarea className="form-control" placeholder="about you" onChange={ this.aboutChange } value={ this.state.player.about }/>
 
                 {/* interest */}
                 <h3>Interests</h3>
@@ -74,7 +98,7 @@ export default class Profile extends React.Component {
 
                 {/* interest tags */}
                 <div id="interests">
-                { this.state.user.interests.map((obj, i) => (
+                { this.state.player.interests.map((obj, i) => (
                     <span key={ obj } className="label label-danger">
                         { obj }
                         <i className="fa fa-times" onClick={ this.removeInterest.bind(this, i) }></i>
