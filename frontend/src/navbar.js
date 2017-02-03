@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router'
+import { hashHistory } from 'react-router'
 import { user, logout } from './auth';
 
 export default class NavBar extends React.Component {
