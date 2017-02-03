@@ -43,7 +43,7 @@ export default class Register extends React.Component {
 
                 <hr/>
 
-                <button className="btn btn-block btn-success" onClick={ this.register }>Register</button>
+                <button className="btn btn-fixed-bottom btn-success" onClick={ this.register }>Register</button>
             </div>
         );
     }

@@ -97,17 +97,17 @@ export default class Login extends React.Component {
 
                 <div className="social row text-center">
                     <div className="col-xs-4">
-                        <a href="#" className="btn btn-default">
+                        <a href="#" className="btn btn-primary btn-circle">
                             <i className="fa fa-facebook" aria-hidden="true"></i>
                         </a>
                     </div>
                     <div className="col-xs-4">
-                        <a href="#" className="btn btn-default">
+                        <a href="#" className="btn btn-info btn-circle">
                             <i className="fa fa-twitter" aria-hidden="true"></i>
                         </a>
                     </div>
                     <div className="col-xs-4">
-                        <a href={ guri } className="btn btn-default">
+                        <a href={ guri } className="btn btn-danger btn-circle">
                             <i className="fa fa-google-plus" aria-hidden="true"></i>
                         </a>
                     </div>
@@ -115,7 +115,7 @@ export default class Login extends React.Component {
 
                 <hr/>
 
-                <button className="btn btn-block btn-success" onClick={ this.login }>Login</button>
+                <button className="btn btn-fixed-bottom btn-success" onClick={ this.login }>Login</button>
             </div>
         );
     }
