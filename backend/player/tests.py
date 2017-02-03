@@ -85,6 +85,30 @@ class PlayerTestCase(APITestCase):
         response = self.c.post('/api/player/set-pos/', {'lat': '', 'lon': '37'})
         self.assertEqual(response.status_code, 400)
 
+    def test_profile(self):
+        response = self.c.authenticate(self.username, self.pwd)
+        self.assertEqual(response.status_code, 200)
+
+        interests = ['sports', 'books', 'music']
+        interests2 = ['music']
+        response = self.c.post('/api/player/profile/',
+            {'about': 'about me', 'interests': interests})
+        self.assertEqual(response.status_code, 200)
+
+        response = self.c.get('/api/player/profile/', {})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['about'], 'about me')
+        self.assertEqual(response.json()['interests'], interests)
+
+        response = self.c.post('/api/player/profile/',
+            {'interests': interests2})
+        self.assertEqual(response.status_code, 200)
+
+        response = self.c.get('/api/player/profile/', {})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['about'], 'about me')
+        self.assertEqual(response.json()['interests'], interests2)
+
 
 class MeetingTestCase(APITestCase):
     """

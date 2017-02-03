@@ -12,6 +12,7 @@ class Player(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="player")
     pos = models.PointField(null=True, blank=True)
     ia = models.BooleanField(default=False)
+    about = models.TextField(blank=True, null=True)
 
     def set_position(self, lon, lat):
         self.pos = GEOSGeometry('POINT({0} {1})'.format(lon, lat))
@@ -26,6 +27,15 @@ class Player(models.Model):
 
     def __str__(self):
         return self.user.username
+
+
+class PlayerInterests(models.Model):
+    user = models.ForeignKey(Player, related_name="interests")
+    text = models.CharField(max_length=100)
+
+    def __str__(self):
+        return "%s - %s" % (self.user, self.text)
+
 
 
 MEETING_STATUS = (

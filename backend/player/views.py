@@ -11,6 +11,7 @@ from clue.models import Clue
 from game.serializers import ChallengeSerializer
 from .models import Meeting
 from .models import Player
+from .models import PlayerInterests
 from .serializers import PlayerSerializer
 
 
@@ -246,3 +247,33 @@ class SetPosition(APIView):
         return Response("Position deleted", status=rf_status.HTTP_200_OK)
 
 set_position = SetPosition.as_view()
+
+
+class Profile(APIView):
+
+    def get(self, request):
+        if request.user.is_anonymous():
+            return Response("Anonymous user", status=rf_status.HTTP_401_UNAUTHORIZED)
+
+        p = request.user.player
+        serializer = PlayerSerializer(p, many=False)
+        return Response(serializer.data)
+
+    def post(self, request):
+        if request.user.is_anonymous():
+            return Response("Anonymous user", status=rf_status.HTTP_401_UNAUTHORIZED)
+        data = request.data
+        p = request.user.player
+
+        if 'about' in data:
+            p.about = data['about']
+        if 'interests' in data:
+            PlayerInterests.objects.filter(user=p).delete()
+            for i in data.getlist('interests'):
+                p.interests.create(text=i)
+
+        p.save()
+
+        return Response({'status': 'ok'})
+
+profile = Profile.as_view()
