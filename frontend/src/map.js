@@ -267,9 +267,9 @@ export default class Map extends React.Component {
                     () => {
                         switch (this.state.state) {
                             case 'started':
-                                return <button className="btn btn-block btn-danger" onClick={ this.stop }>Stop</button>
+                                return <button className="btn  btn-fixed-bottom btn-danger" onClick={ this.stop }>Stop</button>
                             default:
-                                return <button className="btn btn-block btn-success" onClick={ this.start }>Start</button>
+                                return <button className="btn btn-fixed-bottom btn-success" onClick={ this.start }>Start</button>
                         }
                     }
                 )()}
