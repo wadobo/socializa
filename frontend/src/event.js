@@ -146,7 +146,7 @@ export default class Event extends React.Component {
 
                 return (
                     <div className="event-desc">
-                        <EventRow ev={ev} expand={true} />
+                        <EventRow ev={ev} expand={true} hiddenbuttons={true}/>
 
                         <h2>Clues</h2>
 

@@ -53,6 +53,10 @@ export class EventRow extends React.Component {
     }
 
     price = (ev) => {
+        if (this.props.hiddenbuttons) {
+            return (<span></span>)
+        }
+
         if (parseFloat(ev.price)) {
             return (
                 <div className="badge price pull-right">
@@ -79,6 +83,10 @@ export class EventRow extends React.Component {
     }
 
     joinButton = (ev) => {
+        if (this.props.hiddenbuttons) {
+            return (<span></span>)
+        }
+
         if (this.state.joined) {
             return (
                 <button onClick={ this.leave } className="btn btn-danger btn-circle">
@@ -95,7 +103,7 @@ export class EventRow extends React.Component {
     }
 
     playButton = (ev) => {
-        if (!this.state.joined) {
+        if (!this.state.joined || this.props.hiddenbuttons) {
             return (<span></span>);
         }
 
