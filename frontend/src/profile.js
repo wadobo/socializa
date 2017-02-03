@@ -57,6 +57,7 @@ export default class Profile extends React.Component {
     render() {
         return (
             <div id="profile" className="container">
+                <h3>About you</h3>
                 <textarea className="form-control" placeholder="about you" onChange={ this.aboutChange } value={ this.state.user.about }/>
 
                 {/* interest */}
@@ -79,6 +80,7 @@ export default class Profile extends React.Component {
                         <i className="fa fa-times" onClick={ this.removeInterest.bind(this, i) }></i>
                     </span>
                 ))}
+                <div className="clearfix"></div>
                 </div>
 
                 {/* password change */}
@@ -98,7 +100,7 @@ export default class Profile extends React.Component {
 
                 <hr/>
 
-                <button className="btn btn-block btn-success" onClick={ this.save }>Save</button>
+                <button className="btn btn-fixed-bottom btn-success" onClick={ this.save }>Save</button>
             </div>
         );
     }
