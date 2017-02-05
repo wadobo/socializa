@@ -1,9 +1,9 @@
 from rest_framework.test import APITestCase
 
-from .models import Clue
 from event.models import Event
 from player.models import Player
 from player.test_client import JClient
+from .models import Clue
 
 
 class ClueTestCase(APITestCase):
@@ -22,7 +22,7 @@ class ClueTestCase(APITestCase):
     USER_CLUES = 2
 
     def setUp(self):
-        self.pwd = 'qweqweqwe' # USER_1
+        self.pwd = 'qweqweqwe'  # USER_1
         self.c = JClient()
         self.event = Event.objects.get(pk=self.EVENT_PK)
 
@@ -30,7 +30,8 @@ class ClueTestCase(APITestCase):
         self.c = None
         self.event.players.clear()
 
-    def get_username_by_player(self, pk):
+    @classmethod
+    def get_username_by_player(cls, pk):
         return Player.objects.get(pk=pk).user.username
 
     def test_get_my_clues(self):

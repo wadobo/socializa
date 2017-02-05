@@ -32,7 +32,8 @@ def create_member(player, event):
 
 class JoinEvent(APIView):
 
-    def post(self, request, event_id):
+    @classmethod
+    def post(cls, request, event_id):
         if request.user.is_anonymous():
             return Response("Anonymous user", status=rf_status.HTTP_401_UNAUTHORIZED)
         player = request.user.player
@@ -47,7 +48,8 @@ class JoinEvent(APIView):
 
 class UnjoinEvent(APIView):
 
-    def delete(self, request, event_id):
+    @classmethod
+    def delete(cls, request, event_id):
         if request.user.is_anonymous():
             return Response("Anonymous user", status=rf_status.HTTP_401_UNAUTHORIZED)
         player = request.user.player
@@ -65,7 +67,8 @@ class UnjoinEvent(APIView):
 
 class MyEvents(APIView):
 
-    def get(self, request):
+    @classmethod
+    def get(cls, request):
         if request.user.is_anonymous():
             return Response("Anonymous user", status=rf_status.HTTP_401_UNAUTHORIZED)
         events = request.user.player.event_set.all()
@@ -89,7 +92,8 @@ class AllEvents(APIView):
 
 class EventDetail(APIView):
 
-    def get(self, request, event_id):
+    @classmethod
+    def get(cls, request, event_id):
         """ Get the event by id. """
         if request.user.is_anonymous():
             return Response("Anonymous user", status=rf_status.HTTP_401_UNAUTHORIZED)

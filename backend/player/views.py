@@ -80,7 +80,8 @@ near = PlayersNear.as_view()
 
 class MeetingCreate(APIView):
 
-    def get_challenge(self, player, event):
+    @classmethod
+    def get_challenge(cls, player, event):
             clue = Clue.objects.filter(event=event, player=player, main=True).first()
             return clue.challenge if clue else None
 
@@ -227,7 +228,8 @@ meeting_create = MeetingCreate.as_view()
 
 class SetPosition(APIView):
 
-    def post(self, request):
+    @classmethod
+    def post(cls, request):
         if request.user.is_anonymous():
             return Response("Anonymous user", status=rf_status.HTTP_401_UNAUTHORIZED)
         player = request.user.player
@@ -239,7 +241,8 @@ class SetPosition(APIView):
             return Response("Invalid position", status=rf_status.HTTP_400_BAD_REQUEST)
         return Response("Position changed", status=rf_status.HTTP_200_OK)
 
-    def delete(self, request):
+    @classmethod
+    def delete(cls, request):
         if request.user.is_anonymous():
             return Response("Anonymous user", status=rf_status.HTTP_401_UNAUTHORIZED)
         player = request.user.player

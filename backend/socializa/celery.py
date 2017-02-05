@@ -22,7 +22,8 @@ app.autodiscover_tasks()
 class ManageIA(PeriodicTask):
     run_every = timedelta(seconds=10)
 
-    def run(self, **kwargs):
+    @classmethod
+    def run(cls, **kwargs):
         from event.tasks import manage_ia
         manage_ia()
 

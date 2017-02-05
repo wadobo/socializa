@@ -3,15 +3,16 @@ from rest_framework import status as rf_status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from game.models import Game
 from .models import Clue
 from .serializers import ClueSerializer
-from game.models import Game
 
 
 def attach_clue(player, event, main=False):
     game = event.game
     challenges = game.challenges.all()
-    challenges_attach = Clue.objects.filter(challenge__in=challenges, main=True).values_list('pk', flat=True)
+    challenges_attach = Clue.objects.filter(challenge__in=challenges,
+            main=True).values_list('pk', flat=True)
     challenges = game.challenges.exclude(pk__in=challenges_attach)
     avail_challenges = challenges.exclude(pk__in=challenges_attach)
 
@@ -30,7 +31,8 @@ def detach_clue(player, event, main=False):
 
 class MyClues(APIView):
 
-    def get(self, request, game_id):
+    @classmethod
+    def get(cls, request, game_id):
         if request.user.is_anonymous():
             return Response("Anonymous user", status=rf_status.HTTP_401_UNAUTHORIZED)
 
@@ -44,7 +46,8 @@ class MyClues(APIView):
 
 class SolveClue(APIView):
 
-    def post(self, request, clue_id):
+    @classmethod
+    def post(cls, request, clue_id):
         """ Try solve clue_id with solution. """
         if request.user.is_anonymous():
             return Response("Anonymous user", status=rf_status.HTTP_401_UNAUTHORIZED)

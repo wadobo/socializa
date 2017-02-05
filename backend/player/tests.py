@@ -124,10 +124,12 @@ class MeetingTestCase(APITestCase):
     def tearDown(self):
         self.c = None
 
-    def get_username(self, pk):
+    @classmethod
+    def get_username(cls, pk):
         return Player.objects.get(pk=pk).user.username
 
-    def get_challenge_from_player(self, pk, event=1):
+    @classmethod
+    def get_challenge_from_player(cls, pk, event=1):
         clue = Clue.objects.get(player=pk, main=True, event=event)
         return ChallengeSerializer(clue.challenge).data
 

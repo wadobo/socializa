@@ -37,7 +37,8 @@ class EventTestCase(APITestCase):
         self.c = None
         self.event.players.clear()
 
-    def get_username_by_player(self, pk):
+    @classmethod
+    def get_username_by_player(cls, pk):
         return Player.objects.get(pk=pk).user.username
 
     def test_join_an_event_unauthorized(self):
