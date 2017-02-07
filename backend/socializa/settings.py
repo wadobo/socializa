@@ -24,7 +24,7 @@ SECRET_KEY = 'gh)^9&mtcp($nlm-zvlnb(lpe+b8kgbk(l30@u%xdpk@w5@n%j'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-DEV = True
+DEV = False
 
 ALLOWED_HOSTS = []
 
