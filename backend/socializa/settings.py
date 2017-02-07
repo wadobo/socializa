@@ -24,6 +24,7 @@ SECRET_KEY = 'gh)^9&mtcp($nlm-zvlnb(lpe+b8kgbk(l30@u%xdpk@w5@n%j'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+DEV = True
 
 ALLOWED_HOSTS = []
 
@@ -157,6 +158,19 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+# Dev active
+
+if DEV:
+    MIDDLEWARE += ('silk.middleware.SilkyMiddleware',)
+    INSTALLED_APPS += ('silk',)
+    SILKY_PYTHON_PROFILER = True
+    SILKY_META = True
+    SILKY_DYNAMIC_PROFILING = [
+        {'module': 'player.views', 'function': 'PlayersNear.get', 'name': 'near players'},
+        {'module': 'player.views', 'function': 'MeetingCreate.post', 'name': 'meeting players'}
+    ]
 
 
 # SOCIAL AUTHENTICATION

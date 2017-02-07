@@ -13,6 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
+from django.conf import settings
 from django.conf.urls import url, include
 from django.contrib import admin
 from rest_framework.authtoken import views
@@ -31,3 +32,6 @@ urlpatterns = [
     url(r"^api/event/", include("event.urls")),
     url(r"^api/clue/", include("clue.urls"))
 ]
+
+if 'silk' in settings.INSTALLED_APPS:
+    urlpatterns += [url(r'^silk/', include('silk.urls', namespace='silk'))]
