@@ -1,2 +1,3 @@
 -r requirements.txt
 django-silk==0.7.1
+locustio==0.8a2
