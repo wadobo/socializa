@@ -234,6 +234,22 @@ export default class Events extends React.Component {
         var self = this;
         return (
             <div id="events" className="container-fluid container-fw">
+                <div className="search input-group">
+                    <input className="form-control search" id="search" placeholder="search"/>
+
+                    <div className="input-group-btn">
+                        <button type="button" className="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
+                          <i className="fa fa-sw fa-users"></i>
+                        </button>
+                        <button type="button" className="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
+                          <i className="fa fa-sw fa-gamepad"></i>
+                        </button>
+                        <button type="button" className="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
+                          <i className="fa fa-sw fa-money"></i>
+                        </button>
+                    </div>
+                </div>
+
                 {this.state.events.map(function(ev, i){
                     function play(e) { self.play(e, ev); }
                     return <EventRow ev={ev} key={i}
