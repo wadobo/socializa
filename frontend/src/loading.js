@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default class Event extends React.Component {
+export default class Loading extends React.Component {
     render() {
         return (
             <div className="loadingIcon">

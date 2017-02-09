@@ -4,6 +4,7 @@ import { Link } from 'react-router'
 
 import { storeUser, user, logout } from './auth';
 import API from './api';
+import Loading from './loading';
 import moment from 'moment';
 
 
@@ -185,7 +186,7 @@ export class EventRow extends React.Component {
 
 
 export default class Events extends React.Component {
-    state = { user: user, events: [], active: user.activeEvent }
+    state = { user: user, events: [], active: user.activeEvent, loadingMore: false, page: 0 }
 
     componentDidMount() {
         this.updateEvents();
@@ -197,6 +198,18 @@ export default class Events extends React.Component {
         API.allEvents()
             .then(function(events) {
                 self.setState({ events: events });
+            });
+    }
+
+    loadMore = () => {
+        var self = this;
+        this.setState({loadingMore: true});
+        this.state.page += 1;
+
+        API.allEvents(this.state.page)
+            .then(function(events) {
+                self.setState({ events: self.state.events.concat(events) });
+                self.setState({loadingMore: false});
             });
     }
 
@@ -230,8 +243,28 @@ export default class Events extends React.Component {
         this.retitle();
     }
 
-    render() {
+    renderEvents() {
         var self = this;
+        return (
+            <div>
+            { this.state.events.map(function(ev, i) {
+                function play(e) { self.play(e, ev); }
+                return <EventRow ev={ev} key={i}
+                                 active={self.state.active}
+                                 play={play.bind(self)}
+                                 unplay={self.unplay.bind(self)} />;
+            }) }
+
+            { this.state.loadingMore ?
+                <button className="btn btn-block btn-primary btn-disabled"> <i className="fa fa-cog fa-spin fa-fw"></i> </button>
+              :
+                <button className="btn btn-block btn-primary" onClick={ this.loadMore }>Load More</button>
+            }
+            </div>
+        )
+    }
+
+    render() {
         return (
             <div id="events" className="container-fluid container-fw">
                 <div className="search input-group">
@@ -250,13 +283,7 @@ export default class Events extends React.Component {
                     </div>
                 </div>
 
-                {this.state.events.map(function(ev, i){
-                    function play(e) { self.play(e, ev); }
-                    return <EventRow ev={ev} key={i}
-                                     active={self.state.active}
-                                     play={play.bind(self)}
-                                     unplay={self.unplay.bind(self)} />;
-                 })}
+                { this.state.events.length ? this.renderEvents() : <Loading /> }
             </div>
         );
     }
