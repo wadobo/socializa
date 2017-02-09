@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
 from rest_framework import status as rf_status
@@ -83,8 +84,18 @@ class AllEvents(APIView):
         """ Get all new event from now to infinite. """
         if request.user.is_anonymous():
             return Response("Anonymous user", status=rf_status.HTTP_401_UNAUTHORIZED)
+
         events = Event.objects.filter(end_date__gt=timezone.now())
-        events = events.order_by('-pk')
+        events = events.order_by('-start_date', '-pk')
+
+        try:
+            page = int(request.GET.get('page', 0))
+        except ValueError:
+            page = 0
+        pagination = settings.DEFAULT_PAGINATION
+        offset = pagination * page
+        events = events[offset:offset + pagination]
+
         serializer = EventSerializer(events, many=True, context={'player': request.user.player})
         data = serializer.data
         return Response(data)

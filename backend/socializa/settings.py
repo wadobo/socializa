@@ -261,6 +261,8 @@ DEFAULT_VISION_DISTANCE = 1000 # m
 DEFAULT_MEETING_DISTANCE = 10 # m
 QR_LENGTH = 16
 
+DEFAULT_PAGINATION = 20
+
 try:
     from local_settings import *
 except:
