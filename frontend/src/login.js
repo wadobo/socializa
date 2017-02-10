@@ -5,8 +5,11 @@ import $ from 'jquery';
 import API from './api';
 import { login } from './auth';
 
+import { translate, Interpolate } from 'react-i18next';
+import i18n from './i18n';
 
-export default class Login extends React.Component {
+
+class Login extends React.Component {
     constructor(props) {
         super(props);
     }
@@ -72,6 +75,8 @@ export default class Login extends React.Component {
     }
 
     render() {
+        const { t } = this.props;
+
         let redirect = encodeURIComponent('https://socializa.wadobo.com/oauth2callback/');
         let gapp = this.state.gapp;
 
@@ -87,11 +92,11 @@ export default class Login extends React.Component {
                 </div>
 
                 <form className="form">
-                        <input className="form-control" type="email" id="email" name="email" placeholder="email" value={ this.state.email } onChange={ this.emailChange }/>
-                        <input className="form-control" type="password" id="password" name="password" placeholder="password" value={ this.state.password } onChange={ this.passChange }/>
+                        <input className="form-control" type="email" id="email" name="email" placeholder={t('login:email')} value={ this.state.email } onChange={ this.emailChange }/>
+                        <input className="form-control" type="password" id="password" name="password" placeholder={t('login:password')} value={ this.state.password } onChange={ this.passChange }/>
                 </form>
 
-                <Link to="/register">New account</Link>
+                <Link to="/register">{t('login:New account')}</Link>
 
                 <hr/>
 
@@ -115,8 +120,10 @@ export default class Login extends React.Component {
 
                 <hr/>
 
-                <button className="btn btn-fixed-bottom btn-success" onClick={ this.login }>Login</button>
+                <button className="btn btn-fixed-bottom btn-success" onClick={ this.login }>{t('login:Login')}</button>
             </div>
         );
     }
 }
+
+export default translate(['login'], { wait: true })(Login);

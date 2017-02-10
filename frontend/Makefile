@@ -12,5 +12,8 @@ web: clean
 app: clean
 	NODE_ENV=production ./node_modules/.bin/gulp deploy --app
 
+extract:
+	./node_modules/.bin/gulp i18next
+
 clean:
 	rm -rf build dist

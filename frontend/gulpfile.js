@@ -122,6 +122,7 @@ var copyFilesTask = function (options) {
   gulp.src(["js/*"]).pipe(copy(dest, {prefix: 0}));
   gulp.src(["images/*"]).pipe(copy(dest, {prefix: 0}));
   gulp.src(["manifest.json"]).pipe(copy(dest, {prefix: 0}));
+  gulp.src(["locales/**/*.json"]).pipe(copy(dest, {prefix: 0}));
 }
 
 var htmlReplaceTask = function (options) {
@@ -195,4 +196,28 @@ gulp.task('deploy', function () {
     build: build,
     dest: './dist'
   });
+});
+
+var gulp = require('gulp');
+var sort = require('gulp-sort');
+var scanner = require('i18next-scanner');
+
+gulp.task('i18next', function() {
+    return gulp.src(['src/*.js'])
+        .pipe(sort()) // Sort files in stream by path
+        .pipe(scanner({
+            lngs: ['en', 'es'], // supported languages
+            func: {
+                list: ['i18next.t', 'i18n.t', 't'],
+            },
+            ns: ['login', 'common'],
+            resource: {
+                // the source path is relative to current working directory
+                loadPath: 'locales/{{lng}}/{{ns}}.json',
+
+                // the destination path is relative to your `gulp.dest()` path
+                savePath: '{{lng}}/{{ns}}.json'
+            }
+        }))
+        .pipe(gulp.dest('locales'));
 });
