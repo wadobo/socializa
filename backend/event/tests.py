@@ -163,6 +163,31 @@ class EventTestCase(APITestCase):
         self.assertEqual(len(response.json()), 15)
         self.assertEqual(response.json()[0]['name'], 'test-14')
 
+    def test_get_all_events_search(self):
+        response = self.c.authenticate('test5', self.pwd)
+        self.assertEqual(response.status_code, 200)
+
+        response = self.c.get('/api/event/all/', {})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json()), 0)
+
+        # Adding a lot of events
+        evs = []
+        for i in range(35):
+            ev = Event(name="test-%s" % i, game=self.event.game)
+            ev.start_date = timezone.now() + timezone.timedelta(days=1+i)
+            ev.end_date = timezone.now() + timezone.timedelta(days=2+i)
+            ev.save()
+            evs.append(ev.pk)
+
+        response = self.c.get('/api/event/all/?q=test-0', {})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()[0]['name'], 'test-0')
+
+        response = self.c.get('/api/event/all/?q=test-38', {})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json()), 0)
+
     def test_get_event_detail(self):
         response = self.c.authenticate('test5', self.pwd)
         self.assertEqual(response.status_code, 200)

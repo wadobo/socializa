@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
+from django.db.models import Q
 from rest_framework import status as rf_status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -86,6 +87,13 @@ class AllEvents(APIView):
             return Response("Anonymous user", status=rf_status.HTTP_401_UNAUTHORIZED)
 
         events = Event.objects.filter(end_date__gt=timezone.now())
+
+        q = request.GET.get('q', '')
+        if q:
+            query = (Q(name__icontains=q) | Q(place__icontains=q) |
+                     Q(game__name__icontains=q) | Q(game__desc__icontains=q))
+            events = events.filter(query)
+
         events = events.order_by('-start_date', '-pk')
 
         try:
