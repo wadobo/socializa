@@ -186,7 +186,14 @@ export class EventRow extends React.Component {
 
 
 export default class Events extends React.Component {
-    state = { user: user, events: [], active: user.activeEvent, loadingMore: false, page: 0 }
+    state = {
+        user: user,
+        events: null,
+        active: user.activeEvent,
+        loadingMore: false,
+        q: null,
+        page: 0
+    }
 
     componentDidMount() {
         this.updateEvents();
@@ -195,7 +202,8 @@ export default class Events extends React.Component {
 
     updateEvents = () => {
         var self = this;
-        API.allEvents()
+        this.setState({ events: null });
+        API.allEvents(this.state.q)
             .then(function(events) {
                 self.setState({ events: events });
             });
@@ -206,7 +214,13 @@ export default class Events extends React.Component {
         this.setState({loadingMore: true});
         this.state.page += 1;
 
-        API.allEvents(this.state.page)
+        var q = {
+            page: this.state.page
+        };
+
+        if (this.state.q) $.extend(q, this.state.q);
+
+        API.allEvents(q)
             .then(function(events) {
                 self.setState({ events: self.state.events.concat(events) });
                 self.setState({loadingMore: false});
@@ -243,6 +257,12 @@ export default class Events extends React.Component {
         this.retitle();
     }
 
+    searchChange = (e) => {
+        var q = this.state.q || {};
+        q.q = e.target.value;
+        this.setState({q: q});
+    }
+
     renderEvents() {
         var self = this;
         return (
@@ -254,6 +274,8 @@ export default class Events extends React.Component {
                                  play={play.bind(self)}
                                  unplay={self.unplay.bind(self)} />;
             }) }
+
+            { this.state.events.length ? <span></span> : <div className="jumbotron">There's no events :(</div> }
 
             { this.state.loadingMore ?
                 <button className="btn btn-block btn-primary btn-disabled"> <i className="fa fa-cog fa-spin fa-fw"></i> </button>
@@ -268,22 +290,25 @@ export default class Events extends React.Component {
         return (
             <div id="events" className="container-fluid container-fw">
                 <div className="search input-group">
-                    <input className="form-control search" id="search" placeholder="search"/>
+                    <input className="form-control search" id="search" placeholder="search" onChange={ this.searchChange }/>
 
                     <div className="input-group-btn">
-                        <button type="button" className="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
+                        <button type="button" className="btn btn-default" data-toggle="button" aria-pressed="false" autocomplete="off">
                           <i className="fa fa-sw fa-users"></i>
                         </button>
-                        <button type="button" className="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
+                        <button type="button" className="btn btn-default" data-toggle="button" aria-pressed="false" autocomplete="off">
                           <i className="fa fa-sw fa-gamepad"></i>
                         </button>
-                        <button type="button" className="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
+                        <button type="button" className="btn btn-default" data-toggle="button" aria-pressed="false" autocomplete="off">
                           <i className="fa fa-sw fa-money"></i>
+                        </button>
+                        <button type="button" onClick={ this.updateEvents } className="btn btn-success">
+                          <i className="fa fa-sw fa-search"></i>
                         </button>
                     </div>
                 </div>
 
-                { this.state.events.length ? this.renderEvents() : <Loading /> }
+                { this.state.events ? this.renderEvents() : <Loading /> }
             </div>
         );
     }

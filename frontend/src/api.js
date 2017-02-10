@@ -122,11 +122,11 @@ export default class API {
         return customFetch(url, data);
     }
 
-    static allEvents(page) {
+    static allEvents(q) {
         var data = JSONGet();
         var url = '/api/event/all/';
-        if (page) {
-            url += '?page='+page;
+        if (q) {
+            url += '?' + $.param(q);
         }
         return customFetch(url, data);
     }
