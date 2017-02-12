@@ -248,7 +248,18 @@ SOCIAL_AUTH_FACEBOOK_SECRET = 'update me'
 SWAGGER_SETTINGS = {
         'DOC_EXPANSION': 'list',
         'APIS_SORTER': 'alpha',
+        'JSON_EDITOR': True,
         'OPERATIONS_SORTER': 'alpha',
+        'USE_SESSION_AUTH': False,
+        'SHOW_REQUEST_HEADERS': True,
+        'SECURITY_DEFINITIONS': {
+            'token': {
+                'type': 'apiKey',
+                'name': 'authorization',
+                'description': 'The valid api_key should be: "Token xxxxxxxxxxx"',
+                'in': 'header'
+            },
+        },
 }
 
 # For celery

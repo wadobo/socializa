@@ -17,9 +17,12 @@ from django.conf import settings
 from django.conf.urls import url, include
 from django.contrib import admin
 from rest_framework.authtoken import views
+from rest_framework_swagger.views import get_swagger_view
 
-from .views import schema_view
 from .views import oauth2callback, oauth2apps
+
+
+schema_view = get_swagger_view(title="Socializa API")
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
