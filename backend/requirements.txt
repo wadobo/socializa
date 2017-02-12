@@ -8,9 +8,9 @@ django-nose==1.4.4
 django-rest-framework-social-oauth2==1.0.5
 django-rest-swagger==2.1.1
 django==1.10.5
-djangorestframework==3.5.3
+djangorestframework==3.5.4
 psycopg2==2.6.2
 pylint==1.6.5
 radon==1.4.2
-social-auth-app-django==1.0.1
-social-auth-core==1.1.0
+social-auth-app-django==1.1.0
+social-auth-core==1.2.0
