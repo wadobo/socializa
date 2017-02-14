@@ -164,13 +164,17 @@ STATIC_URL = '/static/'
 
 if DEV:
     MIDDLEWARE += ('silk.middleware.SilkyMiddleware',)
-    INSTALLED_APPS += ('silk',)
+    INSTALLED_APPS += ('silk', 'django_extensions')
     SILKY_PYTHON_PROFILER = True
     SILKY_META = True
     SILKY_DYNAMIC_PROFILING = [
         {'module': 'player.views', 'function': 'PlayersNear.get', 'name': 'near players'},
         {'module': 'player.views', 'function': 'MeetingCreate.post', 'name': 'meeting players'}
     ]
+    GRAPH_MODELS = {
+        'all_applications': False,
+        'group_models': True,
+    }
 
 
 # SOCIAL AUTHENTICATION

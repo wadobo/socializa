@@ -7,13 +7,11 @@
 
 3. Create a postgis database. With postgres user
 
-```
     $ psql -c "create user socializa password 'socializa'"
     $ psql -c "create database socializa owner socializa"
     $ psql -d socializa -c "create extension postgis"
     $ psql -c "create database test_socializa owner socializa" # test db
     $ psql -d test_socializa -c "create extension postgis" # test db
-```
 
 # Others dependencies and problems
 
@@ -39,3 +37,12 @@
 # Permit login with social networks
 
 http://python-social-auth.readthedocs.io/en/latest/backends/index.html
+
+
+# Generate graphical overview of your project or specified apps
+
+    $ pip install -r requirements-dev.txt
+    $ vim socializa/settings.py # change DEV to True
+    $ ./manage.py graph_models --pydot event game clue player -g -o output.png  # selected apps
+    $ # OR
+    $ ./manage.py graph_models --pydot -a -g -o output.png  # all apps
