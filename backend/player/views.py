@@ -81,10 +81,14 @@ near = PlayersNear.as_view()
 
 class MeetingCreate(APIView):
 
+    def create_clue(self, challenge):
+        clue = Clue(player=self.player1, event=self.event, challenge=challenge)
+        clue.save()
+
     @classmethod
     def get_challenge(cls, player, event):
-            clue = Clue.objects.filter(event=event, player=player, main=True).first()
-            return clue.challenge if clue else None
+        clue = Clue.objects.filter(event=event, player=player, main=True).first()
+        return clue.challenge if clue else None
 
     def validate_players(self, request, player_id):
         response = {}
@@ -167,6 +171,7 @@ class MeetingCreate(APIView):
                 meeting = create_meeting(self.player1, self.player2, event_id)
                 status = rf_status.HTTP_201_CREATED
                 challenge = self.get_challenge(self.player2, self.event)
+                self.create_clue(challenge)
                 response['status'] = meeting.status
                 response['clue'] = ChallengeSerializer(challenge).data
             elif not meeting1 and not meeting2:  # STEP1: player1 not connect with player2 or vice versa
@@ -188,6 +193,7 @@ class MeetingCreate(APIView):
                 meeting.save()
                 status = rf_status.HTTP_200_OK
                 challenge = self.get_challenge(self.player2, self.event)
+                self.create_clue(challenge)
                 response['status'] = meeting.status
                 response['clue'] = ChallengeSerializer(challenge).data
             else:
@@ -217,6 +223,7 @@ class MeetingCreate(APIView):
             status = rf_status.HTTP_400_BAD_REQUEST
         elif meeting.status == 'connected':
             challenge = self.get_challenge(self.player2, self.event)
+            self.create_clue(challenge)
             response['status'] = meeting.status
             response['clue'] = ChallengeSerializer(challenge).data
         elif meeting.status == 'step2':
