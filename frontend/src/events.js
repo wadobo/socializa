@@ -293,15 +293,6 @@ export default class Events extends React.Component {
                     <input className="form-control search" id="search" placeholder="search" onChange={ this.searchChange }/>
 
                     <div className="input-group-btn">
-                        <button type="button" className="btn btn-default" data-toggle="button" aria-pressed="false" autocomplete="off">
-                          <i className="fa fa-sw fa-users"></i>
-                        </button>
-                        <button type="button" className="btn btn-default" data-toggle="button" aria-pressed="false" autocomplete="off">
-                          <i className="fa fa-sw fa-gamepad"></i>
-                        </button>
-                        <button type="button" className="btn btn-default" data-toggle="button" aria-pressed="false" autocomplete="off">
-                          <i className="fa fa-sw fa-money"></i>
-                        </button>
                         <button type="button" onClick={ this.updateEvents } className="btn btn-success">
                           <i className="fa fa-sw fa-search"></i>
                         </button>

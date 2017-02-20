@@ -213,16 +213,14 @@ export default class Map extends React.Component {
         var self = this;
         window.scanQR(function(resp) {
             self.capturedQR.bind(self)(id, ev, resp);
-        });
+        }, function(err) { });
     }
 
     connectPlayer = (id, ev=null) => {
         var self = this;
         ev = ev ? ev.pk : ev;
-        console.log("connect player", id);
         API.connectPlayer(id, ev)
             .then(function(resp) {
-                console.log(resp);
                 switch (resp.status) {
                     case 'connected':
                         self.connected(resp.clue);

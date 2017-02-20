@@ -12,13 +12,21 @@ body { padding-top: 50px; }
     left: 0;
     right:0;
     bottom: 0;
-    z-index: 1000;
+    z-index: 9999;
     display: none;
     padding-top: 70px;
 }
 
 #overlay.open {
     display: block;
+}
+
+#overlay .close {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    width: 40px;
+    height: 40px;
 }
 
 #qr-video {
