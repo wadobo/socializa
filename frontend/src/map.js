@@ -167,6 +167,7 @@ export default class Map extends React.Component {
 
     connected = (resp) => {
         alert("Connected: " + resp);
+        //TODO redirect to event if you are in an event
     }
 
     capturedQR = (id, ev, resp) => {
@@ -193,7 +194,7 @@ export default class Map extends React.Component {
                     self.connected(resp.clue);
                 }
             })
-            .fail(function(err) {
+            .catch(function(err) {
                 alert("error polling!");
             });
     }
@@ -207,6 +208,10 @@ export default class Map extends React.Component {
         this.qrcodeTimer = setTimeout(function() {
             self.qrcodePolling.bind(self)(id, ev);
         }, 500);
+    }
+
+    startState = (e) => {
+        this.setState({ state: 'started' });
     }
 
     showCamera = (id, ev) => {
@@ -230,6 +235,9 @@ export default class Map extends React.Component {
                         break;
                     case 'step2':
                         self.showQRCode(id, ev, resp.secret);
+                        break;
+                    default:
+                        alert("too far, get near");
                         break;
                 }
             });
