@@ -163,7 +163,7 @@ class MeetingCreate(APIView):
             # Check step
             query = Q(event_id__isnull=True) if event_id is None else Q(event_id=event_id)
             query1 = query & Q(player1=self.player1, player2=self.player2)
-            query2 = query & Q(player1=self.player2, player2=self.player1, status='step1')
+            query2 = query & Q(player1=self.player2, player2=self.player1)
             meeting1 = Meeting.objects.filter(query1).first()
             meeting2 = Meeting.objects.filter(query2).first()
 
@@ -176,11 +176,13 @@ class MeetingCreate(APIView):
                 response['clue'] = ChallengeSerializer(challenge).data
             elif not meeting1 and not meeting2:  # STEP1: player1 not connect with player2 or vice versa
                 meeting = create_meeting(self.player1, self.player2, event_id)
-                response['status'] = meeting.status
+                response['status'] = 'step1'
                 status = rf_status.HTTP_201_CREATED
+            elif meeting1:
+                response['status'] = 'step1'
             elif meeting2:  # STEP2: player1 has created meeting with status step1
                 meeting2.generate_secret()
-                response['status'] = meeting2.status
+                response['status'] = 'step2'
                 response['secret'] = meeting2.secret
             else:
                 response['status'] = 'already connected'

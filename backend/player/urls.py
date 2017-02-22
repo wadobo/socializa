@@ -13,6 +13,8 @@ urlpatterns = [
             views.meeting_create, name="meeting_captured"),
     url(r'^meeting/(?P<player_id>\d+)/(?P<event_id>\d+)/qrclue/$',
             views.meeting_create, name="meeting_qrclue"),
+    url(r'^meeting/(?P<player_id>\d+)/qrclue/$',
+            views.meeting_create, name="meeting_qrclue_noevent"),
     url(r'^set-pos/$', views.set_position, name="set_position"),
     url(r'^profile/$', views.profile, name="profile"),
 ]
