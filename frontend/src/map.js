@@ -18,10 +18,18 @@ export default class Map extends React.Component {
       }
       this.props.setAppState({ 'title': title, 'active': 'map' });
 
+      window.addEventListener("resize", this.updateDimensions.bind(this));
+    }
+
+    componentDidUpdate() {
       this.view = new ol.View({
-        center: ol.proj.fromLonLat([37.41, 8.82]),
+        center: ol.proj.fromLonLat([-5.9866369, 37.3580539]),
         zoom: 12
       });
+
+      if (this.map) {
+        this.map.setTarget(null);
+      }
 
       this.map = new ol.Map({
         target: 'socializa-map',
@@ -34,9 +42,14 @@ export default class Map extends React.Component {
       });
 
       this.startGeolocation();
+      this.updateDimensions();
+    }
 
-      $('canvas').height($(window).height() - 120);
-      this.map.updateSize();
+    updateDimensions() {
+        if (this.state.state != 'qrcode') {
+            $('canvas').height($(window).height() - 120);
+            this.map.updateSize();
+        }
     }
 
     componentWillUnmount() {
@@ -44,6 +57,8 @@ export default class Map extends React.Component {
         this.geolocation.setTracking(false);
         clearTimeout(this.updateTimer);
         clearTimeout(this.qrcodeTimer);
+
+        window.removeEventListener("resize", this.updateDimensions.bind(this));
     }
 
     startGeolocation() {
@@ -110,29 +125,48 @@ export default class Map extends React.Component {
         source: this.playerList
       });
 
+      if (!document.getElementById('popup')) {
+        $("body").append('<div id="popup"></div>');
+      }
+      // starting tracking
+      if (this.state.state == 'started') {
+        this.geolocation.setTracking(true);
+        this.view.setZoom(18);
+
+        this.popup = new ol.Overlay({
+            element: document.getElementById('popup'),
+            positining: 'bottom-center',
+            stopEvent: false
+        });
+        this.map.addOverlay(this.popup);
+        clearTimeout(this.updateTimer);
+        this.updateTimer = setTimeout(this.updatePlayers.bind(this), 500);
+      }
+
       var select = new ol.interaction.Select();
       var self = this;
       map.addInteraction(select);
       select.on('select', function(e) {
-            var f = e.target.getFeatures();
-            var element = document.getElementById('popup');
-            if (f.getLength()) {
-                self.popup.setPosition(f.getArray()[0].customData.coords);
-                var id = f.getArray()[0].customData.id;
-                var content = $('<button class="btn btn-primary">Connect</button>');
-                content.click(function() {
-                    self.connectPlayer(id, user.activeEvent);
-                });
+          var f = e.target.getFeatures();
 
-                $(element).popover({
-                    'placement': 'top',
-                    'html': true,
-                    'content': content
-                });
-                $(element).popover("show");
-            } else {
-                $(element).popover("hide");
-            }
+          var element = document.getElementById('popup');
+          if (f.getLength()) {
+              self.popup.setPosition(f.getArray()[0].customData.coords);
+              var id = f.getArray()[0].customData.id;
+              var content = $('<button class="btn btn-primary">Connect</button>');
+              content.click(function() {
+                  self.connectPlayer(id, user.activeEvent);
+              });
+
+              $(element).popover({
+                  'placement': 'top',
+                  'html': true,
+                  'content': content
+              });
+              $(element).popover("show");
+          } else {
+              $(element).popover("hide");
+          }
       });
     }
 
@@ -244,17 +278,7 @@ export default class Map extends React.Component {
     }
 
     start = (e) => {
-        this.geolocation.setTracking(true);
-        this.view.setZoom(18);
         this.setState({ state: 'started' });
-        this.popup = new ol.Overlay({
-            element: document.getElementById('popup'),
-            positining: 'bottom-center',
-            stopEvent: false
-        });
-        this.map.addOverlay(this.popup);
-        clearTimeout(this.updateTimer);
-        this.updateTimer = setTimeout(this.updatePlayers.bind(this), 500);
     }
 
     stop = (e) => {
@@ -266,7 +290,6 @@ export default class Map extends React.Component {
         return (
             <div>
                 <div id="socializa-map">
-                    <div id="popup"></div>
                 </div>
 
                 {(
@@ -279,7 +302,6 @@ export default class Map extends React.Component {
                         }
                     }
                 )()}
-
             </div>
         );
     }
@@ -288,6 +310,7 @@ export default class Map extends React.Component {
         return (
             <div id="qrcode">
                 <QRCode value={ this.state.code } size={ this.state.qrsize } />
+                <div className="closebtn" onClick={ this.startState }><i className="fa fa-close"></i></div>
             </div>
         )
     }
