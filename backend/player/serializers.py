@@ -9,10 +9,14 @@ class PlayerSerializer(serializers.Serializer):
     ia = serializers.BooleanField()
     about = serializers.CharField()
     interests = serializers.SerializerMethodField('player_interests')
+    username = serializers.SerializerMethodField('player_username')
 
     def player_interests(self, player):
         interests = [i.text for i in player.interests.all()]
         return interests
+
+    def player_username(self, player):
+        return player.user.username
 
     class Meta:
         model = User
