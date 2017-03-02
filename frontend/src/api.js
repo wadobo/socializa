@@ -109,7 +109,7 @@ export default class API {
         var data = JSONPost({});
         var url = '/api/player/meeting/'+id+'/';
         if (ev) url += ev + '/';
-        url += 'captured/' + code;
+        url += 'captured/' + code + '/';
         return customFetch(url, data);
     }
 
