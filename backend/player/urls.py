@@ -11,6 +11,8 @@ urlpatterns = [
             views.meeting_create, name="meeting_create"),
     url(r'^meeting/(?P<player_id>\d+)/(?P<event_id>\d+)/captured/(?P<secret>\w+)/$',
             views.meeting_create, name="meeting_captured"),
+    url(r'^meeting/(?P<player_id>\d+)/captured/(?P<secret>\w+)/$',
+            views.meeting_create, name="meeting_captured_noevent"),
     url(r'^meeting/(?P<player_id>\d+)/(?P<event_id>\d+)/qrclue/$',
             views.meeting_create, name="meeting_qrclue"),
     url(r'^meeting/(?P<player_id>\d+)/qrclue/$',
