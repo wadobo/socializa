@@ -19,6 +19,7 @@ export default class Map extends React.Component {
       this.props.setAppState({ 'title': title, 'active': 'map' });
 
       window.addEventListener("resize", this.updateDimensions.bind(this));
+      document.addEventListener("pause", this.stop.bind(this), false);
     }
 
     componentDidUpdate() {
@@ -53,6 +54,7 @@ export default class Map extends React.Component {
     }
 
     componentWillUnmount() {
+        document.removeEventListener("pause", this.stop.bind(this));
         this.setState({ state: 'stopped' });
 
         if (this.watchID) {
