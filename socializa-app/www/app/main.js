@@ -6643,11 +6643,12 @@ var Map = function (_React$Component) {
             data.forEach(function (p) {
                 var playerFeature = new _openlayers2.default.Feature();
                 playerFeature.setStyle(new _openlayers2.default.style.Style({
-                    image: new _openlayers2.default.style.Icon({ src: 'app/images/geo2.svg' })
+                    image: new _openlayers2.default.style.Icon({ src: 'app/images/geo2.svg' }),
+                    zIndex: 100
                 }));
                 var coords = [parseFloat(p.pos.longitude), parseFloat(p.pos.latitude)];
                 var point = new _openlayers2.default.proj.transform([coords[0], coords[1]], 'EPSG:4326', 'EPSG:3857');
-                playerFeature.customData = { id: p.pk, coords: point };
+                playerFeature.customData = { id: p.pk, coords: point, name: p.username };
                 playerFeature.setGeometry(new _openlayers2.default.geom.Point(_openlayers2.default.proj.fromLonLat(coords)));
 
                 pl.playerList.addFeature(playerFeature);
@@ -6852,7 +6853,8 @@ var Map = function (_React$Component) {
 
             var positionFeature = new _openlayers2.default.Feature();
             positionFeature.setStyle(new _openlayers2.default.style.Style({
-                image: new _openlayers2.default.style.Icon({ src: 'app/images/geo1.svg' })
+                image: new _openlayers2.default.style.Icon({ src: 'app/images/geo1.svg' }),
+                zIndex: 10
             }));
             positionFeature.customData = { name: 'me' };
 
@@ -6904,9 +6906,16 @@ var Map = function (_React$Component) {
 
                 var element = document.getElementById('popup');
                 if (f.getLength()) {
-                    self.popup.setPosition(f.getArray()[0].customData.coords);
-                    var id = f.getArray()[0].customData.id;
-                    var content = $('<button class="btn btn-primary">Connect</button>');
+                    var i = 0;
+                    var feature = f.getArray()[i];
+                    while (feature.customData.name == 'me') {
+                        i += 1;
+                        feature = f.getArray()[i];
+                    }
+
+                    self.popup.setPosition(feature.customData.coords);
+                    var id = feature.customData.id;
+                    var content = $('<center>' + feature.customData.name + '<center><br/><button class="btn btn-primary">Connect</button>');
                     content.click(function () {
                         self.connectPlayer(id, _auth.user.activeEvent);
                     });
