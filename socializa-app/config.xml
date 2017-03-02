@@ -2,10 +2,10 @@
 <widget id="com.wadobo.socializa" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
     <name>Socializa</name>
     <description>
-        Hello World sample application that responds to the deviceready event.
+        A puzzle game that uses your geolocation to tell you a story
     </description>
-    <author email="support@phonegap.com" href="http://phonegap.com">
-        PhoneGap Team
+    <author email="info@wadobo.com" href="http://wadobo.com">
+        Wadobo Team
     </author>
     <content src="index.html" />
     <preference name="DisallowOverscroll" value="true" />
