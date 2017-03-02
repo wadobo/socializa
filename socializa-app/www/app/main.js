@@ -6897,6 +6897,7 @@ var Map = function (_React$Component) {
                 var f = e.target.getFeatures();
 
                 var element = document.getElementById('popup');
+
                 if (f.getLength()) {
                     var i = 0;
                     var feature = f.getArray()[i];
@@ -6912,14 +6913,18 @@ var Map = function (_React$Component) {
                         self.connectPlayer(id, _auth.user.activeEvent);
                     });
 
-                    $(element).popover({
-                        'placement': 'top',
-                        'html': true,
-                        'content': content
-                    });
-                    $(element).popover("show");
-                } else {
-                    $(element).popover("hide");
+                    try {
+                        $(element).popover('destroy');
+                    } catch (err) {}
+
+                    setTimeout(function () {
+                        $(element).popover({
+                            'placement': 'top',
+                            'html': true,
+                            'content': content
+                        });
+                        $(element).popover("show");
+                    }, 200);
                 }
             });
         }
