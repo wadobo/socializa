@@ -54,61 +54,45 @@ export default class Map extends React.Component {
 
     componentWillUnmount() {
         this.setState({ state: 'stopped' });
-        this.geolocation.setTracking(false);
+
+        if (this.watchID) {
+            navigator.geolocation.clearWatch(this.watchID);
+        }
+
         clearTimeout(this.updateTimer);
         clearTimeout(this.qrcodeTimer);
 
         window.removeEventListener("resize", this.updateDimensions.bind(this));
     }
 
+    onPosSuccess(position) {
+        var view = this.view;
+        var positionFeature = this.positionFeature;
+
+        var lat = position.coords.latitude;
+        var lon = position.coords.longitude;
+        var coords = [parseFloat(lon), parseFloat(lat)];
+
+        API.setPos(lat, lon);
+
+        var coordinates = new ol.geom.Point(ol.proj.fromLonLat(coords));
+        map.getView().setCenter(ol.proj.transform([lon, lat], 'EPSG:4326', 'EPSG:3857'));
+        positionFeature.setGeometry(coordinates);
+    }
+
+    onPosError(error) { }
+
     startGeolocation() {
       var view = this.view;
       var map = this.map;
 
-      var geolocation = new ol.Geolocation({
-        projection: view.getProjection()
-      });
-
-      this.geolocation = geolocation;
-      window.map = map;
-      window.geo = geolocation;
-
-      // update when the position changes.
-      geolocation.on('change', function() {
-        var accuracy = geolocation.getAccuracy() + ' [m]';
-        var altitude = geolocation.getAltitude() + ' [m]';
-        var altitudeAccuracy = geolocation.getAltitudeAccuracy() + ' [m]';
-        var heading = geolocation.getHeading() + ' [rad]';
-        var speed = geolocation.getSpeed() + ' [m/s]';
-
-        var coordinates = geolocation.getPosition();
-        var lonlat = ol.proj.toLonLat(coordinates);
-        API.setPos(lonlat[1], lonlat[0]);
-      });
-
-      // handle geolocation error.
-      geolocation.on('error', function(error) {
-        console.error(error.message);
-      });
-
-      var accuracyFeature = new ol.Feature();
-      geolocation.on('change:accuracyGeometry', function() {
-        accuracyFeature.setGeometry(geolocation.getAccuracyGeometry());
-      });
-
       var positionFeature = new ol.Feature();
+      this.positionFeature = positionFeature;
       positionFeature.setStyle(new ol.style.Style({
         image: new ol.style.Icon({ src: 'app/images/geo1.svg' }),
         zIndex: 10
       }));
       positionFeature.customData = {name: 'me'};
-
-      geolocation.on('change:position', function() {
-        var coordinates = geolocation.getPosition();
-        view.setCenter(coordinates);
-        positionFeature.setGeometry(coordinates ?
-            new ol.geom.Point(coordinates) : null);
-      });
 
       // my position layer
       new ol.layer.Vector({
@@ -131,7 +115,9 @@ export default class Map extends React.Component {
       }
       // starting tracking
       if (this.state.state == 'started') {
-        this.geolocation.setTracking(true);
+        var options = { maximumAge: 3000, timeout: 5000, enableHighAccuracy: true };
+        this.watchID = navigator.geolocation.watchPosition(this.onPosSuccess.bind(this), this.onPosError.bind(this), options);
+
         this.view.setZoom(18);
 
         this.popup = new ol.Overlay({
@@ -291,7 +277,9 @@ export default class Map extends React.Component {
     }
 
     stop = (e) => {
-        this.geolocation.setTracking(false);
+        if (this.watchID) {
+            navigator.geolocation.clearWatch(this.watchID);
+        }
         this.setState({ state: 'stopped' });
     }
 
