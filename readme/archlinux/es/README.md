@@ -2,11 +2,11 @@
 
 ### Backend: [![Build Status](https://travis-ci.org/wadobo/socializa.svg?branch=master)](https://travis-ci.org/wadobo/socializa) [![Coverage Status](https://coveralls.io/repos/github/wadobo/socializa/badge.svg?branch=master)](https://coveralls.io/github/wadobo/socializa?branch=master) [![Requirements Status](https://requires.io/github/wadobo/socializa/requirements.svg?branch=master)](https://requires.io/github/wadobo/socializa/requirements/?branch=master) [![sonarqube](https://sonarqube.com/api/badges/gate?key=socializa)](https://sonarqube.com/dashboard/index/socializa)
 
-### Languages:  [![Spanish](/readme/icons/es.png)](/readme/archlinux/es/README.md) [![English](/readme/icons/en.png)](/readme/archlinux/en/README.md)
+### Idiomas:  [![Spanish](/readme/icons/es.png)](/readme/archlinux/es/README.md) [![English](/readme/icons/en.png)](/readme/archlinux/en/README.md)
 
 # Socializa
 
-# Package installation
+# Instalación de paquetes
 
     1. Pacman
         	$ pacman -S git python postgresql postgis nodejs npm python-celery rabbitmq
@@ -18,28 +18,29 @@
         	$ sudo npm install -g bower
 
 
-# Clone the repository
+# Clonar el repositorio
 
 	$ git clone htts://github.com/wadobo/socializa.git
 
-# Activate virtualenv
+# Activar el virtualenv
 
 	$ source bin/activate
 
-# Postgres configuration
+# Configuración de Postgres
 
-    1. Enable the service to run at system startup
+    1. Activar el servicio para que se ejecute al inicio
 
         	$ sudo systemctl enable postgresql
 
-        1.1	In order to get it working in archlinux
+        1.1	Para el correcto funcionamiento en ArchLinux
+
             $ sudo -u postgres initdb --locale $LANG -E UTF8 -D '/var/lib/postgres/data'
 
-	2. Start the service postgresql
+	2. Arrancar el servicio
 
         $ systemctl start postgresql
 
-    3. Create a postgis database with postgres user
+    3. Creación de la base de datos Postgis con el usuario postgres
 
         $ sudo -u postgres psql -c "create user socializa password 'socializa'"
         $ sudo -u postgres psql -c "create database socializa owner socializa"
@@ -48,43 +49,43 @@
         $ sudo -u postgres psql -d test_socializa -c "create extension postgis"
 
 
-# Install python dependences
+# Instalar dependencias python
 
 	$ python install -r requirements.txt
 
-# Apply migrations
+# Aplicamos migraciones
 
 	$ python manage.py migrate
 
-# Start and enable Rabbitmq service
+# Rabbitmq
 
     $ sudo systemctl enable rabbitmq
 
     $ sudo systemctl start rabbitmq
 
-# Run Celery
+# Celery
 
     $ sudo celery -A socializa worker -l info -B -S Django
 
-# Add ip server to settings.py
+# Añadir ip del servidor al settings.py si no se va a usar en local
 
-	ALLOWED_HOSTS = ['server ip']
+	ALLOWED_HOSTS = ['ip del servidor']
 
-# Run Django server
+# Ejecutar el servidor Django (Para acceder desde otra máquina)
 
 	$ python manage.py runserver 0.0.0.0:8000
 
-# Create administrator superuser Django
+# Crear superusuario de administración de Django 
 
 	$ python manage.py createsuperuser
 
-# Compile frontend (/socializa/frontend/)
+# Compilar frontend (/socializa/frontend/)
 
 	$ make dev
 
 	$ make web
 
-#   Populate database
+# Poblar base de datos
 
     $ python manage.py loaddata player/fixtures/player-test.json
 

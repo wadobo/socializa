@@ -29,8 +29,8 @@
     <plugin name="cordova-plugin-splashscreen" source="npm" spec="~3.2.1" />
     <plugin name="cordova-plugin-statusbar" source="npm" spec="~2.1.2" />
     <plugin name="cordova-plugin-vibration" source="npm" spec="~2.1.0" />
-    <plugin name="cordova-plugin-whitelist" source="npm" spec="~1.2.1" />
     <plugin name="phonegap-plugin-barcodescanner" source="npm" spec="~6.0.2" />
+    <plugin name="cordova-plugin-whitelist" spec="~1.2.2" />
     <icon src="icons/icon.png" />
     <platform name="android">
         <icon density="ldpi" src="icons/res/icons/android/icon-36-ldpi.png" />
@@ -61,4 +61,10 @@
         <allow-intent href="itms-apps:*" />
     </platform>
     <engine name="android" spec="~6.0.0" />
+
+
+    <!-- A wildcard can be used to whitelist the entire network,
+         over HTTP and HTTPS.
+         *NOT RECOMMENDED* -->
+    <allow-navigation href="*" />
 </widget>
