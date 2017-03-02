@@ -161,7 +161,7 @@ export default class Map extends React.Component {
 
               self.popup.setPosition(feature.customData.coords);
               var id = feature.customData.id;
-              var content = $('<button class="btn btn-primary">Connect</button>');
+              var content = $('<center>' + feature.customData.name + '<center><br/><button class="btn btn-primary">Connect</button>');
               content.click(function() {
                   self.connectPlayer(id, user.activeEvent);
               });
@@ -189,7 +189,8 @@ export default class Map extends React.Component {
             }));
             var coords = [parseFloat(p.pos.longitude), parseFloat(p.pos.latitude)];
             var point = new ol.proj.transform([coords[0], coords[1]], 'EPSG:4326', 'EPSG:3857');
-            playerFeature.customData = {id: p.pk, coords: point};
+            console.log(p);
+            playerFeature.customData = {id: p.pk, coords: point, name: p.username};
             playerFeature.setGeometry(
                 new ol.geom.Point(ol.proj.fromLonLat(coords))
             );
