@@ -77,7 +77,11 @@ export default class Map extends React.Component {
         API.setPos(lat, lon);
 
         var coordinates = new ol.geom.Point(ol.proj.fromLonLat(coords));
-        map.getView().setCenter(ol.proj.transform([lon, lat], 'EPSG:4326', 'EPSG:3857'));
+        var center = ol.proj.transform([lon, lat], 'EPSG:4326', 'EPSG:3857');
+        map.getView().animate({
+          center: center,
+          duration: 1000
+        });
         positionFeature.setGeometry(coordinates);
     }
 
