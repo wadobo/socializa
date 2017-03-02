@@ -6724,7 +6724,9 @@ var Map = function (_React$Component) {
         }, _this.start = function (e) {
             _this.setState({ state: 'started' });
         }, _this.stop = function (e) {
-            _this.geolocation.setTracking(false);
+            if (_this.watchID) {
+                navigator.geolocation.clearWatch(_this.watchID);
+            }
             _this.setState({ state: 'stopped' });
         }, _this.mapRender = function () {
             return _react2.default.createElement(
@@ -6808,61 +6810,48 @@ var Map = function (_React$Component) {
         key: 'componentWillUnmount',
         value: function componentWillUnmount() {
             this.setState({ state: 'stopped' });
-            this.geolocation.setTracking(false);
+
+            if (this.watchID) {
+                navigator.geolocation.clearWatch(this.watchID);
+            }
+
             clearTimeout(this.updateTimer);
             clearTimeout(this.qrcodeTimer);
 
             window.removeEventListener("resize", this.updateDimensions.bind(this));
         }
     }, {
+        key: 'onPosSuccess',
+        value: function onPosSuccess(position) {
+            var view = this.view;
+            var positionFeature = this.positionFeature;
+
+            var lat = position.coords.latitude;
+            var lon = position.coords.longitude;
+            var coords = [parseFloat(lon), parseFloat(lat)];
+
+            _api2.default.setPos(lat, lon);
+
+            var coordinates = new _openlayers2.default.geom.Point(_openlayers2.default.proj.fromLonLat(coords));
+            map.getView().setCenter(_openlayers2.default.proj.transform([lon, lat], 'EPSG:4326', 'EPSG:3857'));
+            positionFeature.setGeometry(coordinates);
+        }
+    }, {
+        key: 'onPosError',
+        value: function onPosError(error) {}
+    }, {
         key: 'startGeolocation',
         value: function startGeolocation() {
             var view = this.view;
             var map = this.map;
 
-            var geolocation = new _openlayers2.default.Geolocation({
-                projection: view.getProjection()
-            });
-
-            this.geolocation = geolocation;
-            window.map = map;
-            window.geo = geolocation;
-
-            // update when the position changes.
-            geolocation.on('change', function () {
-                var accuracy = geolocation.getAccuracy() + ' [m]';
-                var altitude = geolocation.getAltitude() + ' [m]';
-                var altitudeAccuracy = geolocation.getAltitudeAccuracy() + ' [m]';
-                var heading = geolocation.getHeading() + ' [rad]';
-                var speed = geolocation.getSpeed() + ' [m/s]';
-
-                var coordinates = geolocation.getPosition();
-                var lonlat = _openlayers2.default.proj.toLonLat(coordinates);
-                _api2.default.setPos(lonlat[1], lonlat[0]);
-            });
-
-            // handle geolocation error.
-            geolocation.on('error', function (error) {
-                console.error(error.message);
-            });
-
-            var accuracyFeature = new _openlayers2.default.Feature();
-            geolocation.on('change:accuracyGeometry', function () {
-                accuracyFeature.setGeometry(geolocation.getAccuracyGeometry());
-            });
-
             var positionFeature = new _openlayers2.default.Feature();
+            this.positionFeature = positionFeature;
             positionFeature.setStyle(new _openlayers2.default.style.Style({
                 image: new _openlayers2.default.style.Icon({ src: 'app/images/geo1.svg' }),
                 zIndex: 10
             }));
             positionFeature.customData = { name: 'me' };
-
-            geolocation.on('change:position', function () {
-                var coordinates = geolocation.getPosition();
-                view.setCenter(coordinates);
-                positionFeature.setGeometry(coordinates ? new _openlayers2.default.geom.Point(coordinates) : null);
-            });
 
             // my position layer
             new _openlayers2.default.layer.Vector({
@@ -6885,7 +6874,9 @@ var Map = function (_React$Component) {
             }
             // starting tracking
             if (this.state.state == 'started') {
-                this.geolocation.setTracking(true);
+                var options = { maximumAge: 3000, timeout: 5000, enableHighAccuracy: true };
+                this.watchID = navigator.geolocation.watchPosition(this.onPosSuccess.bind(this), this.onPosError.bind(this), options);
+
                 this.view.setZoom(18);
 
                 this.popup = new _openlayers2.default.Overlay({
