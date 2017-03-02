@@ -67,6 +67,7 @@ export default class Map extends React.Component {
 
     onPosSuccess(position) {
         var view = this.view;
+        var map = this.map;
         var positionFeature = this.positionFeature;
 
         var lat = position.coords.latitude;
