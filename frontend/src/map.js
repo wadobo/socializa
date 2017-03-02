@@ -116,7 +116,7 @@ export default class Map extends React.Component {
       }
       // starting tracking
       if (this.state.state == 'started') {
-        var options = { maximumAge: 3000, timeout: 5000, enableHighAccuracy: true };
+        var options = { maximumAge: 5000, timeout: 5000, enableHighAccuracy: true };
         this.watchID = navigator.geolocation.watchPosition(this.onPosSuccess.bind(this), this.onPosError.bind(this), options);
 
         this.view.setZoom(18);
