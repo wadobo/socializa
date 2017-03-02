@@ -6774,6 +6774,7 @@ var Map = function (_React$Component) {
             this.props.setAppState({ 'title': title, 'active': 'map' });
 
             window.addEventListener("resize", this.updateDimensions.bind(this));
+            document.addEventListener("pause", this.stop.bind(this), false);
         }
     }, {
         key: 'componentDidUpdate',
@@ -6809,6 +6810,7 @@ var Map = function (_React$Component) {
     }, {
         key: 'componentWillUnmount',
         value: function componentWillUnmount() {
+            document.removeEventListener("pause", this.stop.bind(this));
             this.setState({ state: 'stopped' });
 
             if (this.watchID) {
@@ -6834,7 +6836,11 @@ var Map = function (_React$Component) {
             _api2.default.setPos(lat, lon);
 
             var coordinates = new _openlayers2.default.geom.Point(_openlayers2.default.proj.fromLonLat(coords));
-            map.getView().setCenter(_openlayers2.default.proj.transform([lon, lat], 'EPSG:4326', 'EPSG:3857'));
+            var center = _openlayers2.default.proj.transform([lon, lat], 'EPSG:4326', 'EPSG:3857');
+            map.getView().animate({
+                center: center,
+                duration: 1000
+            });
             positionFeature.setGeometry(coordinates);
         }
     }, {
