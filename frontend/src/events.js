@@ -240,7 +240,7 @@ export default class Events extends React.Component {
         e.stopPropagation();
 
         var self = this;
-        API.setPlayingEvent(ev)
+        API.setPlayingEvent(ev.pk)
             .then(function() {
                 user.activeEvent = ev;
                 storeUser();
