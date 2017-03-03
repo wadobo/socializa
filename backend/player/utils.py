@@ -8,7 +8,7 @@ from django.contrib.gis.geos import Point
 from .models import Player
 
 
-def create_player(backend, user):
+def create_player(backend, user, *args, **kwargs):
     if backend.name == "google-oauth2":
         player, new = Player.objects.get_or_create(user=user)
         if new and player:
