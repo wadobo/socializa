@@ -11,6 +11,13 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
+import logging
+import sys
+
+# Removed log oauth2 when execute test. If you want to activate debug, change logging.ERROR by
+# logging.DEBUG
+log = logging.getLogger('oauthlib')
+log.setLevel(logging.ERROR)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
