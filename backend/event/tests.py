@@ -359,3 +359,19 @@ class PlayerEventTestCase(APITestCase):
         response = self.c.post('/api/player/meeting/{0}/{1}/'.format(self.PLAYER_PK_5, self.EVENT_PK_3), {})
         self.assertEqual(response.json(), 'narcissistic: you cannot connect with yourself')
         self.assertEqual(response.status_code, 400)
+
+    def test_playing_event_not_exits(self):
+        response = self.c.authenticate(self.username1, self.pwd)
+        self.assertEqual(response.status_code, 200)
+        response = self.c.post('/api/event/1/', {})
+        self.assertEqual(response.status_code, 201)
+        response = self.c.post('/api/event//', {})
+        self.assertEqual(response.status_code, 200)
+
+    def test_playing_event_exits(self):
+        response = self.c.authenticate(self.username, self.pwd)
+        self.assertEqual(response.status_code, 200)
+        response = self.c.post('/api/event/1/', {})
+        self.assertEqual(response.status_code, 200)
+        response = self.c.post('/api/event//', {})
+        self.assertEqual(response.status_code, 200)

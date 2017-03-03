@@ -3,6 +3,7 @@ from django.contrib.gis.geos import Point
 
 from .models import Event
 from .models import Membership
+from .models import PlayingEvent
 
 
 class EventAdmin(admin.OSMGeoAdmin):
@@ -21,5 +22,10 @@ class MembershipAdmin(admin.ModelAdmin):
     list_display = ('player', 'event', 'status')
 
 
+class PlayingEventAdmin(admin.ModelAdmin):
+    list_display = ('player', 'event')
+
+
 admin.site.register(Event, EventAdmin)
 admin.site.register(Membership, MembershipAdmin)
+admin.site.register(PlayingEvent, PlayingEventAdmin)

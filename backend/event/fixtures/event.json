@@ -282,5 +282,13 @@
     "event": 4,
     "status": "payed"
   }
+},
+{
+  "model": "event.playingevent",
+  "pk": 1,
+  "fields": {
+    "player": 5,
+    "event": 1
+  }
 }
 ]
