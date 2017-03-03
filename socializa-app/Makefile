@@ -1,3 +1,5 @@
+dev:
+	cd ../frontend/; make dev
 frontend:
 	cd ../frontend/; make app
 
@@ -7,7 +9,7 @@ android: frontend
 
 run: android
 
-release: frontend
+release: dev frontend
 	rm -rf www/app
 	rm -rf www/index.html
 	cp -rf ../frontend/dist/app/ www/app
