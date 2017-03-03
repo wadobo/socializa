@@ -303,14 +303,6 @@ class PlayerEventTestCase(APITestCase):
     def tearDown(self):
         self.c = None
 
-    def test_players_near_in_event(self):
-        response = self.c.authenticate(self.username1, self.pwd)
-        self.assertEqual(response.status_code, 200)
-        response = self.c.get('/api/player/near/{0}/'.format(self.EVENT_PK_4), {})
-        self.assertEqual(response.status_code, 200)
-        players = [d for d in response.json() if d.get('ia') is False]
-        self.assertEqual(len(players), self.NEAR_PLAYER_1_EVENT_4)
-
     def test_players_near_in_event2(self):
         response = self.c.authenticate(self.username4, self.pwd)
         self.assertEqual(response.status_code, 200)
@@ -360,18 +352,79 @@ class PlayerEventTestCase(APITestCase):
         self.assertEqual(response.json(), 'narcissistic: you cannot connect with yourself')
         self.assertEqual(response.status_code, 400)
 
+
+class PlayingEventTestCase(APITestCase):
+    """
+    Two events and general events
+    player 1 and 2 in None event
+    player 3 and 4 in event 1
+    player 5 in event 2
+
+    Players in the same current event, can be see it.
+    Players in the different current event, can't be see it.
+    """
+    fixtures = ['player-test.json', 'event.json', 'playing_event.json']
+
+    def setUp(self):
+        self.username1 = 'test1'
+        self.username2 = 'test2'
+        self.username3 = 'test3'
+        self.username4 = 'test4'
+        self.username5 = 'test5'
+        self.username6 = 'test6'
+        self.event1 = 1
+        self.event2 = 2
+        self.pwd = 'qweqweqwe'
+        self.c = JClient()
+
+    def tearDown(self):
+        self.c = None
+
+    def test_players_playing_event_with_event_none(self):
+        """
+        Player 1 and 2 in event None: visible
+        Player 1 and 3 in event None: no visible
+        """
+        response = self.c.authenticate(self.username1, self.pwd)
+        self.assertEqual(response.status_code, 200)
+        response = self.c.get('/api/player/near/', {})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json()), 1)
+        self.assertEqual(response.json()[0].get('username'), self.username2)
+
+    def test_players_playing_event_with_event_id(self):
+        """
+        Player 3 and 4 in event 1: visible. Player 3 is far to player 4
+        Player 3 and 5 in event 1: no visible
+        """
+        event = Event.objects.get(pk=self.event1)
+        prev_vd = event.vision_distance
+        event.vision_distance = 9999
+        event.save()
+
+        response = self.c.authenticate(self.username3, self.pwd)
+        self.assertEqual(response.status_code, 200)
+        response = self.c.get('/api/player/near/{0}/'.format(self.event1), {})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json()), 1)
+        self.assertEqual(response.json()[0].get('username'), self.username4)
+
+        event.vision_distance = prev_vd
+        event.save()
+
     def test_playing_event_not_exits(self):
         response = self.c.authenticate(self.username1, self.pwd)
         self.assertEqual(response.status_code, 200)
         response = self.c.post('/api/event/1/', {})
-        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.status_code, 200)
         response = self.c.post('/api/event//', {})
         self.assertEqual(response.status_code, 200)
 
     def test_playing_event_exits(self):
-        response = self.c.authenticate(self.username, self.pwd)
+        response = self.c.authenticate(self.username5, self.pwd)
         self.assertEqual(response.status_code, 200)
-        response = self.c.post('/api/event/1/', {})
+        response = self.c.post('/api/event/{0}/'.format(self.event1), {})
         self.assertEqual(response.status_code, 200)
         response = self.c.post('/api/event//', {})
         self.assertEqual(response.status_code, 200)
+

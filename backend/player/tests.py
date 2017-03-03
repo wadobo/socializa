@@ -36,13 +36,6 @@ class PlayerTestCase(APITestCase):
         response = self.c.get('/api/player/near/', {})
         self.assertEqual(response.status_code, 401)
 
-    def test_players_near_with_login(self):
-        response = self.c.authenticate(self.username, self.pwd)
-        self.assertEqual(response.status_code, 200)
-        response = self.c.get('/api/player/near/', {})
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.json()), self.PLAYERS_NEAR_PLAYER1)
-
     def test_meeting_without_login(self):
         response = self.c.post('/api/player/meeting/{0}/'.format(self.PLAYER2_PK), {})
         self.assertEqual(response.status_code, 401)

@@ -127,6 +127,7 @@ class EventDetail(APIView):
         return Response(data)
 
     def post(self, request, event_id):
+        """ Set current event for player. """
         if request.user.is_anonymous():
             return Response("Anonymous user", status=rf_status.HTTP_401_UNAUTHORIZED)
         player = request.user.player
