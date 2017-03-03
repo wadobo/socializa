@@ -65,9 +65,11 @@ class PlayersNear(APIView):
         if event:
             _vision = event.vision_distance
             q &= Q(pk__in=event.players.values_list('pk', flat=True))
+            q &= Q(playing_event__event=event.pk)
         else:
             _vision = settings.DEFAULT_VISION_DISTANCE
             q &= Q(ia=False)
+            q &= Q(playing_event__event=None)
         q &= Q(pos__distance_lte=(self.player.pos, D(m=_vision)))
         near_players = Player.objects.filter(q).exclude(pk=self.player.pk)
         if event and event.place:

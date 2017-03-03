@@ -2,6 +2,7 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
 from rest_framework import status as rf_status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -10,6 +11,7 @@ from clue.views import attach_clue
 from clue.views import detach_clue
 from .models import Event
 from .models import Membership
+from .models import PlayingEvent
 from .serializers import EventSerializer
 
 
@@ -123,6 +125,23 @@ class EventDetail(APIView):
         serializer = EventSerializer(event, many=False, context={'player': request.user.player})
         data = serializer.data
         return Response(data)
+
+    def post(self, request, event_id):
+        """ Set current event for player. """
+        if request.user.is_anonymous():
+            return Response("Anonymous user", status=rf_status.HTTP_401_UNAUTHORIZED)
+        player = request.user.player
+        event = get_object_or_404(Event, pk=event_id) if event_id else None
+        if hasattr(player, "playing_event"):
+            player.playing_event.player = player
+            player.playing_event.event = event
+            player.playing_event.save()
+            status = rf_status.HTTP_200_OK
+        else:
+            playing_event = PlayingEvent(player=player, event=event)
+            playing_event.save()
+            status = rf_status.HTTP_201_CREATED
+        return Response({}, status=status)
 
 
 class SolveEvent(APIView):

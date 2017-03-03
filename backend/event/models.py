@@ -65,3 +65,8 @@ class Membership(models.Model):
 
     def __str__(self):
         return "{0} ∈ {1}".format(self.player.user.username, self.event.name)
+
+
+class PlayingEvent(models.Model):
+    player = models.OneToOneField(Player, related_name="playing_event")
+    event = models.ForeignKey(Event, blank=True, null=True, related_name="playing_event")
