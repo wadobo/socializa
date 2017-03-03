@@ -4,6 +4,7 @@ from django.shortcuts import redirect
 from django.http import JsonResponse
 from django.http import HttpResponse
 from django.conf import settings
+from django.core.urlresolvers import reverse
 
 from rest_framework.decorators import api_view, renderer_classes
 
@@ -36,9 +37,13 @@ def oauth2callback(request):
 
         token, created = Token.objects.get_or_create(user=user)
 
-        response = HttpResponse("", status=302)
-        response['Location'] = state + '?email=' + user.email + '&token=' + token.key
-        return response
+        state = state.split('/')[-1]
+        location = '?url=' + state + '&email=' + user.email + '&token=' + token.key
+        return redirect(reverse('oauth2redirect') + location)
+
+
+def oauth2redirect(request):
+    return HttpResponse("")
 
 
 def oauth2apps(request):
