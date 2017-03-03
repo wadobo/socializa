@@ -5518,7 +5518,7 @@ var App = function (_React$Component) {
 
 exports.default = App;
 
-},{"./navbar":49,"bootstrap":"bootstrap","jquery":"jquery","react":"react","react-router":"react-router"}],41:[function(require,module,exports){
+},{"./navbar":50,"bootstrap":"bootstrap","jquery":"jquery","react":"react","react-router":"react-router"}],41:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5848,7 +5848,7 @@ var Event = function (_React$Component2) {
 
 exports.default = Event;
 
-},{"./api":39,"./auth":41,"./events":43,"./loading":45,"moment":"moment","react":"react","react-router":"react-router"}],43:[function(require,module,exports){
+},{"./api":39,"./auth":41,"./events":43,"./loading":46,"moment":"moment","react":"react","react-router":"react-router"}],43:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6266,7 +6266,69 @@ var Events = function (_React$Component2) {
 
 exports.default = Events;
 
-},{"./api":39,"./auth":41,"./loading":45,"moment":"moment","react":"react","react-router":"react-router"}],44:[function(require,module,exports){
+},{"./api":39,"./auth":41,"./loading":46,"moment":"moment","react":"react","react-router":"react-router"}],44:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var GEO = function () {
+    function GEO() {
+        _classCallCheck(this, GEO);
+    }
+
+    _createClass(GEO, null, [{
+        key: 'start',
+        value: function start(success, error) {
+            if (success) this.successCB = success;
+            if (error) this.errorCB = error;
+
+            this.watchID = navigator.geolocation.watchPosition(this.successCB, this.errorCB, this.options);
+            this.status = 'started';
+        }
+    }, {
+        key: 'stop',
+        value: function stop(pause) {
+            if (this.watchID) {
+                navigator.geolocation.clearWatch(this.watchID);
+                this.watchID = null;
+            }
+
+            if (!pause) {
+                this.status = 'stopped';
+            } else {
+                this.status = 'paused';
+            }
+        }
+    }]);
+
+    return GEO;
+}();
+
+GEO.watchID = null;
+GEO.options = { maximumAge: 5000, timeout: 5000, enableHighAccuracy: true };
+GEO.status = 'stopped';
+GEO.successCB = null;
+GEO.errorCB = null;
+exports.default = GEO;
+;
+
+document.addEventListener("pause", function () {
+    GEO.stop.bind(GEO)(true);
+}, false);
+
+document.addEventListener("resume", function () {
+    if (GEO.status == 'paused') {
+        GEO.start.bind(GEO)();
+    }
+}, false);
+
+},{}],45:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6307,7 +6369,7 @@ _i18next2.default.use(_i18nextXhrBackend2.default).use(_i18nextBrowserLanguagede
 
 exports.default = _i18next2.default;
 
-},{"i18next":30,"i18next-browser-languagedetector":10,"i18next-xhr-backend":14}],45:[function(require,module,exports){
+},{"i18next":30,"i18next-browser-languagedetector":10,"i18next-xhr-backend":14}],46:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6358,7 +6420,7 @@ var Loading = function (_React$Component) {
 
 exports.default = Loading;
 
-},{"react":"react"}],46:[function(require,module,exports){
+},{"react":"react"}],47:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6565,7 +6627,7 @@ var Login = function (_React$Component) {
 
 exports.default = (0, _reactI18next.translate)(['login'], { wait: true })(Login);
 
-},{"./api":39,"./auth":41,"./i18n":44,"jquery":"jquery","react":"react","react-i18next":34,"react-router":"react-router"}],47:[function(require,module,exports){
+},{"./api":39,"./auth":41,"./i18n":45,"jquery":"jquery","react":"react","react-i18next":34,"react-router":"react-router"}],48:[function(require,module,exports){
 'use strict';
 
 var _react = require('react');
@@ -6635,7 +6697,7 @@ _reactDom2.default.render(_react2.default.createElement(
   )
 ), document.getElementById('content')); // main.js
 
-},{"./app":40,"./auth":41,"./event":42,"./events":43,"./i18n":44,"./login":46,"./map":48,"./profile":50,"./register":51,"react":"react","react-dom":"react-dom","react-i18next":34,"react-router":"react-router"}],48:[function(require,module,exports){
+},{"./app":40,"./auth":41,"./event":42,"./events":43,"./i18n":45,"./login":47,"./map":49,"./profile":51,"./register":52,"react":"react","react-dom":"react-dom","react-i18next":34,"react-router":"react-router"}],49:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6663,6 +6725,10 @@ var _auth = require('./auth');
 var _api = require('./api');
 
 var _api2 = _interopRequireDefault(_api);
+
+var _geo = require('./geo');
+
+var _geo2 = _interopRequireDefault(_geo);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -6773,10 +6839,8 @@ var Map = function (_React$Component) {
         }, _this.start = function (e) {
             _this.setState({ state: 'started' });
         }, _this.stop = function (e) {
-            if (_this.watchID) {
-                navigator.geolocation.clearWatch(_this.watchID);
-            }
             _this.setState({ state: 'stopped' });
+            _geo2.default.stop();
         }, _this.mapRender = function () {
             return _react2.default.createElement(
                 'div',
@@ -6823,7 +6887,10 @@ var Map = function (_React$Component) {
             this.props.setAppState({ 'title': title, 'active': 'map' });
 
             window.addEventListener("resize", this.updateDimensions.bind(this));
-            document.addEventListener("pause", this.stop.bind(this), false);
+
+            if (_geo2.default.status == 'started') {
+                this.start();
+            }
         }
     }, {
         key: 'componentDidUpdate',
@@ -6859,13 +6926,6 @@ var Map = function (_React$Component) {
     }, {
         key: 'componentWillUnmount',
         value: function componentWillUnmount() {
-            document.removeEventListener("pause", this.stop.bind(this));
-            this.setState({ state: 'stopped' });
-
-            if (this.watchID) {
-                navigator.geolocation.clearWatch(this.watchID);
-            }
-
             clearTimeout(this.updateTimer);
             clearTimeout(this.qrcodeTimer);
 
@@ -6930,8 +6990,7 @@ var Map = function (_React$Component) {
             }
             // starting tracking
             if (this.state.state == 'started') {
-                var options = { maximumAge: 5000, timeout: 5000, enableHighAccuracy: true };
-                this.watchID = navigator.geolocation.watchPosition(this.onPosSuccess.bind(this), this.onPosError.bind(this), options);
+                _geo2.default.start(this.onPosSuccess.bind(this), this.onPosError.bind(this));
 
                 this.view.setZoom(18);
 
@@ -6997,7 +7056,7 @@ var Map = function (_React$Component) {
 
 exports.default = Map;
 
-},{"./api":39,"./auth":41,"openlayers":"openlayers","qrcode.react":"qrcode.react","react":"react","react-router":"react-router"}],49:[function(require,module,exports){
+},{"./api":39,"./auth":41,"./geo":44,"openlayers":"openlayers","qrcode.react":"qrcode.react","react":"react","react-router":"react-router"}],50:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7145,7 +7204,7 @@ var NavBar = function (_React$Component) {
 
 exports.default = NavBar;
 
-},{"./auth":41,"react":"react","react-router":"react-router"}],50:[function(require,module,exports){
+},{"./auth":41,"react":"react","react-router":"react-router"}],51:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7335,7 +7394,7 @@ var Profile = function (_React$Component) {
 
 exports.default = Profile;
 
-},{"./api":39,"./auth":41,"./loading":45,"react":"react","react-router":"react-router"}],51:[function(require,module,exports){
+},{"./api":39,"./auth":41,"./loading":46,"react":"react","react-router":"react-router"}],52:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7431,4 +7490,4 @@ var Register = function (_React$Component) {
 
 exports.default = Register;
 
-},{"./auth":41,"jquery":"jquery","react":"react","react-router":"react-router"}]},{},[47]);
+},{"./auth":41,"jquery":"jquery","react":"react","react-router":"react-router"}]},{},[48]);
