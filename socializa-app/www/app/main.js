@@ -1,186 +1,4 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-// shim for using process in browser
-var process = module.exports = {};
-
-// cached from whatever global is present so that test runners that stub it
-// don't break things.  But we need to wrap it in a try catch in case it is
-// wrapped in strict mode code which doesn't define any globals.  It's inside a
-// function because try/catches deoptimize in certain engines.
-
-var cachedSetTimeout;
-var cachedClearTimeout;
-
-function defaultSetTimout() {
-    throw new Error('setTimeout has not been defined');
-}
-function defaultClearTimeout () {
-    throw new Error('clearTimeout has not been defined');
-}
-(function () {
-    try {
-        if (typeof setTimeout === 'function') {
-            cachedSetTimeout = setTimeout;
-        } else {
-            cachedSetTimeout = defaultSetTimout;
-        }
-    } catch (e) {
-        cachedSetTimeout = defaultSetTimout;
-    }
-    try {
-        if (typeof clearTimeout === 'function') {
-            cachedClearTimeout = clearTimeout;
-        } else {
-            cachedClearTimeout = defaultClearTimeout;
-        }
-    } catch (e) {
-        cachedClearTimeout = defaultClearTimeout;
-    }
-} ())
-function runTimeout(fun) {
-    if (cachedSetTimeout === setTimeout) {
-        //normal enviroments in sane situations
-        return setTimeout(fun, 0);
-    }
-    // if setTimeout wasn't available but was latter defined
-    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
-        cachedSetTimeout = setTimeout;
-        return setTimeout(fun, 0);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedSetTimeout(fun, 0);
-    } catch(e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-            return cachedSetTimeout.call(null, fun, 0);
-        } catch(e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-            return cachedSetTimeout.call(this, fun, 0);
-        }
-    }
-
-
-}
-function runClearTimeout(marker) {
-    if (cachedClearTimeout === clearTimeout) {
-        //normal enviroments in sane situations
-        return clearTimeout(marker);
-    }
-    // if clearTimeout wasn't available but was latter defined
-    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
-        cachedClearTimeout = clearTimeout;
-        return clearTimeout(marker);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedClearTimeout(marker);
-    } catch (e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-            return cachedClearTimeout.call(null, marker);
-        } catch (e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-            return cachedClearTimeout.call(this, marker);
-        }
-    }
-
-
-
-}
-var queue = [];
-var draining = false;
-var currentQueue;
-var queueIndex = -1;
-
-function cleanUpNextTick() {
-    if (!draining || !currentQueue) {
-        return;
-    }
-    draining = false;
-    if (currentQueue.length) {
-        queue = currentQueue.concat(queue);
-    } else {
-        queueIndex = -1;
-    }
-    if (queue.length) {
-        drainQueue();
-    }
-}
-
-function drainQueue() {
-    if (draining) {
-        return;
-    }
-    var timeout = runTimeout(cleanUpNextTick);
-    draining = true;
-
-    var len = queue.length;
-    while(len) {
-        currentQueue = queue;
-        queue = [];
-        while (++queueIndex < len) {
-            if (currentQueue) {
-                currentQueue[queueIndex].run();
-            }
-        }
-        queueIndex = -1;
-        len = queue.length;
-    }
-    currentQueue = null;
-    draining = false;
-    runClearTimeout(timeout);
-}
-
-process.nextTick = function (fun) {
-    var args = new Array(arguments.length - 1);
-    if (arguments.length > 1) {
-        for (var i = 1; i < arguments.length; i++) {
-            args[i - 1] = arguments[i];
-        }
-    }
-    queue.push(new Item(fun, args));
-    if (queue.length === 1 && !draining) {
-        runTimeout(drainQueue);
-    }
-};
-
-// v8 likes predictible objects
-function Item(fun, array) {
-    this.fun = fun;
-    this.array = array;
-}
-Item.prototype.run = function () {
-    this.fun.apply(null, this.array);
-};
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-process.version = ''; // empty string to avoid regexp issues
-process.versions = {};
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-process.umask = function() { return 0; };
-
-},{}],2:[function(require,module,exports){
 (function (process,global){
 /*!
  * @overview es6-promise - a tiny implementation of Promises/A+.
@@ -1337,7 +1155,7 @@ return Promise;
 })));
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":1}],3:[function(require,module,exports){
+},{"_process":32}],2:[function(require,module,exports){
 /**
  * Copyright 2015, Yahoo! Inc.
  * Copyrights licensed under the New BSD License. See the accompanying LICENSE file for terms.
@@ -1389,7 +1207,7 @@ module.exports = function hoistNonReactStatics(targetComponent, sourceComponent,
     return targetComponent;
 };
 
-},{}],4:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1443,7 +1261,7 @@ exports.default = {
     }
   }
 };
-},{}],5:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1463,7 +1281,7 @@ exports.default = {
     return found;
   }
 };
-},{}],6:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1498,7 +1316,7 @@ exports.default = {
     }
   }
 };
-},{}],7:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1528,7 +1346,7 @@ exports.default = {
     return found.length > 0 ? found : undefined;
   }
 };
-},{}],8:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1557,7 +1375,7 @@ exports.default = {
     return found;
   }
 };
-},{}],9:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1687,7 +1505,7 @@ var Browser = function () {
 Browser.type = 'languageDetector';
 
 exports.default = Browser;
-},{"./browserLookups/cookie":4,"./browserLookups/htmlTag":5,"./browserLookups/localStorage":6,"./browserLookups/navigator":7,"./browserLookups/querystring":8,"./utils":10}],10:[function(require,module,exports){
+},{"./browserLookups/cookie":3,"./browserLookups/htmlTag":4,"./browserLookups/localStorage":5,"./browserLookups/navigator":6,"./browserLookups/querystring":7,"./utils":9}],9:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1720,10 +1538,10 @@ function extend(obj) {
   });
   return obj;
 }
-},{}],11:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 module.exports = require('./dist/commonjs/index.js').default;
 
-},{"./dist/commonjs/index.js":9}],12:[function(require,module,exports){
+},{"./dist/commonjs/index.js":8}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1770,7 +1588,7 @@ function ajax(url, options, callback, data, cache) {
 }
 
 exports.default = ajax;
-},{}],13:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1894,11 +1712,11 @@ var Backend = function () {
 Backend.type = 'backend';
 
 exports.default = Backend;
-},{"./ajax":12,"./utils":14}],14:[function(require,module,exports){
+},{"./ajax":11,"./utils":13}],13:[function(require,module,exports){
+arguments[4][9][0].apply(exports,arguments)
+},{"dup":9}],14:[function(require,module,exports){
 arguments[4][10][0].apply(exports,arguments)
-},{"dup":10}],15:[function(require,module,exports){
-arguments[4][11][0].apply(exports,arguments)
-},{"./dist/commonjs/index.js":13,"dup":11}],16:[function(require,module,exports){
+},{"./dist/commonjs/index.js":12,"dup":10}],15:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2216,7 +2034,7 @@ var Connector = function (_EventEmitter) {
 }(_EventEmitter3.default);
 
 exports.default = Connector;
-},{"./EventEmitter":18,"./logger":28,"./utils":30}],17:[function(require,module,exports){
+},{"./EventEmitter":17,"./logger":27,"./utils":29}],16:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2305,7 +2123,7 @@ var Connector = function (_EventEmitter) {
 }(_EventEmitter3.default);
 
 exports.default = Connector;
-},{"./EventEmitter":18,"./logger":28,"./utils":30}],18:[function(require,module,exports){
+},{"./EventEmitter":17,"./logger":27,"./utils":29}],17:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2375,7 +2193,7 @@ var EventEmitter = function () {
 }();
 
 exports.default = EventEmitter;
-},{}],19:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2552,7 +2370,7 @@ var Interpolator = function () {
 }();
 
 exports.default = Interpolator;
-},{"./logger":28,"./utils":30}],20:[function(require,module,exports){
+},{"./logger":27,"./utils":29}],19:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2581,15 +2399,8 @@ var LanguageUtil = function () {
     this.logger = _logger2.default.create('languageUtils');
   }
 
-  LanguageUtil.prototype.getLanguagePartFromCode = function getLanguagePartFromCode(code) {
-    if (code.indexOf('-') < 0) return code;
-
-    var p = code.split('-');
-    return this.formatLanguageCode(p[0]);
-  };
-
   LanguageUtil.prototype.getScriptPartFromCode = function getScriptPartFromCode(code) {
-    if (code.indexOf('-') < 0) return null;
+    if (!code || code.indexOf('-') < 0) return null;
 
     var p = code.split('-');
     if (p.length === 2) return null;
@@ -2598,7 +2409,7 @@ var LanguageUtil = function () {
   };
 
   LanguageUtil.prototype.getLanguagePartFromCode = function getLanguagePartFromCode(code) {
-    if (code.indexOf('-') < 0) return code;
+    if (!code || code.indexOf('-') < 0) return code;
 
     var p = code.split('-');
     return this.formatLanguageCode(p[0]);
@@ -2648,6 +2459,8 @@ var LanguageUtil = function () {
     if (typeof fallbacks === 'string') fallbacks = [fallbacks];
     if (Object.prototype.toString.apply(fallbacks) === '[object Array]') return fallbacks;
 
+    if (!code) return fallbacks.default || [];
+
     // asume we have an object defining fallbacks
     var found = fallbacks[code];
     if (!found) found = fallbacks[this.getScriptPartFromCode(code)];
@@ -2695,7 +2508,7 @@ var LanguageUtil = function () {
 ;
 
 exports.default = LanguageUtil;
-},{"./logger":28}],21:[function(require,module,exports){
+},{"./logger":27}],20:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2895,7 +2708,7 @@ var PluralResolver = function () {
 ;
 
 exports.default = PluralResolver;
-},{"./logger":28}],22:[function(require,module,exports){
+},{"./logger":27}],21:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3053,7 +2866,7 @@ var ResourceStore = function (_EventEmitter) {
 }(_EventEmitter3.default);
 
 exports.default = ResourceStore;
-},{"./EventEmitter":18,"./utils":30}],23:[function(require,module,exports){
+},{"./EventEmitter":17,"./utils":29}],22:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3374,7 +3187,7 @@ var Translator = function (_EventEmitter) {
 }(_EventEmitter3.default);
 
 exports.default = Translator;
-},{"./EventEmitter":18,"./compatibility/v1":24,"./logger":28,"./postProcessor":29,"./utils":30}],24:[function(require,module,exports){
+},{"./EventEmitter":17,"./compatibility/v1":23,"./logger":27,"./postProcessor":28,"./utils":29}],23:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3529,7 +3342,7 @@ function appendBackwardsAPI(i18n) {
     });
   };
 }
-},{"../logger":28}],25:[function(require,module,exports){
+},{"../logger":27}],24:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3607,7 +3420,7 @@ function transformOptions(options) {
 
   return options;
 }
-},{}],26:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3692,7 +3505,7 @@ var I18n = function (_EventEmitter) {
     _this.options = (0, _defaults2.transformOptions)(options);
     _this.services = {};
     _this.logger = _logger2.default;
-    _this.modules = {};
+    _this.modules = { external: [] };
 
     if (callback && !_this.isInitialized && !options.isClone) _this.init(options, callback);
     return _this;
@@ -3781,6 +3594,10 @@ var I18n = function (_EventEmitter) {
 
         _this2.emit.apply(_this2, [event].concat(args));
       });
+
+      this.modules.external.forEach(function (m) {
+        if (m.init) m.init(_this2);
+      });
     }
 
     // append api
@@ -3827,6 +3644,7 @@ var I18n = function (_EventEmitter) {
         var toLoad = [];
 
         var append = function append(lng) {
+          if (!lng) return;
           var lngs = _this3.services.languageUtils.toResolveHierarchy(lng);
           lngs.forEach(function (l) {
             if (toLoad.indexOf(l) < 0) toLoad.push(l);
@@ -3867,7 +3685,7 @@ var I18n = function (_EventEmitter) {
       this.modules.cache = module;
     }
 
-    if (module.type === 'logger' || module.log && module.warn && module.warn) {
+    if (module.type === 'logger' || module.log && module.warn && module.error) {
       this.modules.logger = module;
     }
 
@@ -3877,6 +3695,10 @@ var I18n = function (_EventEmitter) {
 
     if (module.type === 'postProcessor') {
       _postProcessor2.default.addPostProcessor(module);
+    }
+
+    if (module.type === '3rdParty') {
+      this.modules.external.push(module);
     }
 
     return this;
@@ -4016,7 +3838,7 @@ var I18n = function (_EventEmitter) {
 }(_EventEmitter3.default);
 
 exports.default = new I18n();
-},{"./BackendConnector":16,"./CacheConnector":17,"./EventEmitter":18,"./Interpolator":19,"./LanguageUtils":20,"./PluralResolver":21,"./ResourceStore":22,"./Translator":23,"./compatibility/v1":24,"./defaults":25,"./logger":28,"./postProcessor":29}],27:[function(require,module,exports){
+},{"./BackendConnector":15,"./CacheConnector":16,"./EventEmitter":17,"./Interpolator":18,"./LanguageUtils":19,"./PluralResolver":20,"./ResourceStore":21,"./Translator":22,"./compatibility/v1":23,"./defaults":24,"./logger":27,"./postProcessor":28}],26:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4046,7 +3868,7 @@ var on = exports.on = _i18next2.default.on.bind(_i18next2.default);
 var setDefaultNamespace = exports.setDefaultNamespace = _i18next2.default.setDefaultNamespace.bind(_i18next2.default);
 var t = exports.t = _i18next2.default.t.bind(_i18next2.default);
 var use = exports.use = _i18next2.default.use.bind(_i18next2.default);
-},{"./i18next":26}],28:[function(require,module,exports){
+},{"./i18next":25}],27:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4134,7 +3956,7 @@ var Logger = function () {
 ;
 
 exports.default = new Logger();
-},{}],29:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4157,7 +3979,7 @@ exports.default = {
     return value;
   }
 };
-},{}],30:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4269,9 +4091,9 @@ function escape(data) {
     return data;
   }
 }
-},{}],31:[function(require,module,exports){
-arguments[4][11][0].apply(exports,arguments)
-},{"./dist/commonjs/index.js":27,"dup":11}],32:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
+arguments[4][10][0].apply(exports,arguments)
+},{"./dist/commonjs/index.js":26,"dup":10}],31:[function(require,module,exports){
 // the whatwg-fetch polyfill installs the fetch() function
 // on the global object (window or self)
 //
@@ -4279,7 +4101,189 @@ arguments[4][11][0].apply(exports,arguments)
 require('whatwg-fetch');
 module.exports = self.fetch.bind(self);
 
-},{"whatwg-fetch":38}],33:[function(require,module,exports){
+},{"whatwg-fetch":38}],32:[function(require,module,exports){
+// shim for using process in browser
+var process = module.exports = {};
+
+// cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+function defaultSetTimout() {
+    throw new Error('setTimeout has not been defined');
+}
+function defaultClearTimeout () {
+    throw new Error('clearTimeout has not been defined');
+}
+(function () {
+    try {
+        if (typeof setTimeout === 'function') {
+            cachedSetTimeout = setTimeout;
+        } else {
+            cachedSetTimeout = defaultSetTimout;
+        }
+    } catch (e) {
+        cachedSetTimeout = defaultSetTimout;
+    }
+    try {
+        if (typeof clearTimeout === 'function') {
+            cachedClearTimeout = clearTimeout;
+        } else {
+            cachedClearTimeout = defaultClearTimeout;
+        }
+    } catch (e) {
+        cachedClearTimeout = defaultClearTimeout;
+    }
+} ())
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    // if setTimeout wasn't available but was latter defined
+    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+        cachedSetTimeout = setTimeout;
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch(e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch(e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+
+
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    // if clearTimeout wasn't available but was latter defined
+    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+        cachedClearTimeout = clearTimeout;
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+
+
+
+}
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = runTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    runClearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        runTimeout(drainQueue);
+    }
+};
+
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
+
+},{}],33:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4432,6 +4436,20 @@ var Interpolate = function (_Component) {
 
       var children = [];
 
+      var handleFormat = function handleFormat(key, props) {
+        if (key.indexOf(_this2.i18n.options.interpolation.formatSeparator) < 0) {
+          if (!props[key]) _this2.i18n.services.logger.warn('interpolator: missed to pass in variable ' + key + ' for interpolating ' + format);
+          return props[key];
+        }
+
+        var p = key.split(_this2.i18n.options.interpolation.formatSeparator);
+        var k = p.shift().trim();
+        var f = p.join(_this2.i18n.options.interpolation.formatSeparator).trim();
+
+        if (!props[k]) _this2.i18n.services.logger.warn('interpolator: missed to pass in variable ' + k + ' for interpolating ' + format);
+        return _this2.i18n.options.interpolation.format(props[k], f, _this2.i18n.language);
+      };
+
       format.split(REGEXP).reduce(function (memo, match, index) {
         var child = void 0;
 
@@ -4443,8 +4461,7 @@ var Interpolate = function (_Component) {
             child = match;
           }
         } else {
-          child = _this2.props[match];
-          if (!_this2.props[match]) _this2.i18n.services.logger.warn('interpolator: missed to pass in variable ' + match + ' for interpolating ' + format);
+          child = handleFormat(match, _this2.props);
         }
 
         memo.push(child);
@@ -4731,7 +4748,7 @@ function translate(namespaces) {
     return (0, _hoistNonReactStatics2.default)(Translate, WrappedComponent);
   };
 }
-},{"hoist-non-react-statics":3,"react":"react"}],38:[function(require,module,exports){
+},{"hoist-non-react-statics":2,"react":"react"}],38:[function(require,module,exports){
 (function(self) {
   'use strict';
 
@@ -4818,7 +4835,10 @@ function translate(namespaces) {
       headers.forEach(function(value, name) {
         this.append(name, value)
       }, this)
-
+    } else if (Array.isArray(headers)) {
+      headers.forEach(function(header) {
+        this.append(header[0], header[1])
+      }, this)
     } else if (headers) {
       Object.getOwnPropertyNames(headers).forEach(function(name) {
         this.append(name, headers[name])
@@ -5037,9 +5057,7 @@ function translate(namespaces) {
     options = options || {}
     var body = options.body
 
-    if (typeof input === 'string') {
-      this.url = input
-    } else {
+    if (input instanceof Request) {
       if (input.bodyUsed) {
         throw new TypeError('Already read')
       }
@@ -5054,6 +5072,8 @@ function translate(namespaces) {
         body = input._bodyInit
         input.bodyUsed = true
       }
+    } else {
+      this.url = String(input)
     }
 
     this.credentials = options.credentials || this.credentials || 'omit'
@@ -5089,7 +5109,7 @@ function translate(namespaces) {
 
   function parseHeaders(rawHeaders) {
     var headers = new Headers()
-    rawHeaders.split('\r\n').forEach(function(line) {
+    rawHeaders.split(/\r?\n/).forEach(function(line) {
       var parts = line.split(':')
       var key = parts.shift().trim()
       if (key) {
@@ -5412,7 +5432,7 @@ var API = function () {
 
 exports.default = API;
 
-},{"./auth":41,"es6-promise":2,"fetch":"fetch","isomorphic-fetch":32}],40:[function(require,module,exports){
+},{"./auth":41,"es6-promise":1,"fetch":"fetch","isomorphic-fetch":31}],40:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6287,7 +6307,7 @@ _i18next2.default.use(_i18nextXhrBackend2.default).use(_i18nextBrowserLanguagede
 
 exports.default = _i18next2.default;
 
-},{"i18next":31,"i18next-browser-languagedetector":11,"i18next-xhr-backend":15}],45:[function(require,module,exports){
+},{"i18next":30,"i18next-browser-languagedetector":10,"i18next-xhr-backend":14}],45:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
