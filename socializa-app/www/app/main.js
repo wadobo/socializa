@@ -6411,6 +6411,7 @@ var Login = function (_React$Component) {
         };
 
         _this.googleAuth = function (e) {
+            var self = _this;
             var redirect = encodeURIComponent('https://socializa.wadobo.com/oauth2callback/');
             var gapp = _this.state.gapp;
 
@@ -6418,11 +6419,15 @@ var Login = function (_React$Component) {
             guri += '&redirect_uri=' + redirect;
             guri += '&state=' + location.href;
 
-            var win = window.open(guri, '_blank', 'location=yes');
+            // TODO make this work with the browser
+            _this.win = window.open(guri, '_blank', 'location=no');
 
             function loadCallBack(ev) {
-                var qs = ev.url || ev.target.location.href;
+                var qs = ev.url;
                 qs = qs.split('+').join(' ');
+                if (!qs.includes('oauth2redirect')) {
+                    return;
+                }
 
                 var params = {},
                     tokens,
@@ -6432,13 +6437,12 @@ var Login = function (_React$Component) {
                     params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
                 }
                 if (params.token) {
-                    this.authWithToken(params.token, params.email);
+                    self.authWithToken(params.token, params.email);
                 }
-                win.close();
+                self.win.close();
             }
 
-            win.addEventListener('load', loadCallBack.bind(_this), false);
-            win.addEventListener('loadstart', loadCallBack.bind(_this));
+            _this.win.addEventListener('loadstart', loadCallBack);
         };
 
         return _this;
