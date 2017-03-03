@@ -5399,6 +5399,12 @@ var API = function () {
             var data = JSONPost(data);
             return customFetch('/api/player/profile/', data);
         }
+    }, {
+        key: 'setPlayingEvent',
+        value: function setPlayingEvent(evid) {
+            var data = JSONPost({});
+            return customFetch('/api/event/' + evid + '/', data);
+        }
     }]);
 
     return API;
@@ -6139,20 +6145,30 @@ var Events = function (_React$Component2) {
             e.preventDefault();
             e.stopPropagation();
 
-            _auth.user.activeEvent = ev;
-            (0, _auth.storeUser)();
-            _this2.setState({ active: _auth.user.activeEvent });
-            _this2.retitle();
+            var self = _this2;
+            _api2.default.setPlayingEvent(ev).then(function () {
+                _auth.user.activeEvent = ev;
+                (0, _auth.storeUser)();
+                self.setState({ active: _auth.user.activeEvent });
+                self.retitle();
+            }).catch(function () {
+                alert("Error joining the game");
+            });
         }, _this2.unplay = function (e) {
             if (e) {
                 e.preventDefault();
                 e.stopPropagation();
             }
 
-            _auth.user.activeEvent = null;
-            (0, _auth.storeUser)();
-            _this2.setState({ active: _auth.user.activeEvent });
-            _this2.retitle();
+            var self = _this2;
+            _api2.default.setPlayingEvent('').then(function () {
+                _auth.user.activeEvent = null;
+                (0, _auth.storeUser)();
+                self.setState({ active: _auth.user.activeEvent });
+                self.retitle();
+            }).catch(function () {
+                alert("Error leaving the game");
+            });
         }, _this2.searchChange = function (e) {
             var q = _this2.state.q || {};
             q.q = e.target.value;
@@ -6903,6 +6919,9 @@ var Map = function (_React$Component) {
                 var f = e.target.getFeatures();
 
                 var element = document.getElementById('popup');
+                try {
+                    $(element).popover('destroy');
+                } catch (err) {}
 
                 if (f.getLength()) {
                     var i = 0;
@@ -6918,10 +6937,6 @@ var Map = function (_React$Component) {
                     content.click(function () {
                         self.connectPlayer(id, _auth.user.activeEvent);
                     });
-
-                    try {
-                        $(element).popover('destroy');
-                    } catch (err) {}
 
                     setTimeout(function () {
                         $(element).popover({
