@@ -6,6 +6,7 @@ import ol from 'openlayers'
 
 import { user, logout } from './auth';
 import API from './api';
+import GEO from './geo';
 
 
 export default class Map extends React.Component {
@@ -19,7 +20,10 @@ export default class Map extends React.Component {
       this.props.setAppState({ 'title': title, 'active': 'map' });
 
       window.addEventListener("resize", this.updateDimensions.bind(this));
-      document.addEventListener("pause", this.stop.bind(this), false);
+
+      if (GEO.status == 'started') {
+        this.start();
+      }
     }
 
     componentDidUpdate() {
@@ -54,13 +58,6 @@ export default class Map extends React.Component {
     }
 
     componentWillUnmount() {
-        document.removeEventListener("pause", this.stop.bind(this));
-        this.setState({ state: 'stopped' });
-
-        if (this.watchID) {
-            navigator.geolocation.clearWatch(this.watchID);
-        }
-
         clearTimeout(this.updateTimer);
         clearTimeout(this.qrcodeTimer);
 
@@ -122,8 +119,7 @@ export default class Map extends React.Component {
       }
       // starting tracking
       if (this.state.state == 'started') {
-        var options = { maximumAge: 5000, timeout: 5000, enableHighAccuracy: true };
-        this.watchID = navigator.geolocation.watchPosition(this.onPosSuccess.bind(this), this.onPosError.bind(this), options);
+        GEO.start(this.onPosSuccess.bind(this), this.onPosError.bind(this));
 
         this.view.setZoom(18);
 
@@ -286,10 +282,8 @@ export default class Map extends React.Component {
     }
 
     stop = (e) => {
-        if (this.watchID) {
-            navigator.geolocation.clearWatch(this.watchID);
-        }
         this.setState({ state: 'stopped' });
+        GEO.stop();
     }
 
     mapRender = () => {
