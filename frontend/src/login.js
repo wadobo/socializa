@@ -15,37 +15,21 @@ class Login extends React.Component {
     }
 
     componentDidMount() {
-        var q = this.getQueryParams();
         var self = this;
-        if (q.token) {
-            login(q.email, q.token, 'token');
-            hashHistory.push('/map');
-            document.location.search = '';
-        } else {
-            API.oauth2apps()
-                .then(function(resp) {
-                    self.setState({
-                        gapp: resp.google,
-                        fapp: resp.facebook,
-                        tapp: resp.twitter
-                    });
+        API.oauth2apps()
+            .then(function(resp) {
+                self.setState({
+                    gapp: resp.google,
+                    fapp: resp.facebook,
+                    tapp: resp.twitter
                 });
-        }
+            });
     }
 
-    getQueryParams = () => {
-        var qs = document.location.search;
-        qs = qs.split('+').join(' ');
-
-        var params = {},
-            tokens,
-            re = /[?&]?([^=]+)=([^&]*)/g;
-
-        while (tokens = re.exec(qs)) {
-            params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
-        }
-
-        return params;
+    authWithToken(token, email) {
+        login(email, token, 'token');
+        hashHistory.push('/map');
+        document.location.search = '';
     }
 
     emailChange = (e) => {
@@ -58,7 +42,7 @@ class Login extends React.Component {
 
     state = {
         email: '', password: '',
-        gapp: '', tapp: '', fapp: ''
+        gapp: null, tapp: null, fapp: null
     }
 
     login = (e) => {
@@ -74,15 +58,39 @@ class Login extends React.Component {
             });
     }
 
-    render() {
-        const { t } = this.props;
+    googleAuth = (e) => {
+        var redirect = encodeURIComponent('https://socializa.wadobo.com/oauth2callback/');
+        var gapp = this.state.gapp;
 
-        let redirect = encodeURIComponent('https://socializa.wadobo.com/oauth2callback/');
-        let gapp = this.state.gapp;
-
-        let guri = 'https://accounts.google.com/o/oauth2/v2/auth?scope=email%20profile&response_type=token&client_id='+gapp;
+        var guri = 'https://accounts.google.com/o/oauth2/v2/auth?scope=email%20profile&response_type=token&client_id='+gapp;
         guri += '&redirect_uri='+redirect;
         guri += '&state='+location.href;
+
+        var win = window.open(guri, '_blank', 'location=yes');
+
+        function loadCallBack(ev) {
+            var qs = ev.url || ev.target.location.href;
+            qs = qs.split('+').join(' ');
+
+            var params = {},
+                tokens,
+                re = /[?&]?([^=]+)=([^&]*)/g;
+
+            while (tokens = re.exec(qs)) {
+                params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
+            }
+            if (params.token) {
+                this.authWithToken(params.token, params.email);
+            }
+            win.close();
+        }
+
+        win.addEventListener('load', loadCallBack.bind(this), false);
+        win.addEventListener('loadstart', loadCallBack.bind(this));
+    }
+
+    render() {
+        const { t } = this.props;
 
         return (
             <div id="login" className="container">
@@ -112,9 +120,12 @@ class Login extends React.Component {
                         </a>
                     </div>
                     <div className="col-xs-4">
-                        <a href={ guri } className="btn btn-danger btn-circle">
-                            <i className="fa fa-google-plus" aria-hidden="true"></i>
-                        </a>
+                        { this.state.gapp ? (
+                            <a onClick={ this.googleAuth } className="btn btn-danger btn-circle">
+                                <i className="fa fa-google-plus" aria-hidden="true"></i>
+                            </a> )
+                         : (<span></span>) }
+
                     </div>
                 </div>
 
