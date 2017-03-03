@@ -2,6 +2,7 @@ import requests
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.http import JsonResponse
+from django.http import HttpResponse
 from django.conf import settings
 
 from rest_framework.decorators import api_view, renderer_classes
@@ -35,7 +36,9 @@ def oauth2callback(request):
 
         token, created = Token.objects.get_or_create(user=user)
 
-        return redirect(state + '?email=' + user.email + '&token=' + token.key)
+        response = HttpResponse("", status=302)
+        response['Location'] = state + '?email=' + user.email + '&token=' + token.key
+        return response
 
 
 def oauth2apps(request):
