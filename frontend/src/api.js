@@ -175,4 +175,9 @@ export default class API {
         var data = JSONPost(data);
         return customFetch('/api/player/profile/', data);
     }
+
+    static setPlayingEvent(evid) {
+        var data = JSONPost({});
+        return customFetch('/api/event/' + evid + '/', data);
+    }
 }

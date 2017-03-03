@@ -239,10 +239,16 @@ export default class Events extends React.Component {
         e.preventDefault();
         e.stopPropagation();
 
-        user.activeEvent = ev;
-        storeUser();
-        this.setState({ active: user.activeEvent });
-        this.retitle();
+        var self = this;
+        API.setPlayingEvent(ev)
+            .then(function() {
+                user.activeEvent = ev;
+                storeUser();
+                self.setState({ active: user.activeEvent });
+                self.retitle();
+            }).catch(function() {
+                alert("Error joining the game");
+            });
     }
 
     unplay = (e) => {
@@ -251,10 +257,16 @@ export default class Events extends React.Component {
             e.stopPropagation();
         }
 
-        user.activeEvent = null;
-        storeUser();
-        this.setState({ active: user.activeEvent });
-        this.retitle();
+        var self = this;
+        API.setPlayingEvent('')
+            .then(function() {
+                user.activeEvent = null;
+                storeUser();
+                self.setState({ active: user.activeEvent });
+                self.retitle();
+            }).catch(function() {
+                alert("Error leaving the game");
+            });
     }
 
     searchChange = (e) => {

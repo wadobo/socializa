@@ -144,6 +144,7 @@ export default class Map extends React.Component {
           var f = e.target.getFeatures();
 
           var element = document.getElementById('popup');
+          try { $(element).popover('destroy'); } catch (err) { }
 
           if (f.getLength()) {
               var i = 0;
@@ -159,8 +160,6 @@ export default class Map extends React.Component {
               content.click(function() {
                   self.connectPlayer(id, user.activeEvent);
               });
-
-              try { $(element).popover('destroy'); } catch (err) { }
 
               setTimeout(function() {
                 $(element).popover({
