@@ -37,9 +37,14 @@ def oauth2callback(request):
 
         token, created = Token.objects.get_or_create(user=user)
 
-        state = state.split('/')[-1]
-        location = '?url=' + state + '&email=' + user.email + '&token=' + token.key
-        return redirect(reverse('oauth2redirect') + location)
+
+        # don't redirect if phonegap
+        if 'file://' in state:
+            state = state.split('/')[-1]
+            location = '?url=' + state + '&email=' + user.email + '&token=' + token.key
+            return redirect(reverse('oauth2redirect') + location)
+
+        return redirect(state + '?email=' + user.email + '&token=' + token.key)
 
 
 def oauth2redirect(request):

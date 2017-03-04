@@ -16,14 +16,36 @@ class Login extends React.Component {
 
     componentDidMount() {
         var self = this;
-        API.oauth2apps()
-            .then(function(resp) {
-                self.setState({
-                    gapp: resp.google,
-                    fapp: resp.facebook,
-                    tapp: resp.twitter
+
+        var q = this.getQueryParams();
+
+        if (q.token) {
+            self.authWithToken(q.token, q.email);
+        } else {
+            API.oauth2apps()
+                .then(function(resp) {
+                    self.setState({
+                        gapp: resp.google,
+                        fapp: resp.facebook,
+                        tapp: resp.twitter
+                    });
                 });
-            });
+        }
+    }
+
+    getQueryParams = () => {
+        var qs = document.location.search;
+        qs = qs.split('+').join(' ');
+
+        var params = {},
+            tokens,
+            re = /[?&]?([^=]+)=([^&]*)/g;
+
+        while (tokens = re.exec(qs)) {
+            params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
+        }
+
+        return params;
     }
 
     authWithToken(token, email) {
@@ -67,8 +89,11 @@ class Login extends React.Component {
         guri += '&redirect_uri='+redirect;
         guri += '&state='+location.href;
 
-        // TODO make this work with the browser
-        this.win = window.open(guri, '_blank', 'location=no');
+        if (window.HOST != '') {
+            this.win = window.open(guri, '_blank', 'location=no');
+        } else {
+            location.href = guri;
+        }
 
         function loadCallBack(ev) {
             var qs = ev.url;
@@ -90,7 +115,9 @@ class Login extends React.Component {
             self.win.close();
         }
 
-        this.win.addEventListener('loadstart', loadCallBack);
+        if (this.win) {
+            this.win.addEventListener('loadstart', loadCallBack);
+        }
     }
 
     render() {
