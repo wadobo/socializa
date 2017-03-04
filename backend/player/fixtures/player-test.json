@@ -218,21 +218,5 @@
     "groups": [],
     "user_permissions": []
   }
-},
-{
-  "model": "player.player",
-  "pk": 50,
-  "fields": {
-    "user": 50,
-    "pos": "SRID=4326;POINT (-6.928866063832878 37.257269099074534)"
-  }
-},
-{
-  "model": "player.player",
-  "pk": 51,
-  "fields": {
-    "user": 51,
-    "pos": "SRID=4326;POINT (-6.928866063832878 37.257269099074534)"
-  }
 }
 ]
