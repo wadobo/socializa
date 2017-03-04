@@ -16,8 +16,5 @@ class Game(models.Model):
     solution = models.TextField(max_length=1024, blank=True, null=True)
     challenges = models.ManyToManyField(Challenge, related_name="games") 
 
-    def num_challenges(self):
-        return self.challenges.count()
-
     def __str__(self):
         return self.name
