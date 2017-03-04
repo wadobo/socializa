@@ -196,10 +196,13 @@ class MeetingCreate(APIView):
                 meeting.status = 'connected'
                 meeting.save()
                 status = rf_status.HTTP_200_OK
-                challenge = self.get_challenge(self.player2, self.event)
-                self.create_clue(challenge)
                 response['status'] = meeting.status
-                response['clue'] = ChallengeSerializer(challenge).data
+                challenge = self.get_challenge(self.player2, self.event)
+                if challenge:
+                    self.create_clue(challenge)
+                    response['clue'] = ChallengeSerializer(challenge).data
+                else:
+                    response['clue'] = {}
             else:
                 response = "Invalid secret"
                 status = rf_status.HTTP_400_BAD_REQUEST
@@ -227,9 +230,13 @@ class MeetingCreate(APIView):
             status = rf_status.HTTP_400_BAD_REQUEST
         elif meeting.status == 'connected':
             challenge = self.get_challenge(self.player2, self.event)
-            self.create_clue(challenge)
             response['status'] = meeting.status
-            response['clue'] = ChallengeSerializer(challenge).data
+            challenge = self.get_challenge(self.player2, self.event)
+            if challenge:
+                self.create_clue(challenge)
+                response['clue'] = ChallengeSerializer(challenge).data
+            else:
+                response['clue'] = {}
         elif meeting.status == 'step2':
             response['status'] = 'waiting'
 
