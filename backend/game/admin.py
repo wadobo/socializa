@@ -9,7 +9,7 @@ class ChallengeAdmin(admin.ModelAdmin):
 
 
 class GameAdmin(admin.ModelAdmin):
-    list_display = ('name', 'desc', 'num_challenges')
+    list_display = ('name', 'desc', 'solution')
     filter_horizontal = ('challenges', )
 
 

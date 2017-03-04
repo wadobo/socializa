@@ -6,16 +6,24 @@ export default class GEO {
     static successCB = null;
     static errorCB = null;
 
-    static start(success, error) {
-        if (success) this.successCB = success;
-        if (error) this.errorCB = error;
+    static start() {
+        if (this.watchID == null) {
+            this.watchID = navigator.geolocation.watchPosition(this.success.bind(this), this.error.bind(this), this.options);
+        }
 
-        this.watchID = navigator.geolocation.watchPosition(this.successCB, this.errorCB, this.options);
         this.status = 'started';
     }
 
+    static success(p) {
+        if (this.successCB) this.successCB(p);
+    }
+
+    static error(e) {
+        if (this.errorCB) this.errorCB(e);
+    }
+
     static stop(pause) {
-        if (this.watchID) {
+        if (this.watchID != null) {
             navigator.geolocation.clearWatch(this.watchID);
             this.watchID = null;
         }

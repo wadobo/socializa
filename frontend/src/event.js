@@ -5,6 +5,7 @@ import { Link } from 'react-router'
 import { storeUser, user, logout } from './auth';
 import API from './api';
 import moment from 'moment';
+import Purifier from 'html-purify';
 
 import { EventRow } from './events';
 
@@ -15,10 +16,17 @@ import Loading from './loading';
 
 export class ClueRow extends React.Component {
     render() {
+        var self = this;
+        function createMarkup() {
+            var purifier = new Purifier();
+            var input = self.props.clue.challenge.desc;
+            var result = purifier.purify(input);
+            return {__html: result };
+        }
         return (
             <div className="clue">
                 <strong>{ this.props.clue.challenge.name }</strong>:<br/>
-                { this.props.clue.challenge.desc }
+                <div dangerouslySetInnerHTML={ createMarkup() } />
             </div>
         )
     }
@@ -148,7 +156,14 @@ export default class Event extends React.Component {
                     <div className="event-desc">
                         <EventRow ev={ev} expand={true} hiddenbuttons={true}/>
 
-                        <h2>Clues</h2>
+                        { this.state.clues && this.state.clues.length ?
+                            <h2>Clues</h2>
+                         : (<p className="text-center">No Clues yet,
+                                <Link to="/map"> <i className="fa fa-fw fa-map-marker"></i>
+                                    go to find someone
+                                </Link>
+                            </p>)
+                        }
 
                         {this.state.clues && this.state.clues.map(function(clue, i) {
                             return <ClueRow ev={ev} clue={clue}/>;

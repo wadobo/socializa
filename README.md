@@ -2,6 +2,8 @@
 
 ### Backend: [![Build Status](https://travis-ci.org/wadobo/socializa.svg?branch=master)](https://travis-ci.org/wadobo/socializa) [![Coverage Status](https://coveralls.io/repos/github/wadobo/socializa/badge.svg?branch=master)](https://coveralls.io/github/wadobo/socializa?branch=master) [![Requirements Status](https://requires.io/github/wadobo/socializa/requirements.svg?branch=master)](https://requires.io/github/wadobo/socializa/requirements/?branch=master) [![sonarqube](https://sonarqube.com/api/badges/gate?key=socializa)](https://sonarqube.com/dashboard/index/socializa)
 
+### Frontend: [![Requirements status](https://www.versioneye.com/user/projects/58ba22dc8be8c8003d07eda3/badge.svg)](https://www.versioneye.com/user/projects/58ba22dc8be8c8003d07eda3?child=summary#tab-dependencies)
+
 ### Languages:  [![Spanish](/readme/icons/es.png)](/readme/archlinux/es/README.md) [![English](/readme/icons/en.png)](/readme/archlinux/en/README.md)
 
 # Socializa

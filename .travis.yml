@@ -18,6 +18,8 @@ before_script:
 language: python
 python:
   - "3.4"
+  - "3.5"
+  - "3.6"
 install:
   - pip install -r backend/requirements.txt
   - pip install coveralls
@@ -25,7 +27,7 @@ script:
   - cd backend
   - pylint -f parseable --ignore-patterns="env/" * | tee pylint.out
   - coverage run --branch --source=. ./manage.py test --keepdb --with-xunit
-  - coverage xml
+  - coverage xml -i
   - cd ..
   - sonar-scanner
 after_success: coveralls
