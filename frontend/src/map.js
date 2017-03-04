@@ -210,8 +210,11 @@ export default class Map extends React.Component {
     }
 
     connected = (resp) => {
-        alert("Connected: " + resp);
-        //TODO redirect to event if you are in an event
+        if (resp.player) {
+            hashHistory.push('/event/' + user.activeEvent.pk);
+        } else {
+            alert("Connected!");
+        }
     }
 
     capturedQR = (id, ev, resp) => {
@@ -350,11 +353,32 @@ export default class Map extends React.Component {
             });
     }
 
+    playGlobal = (e) => {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        var self = this;
+        API.setPlayingEvent('')
+            .then(function() {
+                user.activeEvent = null;
+                storeUser();
+                self.setState({ active: user.activeEvent });
+                self.retitle();
+                self.start();
+                self.toggleEventMenu();
+            }).catch(function() {
+                alert("Error starting the game");
+            });
+    }
+
     renderEventMenu = () => {
         var self = this;
         if (this.state.eventMenu) {
             return (
                 <div className="eventMenu">
+                    <div className="ev" onClick={ (e) => self.playGlobal(e) }> Global event </div>
                     { this.state.events.map(function(ev, i) {
                         return <div className="ev" onClick={ (e) => self.play(e, ev) }> { ev.name } </div>
                       })}
