@@ -2,7 +2,7 @@ import React from 'react';
 import { hashHistory } from 'react-router'
 import { Link } from 'react-router'
 
-import { storeUser, user, logout } from './auth';
+import { user, logout } from './auth';
 import API from './api';
 import Loading from './loading';
 import moment from 'moment';
@@ -47,10 +47,6 @@ export class EventRow extends React.Component {
             }).catch(function(error) {
                 alert(error);
             });
-
-        if (this.props.active && this.props.active.pk == this.props.ev.pk) {
-            this.props.unplay();
-        }
     }
 
     price = (ev) => {
@@ -103,26 +99,6 @@ export class EventRow extends React.Component {
         )
     }
 
-    playButton = (ev) => {
-        if (!this.state.joined || this.props.hiddenbuttons) {
-            return (<span></span>);
-        }
-
-        if (this.props.active && this.props.active.pk == ev.pk) {
-            return (
-                <button onClick={ this.props.unplay } className="btn btn-primary btn-circle pull-right">
-                    <i className="fa fa-gamepad"></i>
-                </button>
-            )
-        }
-
-        return (
-            <button onClick={ this.props.play } className="btn btn-default btn-circle pull-right">
-                <i className="fa fa-gamepad"></i>
-            </button>
-        )
-    }
-
     shortDesc() {
         if (!this.props.expand && !this.state.expand) {
             return (<p className="text-muted small">{ this.props.ev.game.name }</p>)
@@ -151,7 +127,7 @@ export class EventRow extends React.Component {
         return (
             <div className="event" onClick={ this.expand.bind(this) }>
                 <div className="row">
-                    <div className="col-xs-1">
+                    <div className="col-xs-2">
                         { this.joinButton(this.props.ev) }
                     </div>
                     <div className="col-xs-10">
@@ -159,9 +135,6 @@ export class EventRow extends React.Component {
                             <h2>{ this.props.ev.name }</h2>
                             { this.shortDesc() }
                         </div>
-                    </div>
-                    <div className="col-xs-1">
-                        { this.playButton(this.props.ev) }
                     </div>
                 </div>
                 <div className="row">
@@ -189,7 +162,6 @@ export default class Events extends React.Component {
     state = {
         user: user,
         events: null,
-        active: user.activeEvent,
         loadingMore: false,
         q: null,
         page: 0
@@ -235,40 +207,6 @@ export default class Events extends React.Component {
         this.props.setAppState({ title: title, active: 'events' });
     }
 
-    play = (e, ev) => {
-        e.preventDefault();
-        e.stopPropagation();
-
-        var self = this;
-        API.setPlayingEvent(ev.pk)
-            .then(function() {
-                user.activeEvent = ev;
-                storeUser();
-                self.setState({ active: user.activeEvent });
-                self.retitle();
-            }).catch(function() {
-                alert("Error joining the game");
-            });
-    }
-
-    unplay = (e) => {
-        if (e) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
-
-        var self = this;
-        API.setPlayingEvent('')
-            .then(function() {
-                user.activeEvent = null;
-                storeUser();
-                self.setState({ active: user.activeEvent });
-                self.retitle();
-            }).catch(function() {
-                alert("Error leaving the game");
-            });
-    }
-
     searchChange = (e) => {
         var q = this.state.q || {};
         q.q = e.target.value;
@@ -280,11 +218,7 @@ export default class Events extends React.Component {
         return (
             <div>
             { this.state.events.map(function(ev, i) {
-                function play(e) { self.play(e, ev); }
-                return <EventRow ev={ev} key={i}
-                                 active={self.state.active}
-                                 play={play.bind(self)}
-                                 unplay={self.unplay.bind(self)} />;
+                return <EventRow ev={ev} key={i} active={self.state.active} />
             }) }
 
             { this.state.events.length ? <span></span> : <div className="jumbotron">There's no events :(</div> }

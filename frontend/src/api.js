@@ -131,6 +131,12 @@ export default class API {
         return customFetch(url, data);
     }
 
+    static myEvents() {
+        var data = JSONGet();
+        var url = '/api/event/my-events/';
+        return customFetch(url, data);
+    }
+
     static EventDetail(id) {
         var data = JSONGet();
         return customFetch('/api/event/'+id+'/', data);
