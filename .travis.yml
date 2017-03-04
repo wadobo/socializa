@@ -24,6 +24,7 @@ install:
 script:
   - cd backend
   - pylint -f parseable --ignore-patterns="env/" * | tee pylint.out
+  - ￼￼coverage run --branch --source=. ./manage.py test --keepdb
   - coverage run --branch --source=. ./manage.py test --keepdb --with-xunit
   - coverage xml
   - cd ..
