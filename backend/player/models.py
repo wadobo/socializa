@@ -37,7 +37,6 @@ class PlayerInterests(models.Model):
         return "%s - %s" % (self.user, self.text)
 
 
-
 MEETING_STATUS = (
     ('connected', 'connected'),
     ('step1', 'step1'),

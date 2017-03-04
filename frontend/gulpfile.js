@@ -24,6 +24,7 @@ var removeHTML = require("gulp-remove-html");
 // but include in your application deployment
 var dependencies = [
   'react', 'react-dom', 'react-router', 'qrcode.react',
+  'html-purify',
   'jquery',
   'bootstrap',
   'openlayers',

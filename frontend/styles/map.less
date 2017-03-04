@@ -14,3 +14,32 @@
     height: 40px;
     font-size: 40px;
 }
+
+.eventMenu {
+    position: fixed;
+    top: 50%;
+    bottom: 0px;
+    width: 100%;
+    background-color: @menu-color;
+    color: white;
+    box-shadow: 0px -3px 3px 0px rgba(50, 50, 50, 0.5);
+    overflow: hidden;
+
+    animation-name: bottomTop;
+    animation-duration: .5s;
+    animation-timing-function: ease-in;
+}
+
+@keyframes bottomTop {
+    0%   {top: 90%;}
+    100% {top: 50%;}
+}
+
+.eventMenu .ev {
+    width: 100%;
+    text-align: center;
+    padding: 20px;
+    font-weight: bold;
+    font-size: x-large;
+    border-bottom: 1px solid white;
+}

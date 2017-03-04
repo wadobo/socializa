@@ -4,12 +4,13 @@ import { hashHistory } from 'react-router'
 import { Link } from 'react-router'
 import ol from 'openlayers'
 
-import { user, logout } from './auth';
+import { storeUser, user, logout } from './auth';
 import API from './api';
+import GEO from './geo';
 
 
 export default class Map extends React.Component {
-    state = { user: user, state: 'stopped' }
+    state = { user: user, state: 'stopped', eventMenu: false, events: [] }
 
     componentDidMount() {
       let title = 'Map';
@@ -19,7 +20,10 @@ export default class Map extends React.Component {
       this.props.setAppState({ 'title': title, 'active': 'map' });
 
       window.addEventListener("resize", this.updateDimensions.bind(this));
-      document.addEventListener("pause", this.stop.bind(this), false);
+
+      if (GEO.status == 'started') {
+        this.start();
+      }
     }
 
     componentDidUpdate() {
@@ -54,17 +58,18 @@ export default class Map extends React.Component {
     }
 
     componentWillUnmount() {
-        document.removeEventListener("pause", this.stop.bind(this));
-        this.setState({ state: 'stopped' });
-
-        if (this.watchID) {
-            navigator.geolocation.clearWatch(this.watchID);
-        }
-
         clearTimeout(this.updateTimer);
         clearTimeout(this.qrcodeTimer);
 
         window.removeEventListener("resize", this.updateDimensions.bind(this));
+    }
+
+    updateEvents() {
+        var self = this;
+        API.myEvents()
+            .then(function(events) {
+                self.setState({ events: events });
+            });
     }
 
     onPosSuccess(position) {
@@ -122,8 +127,9 @@ export default class Map extends React.Component {
       }
       // starting tracking
       if (this.state.state == 'started') {
-        var options = { maximumAge: 5000, timeout: 5000, enableHighAccuracy: true };
-        this.watchID = navigator.geolocation.watchPosition(this.onPosSuccess.bind(this), this.onPosError.bind(this), options);
+        GEO.successCB = this.onPosSuccess.bind(this);
+        GEO.errorCB = this.onPosError.bind(this);
+        GEO.start();
 
         this.view.setZoom(18);
 
@@ -204,8 +210,11 @@ export default class Map extends React.Component {
     }
 
     connected = (resp) => {
-        alert("Connected: " + resp);
-        //TODO redirect to event if you are in an event
+        if (resp.player) {
+            hashHistory.push('/event/' + user.activeEvent.pk);
+        } else {
+            alert("Connected!");
+        }
     }
 
     capturedQR = (id, ev, resp) => {
@@ -286,10 +295,98 @@ export default class Map extends React.Component {
     }
 
     stop = (e) => {
-        if (this.watchID) {
-            navigator.geolocation.clearWatch(this.watchID);
-        }
         this.setState({ state: 'stopped' });
+        GEO.stop();
+        this.unplay();
+    }
+
+    toggleEventMenu = () => {
+        if (this.state.eventMenu) {
+            this.setState({ eventMenu: false });
+        } else {
+            this.updateEvents();
+            this.setState({ eventMenu: true });
+        }
+    }
+
+    retitle = () => {
+        var title = 'Map';
+        if (user.activeEvent) {
+          title = title + ' - ' + user.activeEvent.name;
+        }
+        this.props.setAppState({ title: title, active: 'map' });
+    }
+
+    play = (e, ev) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        var self = this;
+        API.setPlayingEvent(ev.pk)
+            .then(function() {
+                user.activeEvent = ev;
+                storeUser();
+                self.setState({ active: user.activeEvent });
+                self.retitle();
+                self.start();
+                self.toggleEventMenu();
+            }).catch(function() {
+                alert("Error joining the game");
+            });
+    }
+
+    unplay = (e) => {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        var self = this;
+        API.setPlayingEvent('')
+            .then(function() {
+                user.activeEvent = null;
+                storeUser();
+                self.setState({ active: user.activeEvent });
+                self.retitle();
+            }).catch(function() {
+                alert("Error leaving the game");
+            });
+    }
+
+    playGlobal = (e) => {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        var self = this;
+        API.setPlayingEvent('')
+            .then(function() {
+                user.activeEvent = null;
+                storeUser();
+                self.setState({ active: user.activeEvent });
+                self.retitle();
+                self.start();
+                self.toggleEventMenu();
+            }).catch(function() {
+                alert("Error starting the game");
+            });
+    }
+
+    renderEventMenu = () => {
+        var self = this;
+        if (this.state.eventMenu) {
+            return (
+                <div className="eventMenu">
+                    <div className="ev" onClick={ (e) => self.playGlobal(e) }> Global event </div>
+                    { this.state.events.map(function(ev, i) {
+                        return <div className="ev" onClick={ (e) => self.play(e, ev) }> { ev.name } </div>
+                      })}
+                </div>
+            )
+        } else {
+            return <button className="btn btn-fixed-bottom btn-success" onClick={ this.toggleEventMenu }>Start</button>
+        }
     }
 
     mapRender = () => {
@@ -304,7 +401,7 @@ export default class Map extends React.Component {
                             case 'started':
                                 return <button className="btn btn-fixed-bottom btn-danger" onClick={ this.stop }>Stop</button>
                             default:
-                                return <button className="btn btn-fixed-bottom btn-success" onClick={ this.start }>Start</button>
+                                return this.renderEventMenu();
                         }
                     }
                 )()}

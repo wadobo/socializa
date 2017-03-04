@@ -1,3 +1,5 @@
+from django.contrib.auth.models import User
+from django.contrib.gis.geos import GEOSGeometry
 from rest_framework.test import APITestCase
 
 from clue.models import Clue
@@ -5,8 +7,6 @@ from game.serializers import ChallengeSerializer
 from player.test_client import JClient
 from player.models import Meeting
 from player.models import Player
-
-
 
 
 class PlayerTestCase(APITestCase):
@@ -239,3 +239,37 @@ class MeetingTestCase(APITestCase):
         self.assertEqual(response.json(), res)
         meeting.status = prev_status
         meeting.save()
+
+    def test_meeting_between_players_without_challenge(self):
+        user_1 = User.objects.create_user('user_1', 'user_1@test.com', 'qweqweqwe')
+        user_2 = User.objects.create_user('user_2', 'user_2@test.com', 'qweqweqwe')
+        pos = GEOSGeometry('POINT(37.00000 -5.00000)')
+        player_1 = Player(user=user_1, pos=pos)
+        player_1.save()
+        player_2 = Player(user=user_2, pos=pos)
+        player_2.save()
+
+        response = self.c.authenticate(self.get_username(player_1.pk), self.pwd)
+        self.assertEqual(response.status_code, 200)
+        # step 1
+        response = self.c.post('/api/player/meeting/{0}/'.format(player_2.pk), {})
+        self.assertEqual(response.status_code, 201)
+
+        response = self.c.authenticate(self.get_username(player_2.pk), self.pwd)
+        self.assertEqual(response.status_code, 200)
+        # step 2
+        response = self.c.post('/api/player/meeting/{0}/'.format(player_1.pk), {})
+        self.assertEqual(response.status_code, 200)
+
+        secret = Meeting.objects.get(player1=player_1, player2=player_2).secret
+        response = self.c.authenticate(self.get_username(player_1.pk), self.pwd)
+        self.assertEqual(response.status_code, 200)
+        # step 3
+        response = self.c.post('/api/player/meeting/{0}/captured/{1}/'.format(player_2.pk, secret), {})
+        self.assertEqual(response.status_code, 200)
+
+        response = self.c.authenticate(self.get_username(player_2.pk), self.pwd)
+        self.assertEqual(response.status_code, 200)
+        # step 4
+        response = self.c.get('/api/player/meeting/{0}/qrclue/'.format(player_1.pk), {})
+        self.assertEqual(response.status_code, 200)
