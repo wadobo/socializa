@@ -9,12 +9,18 @@ from .serializers import ClueSerializer
 
 
 def attach_clue(player, event, main=False):
+    import ipdb; ipdb.set_trace()
     game = event.game
+    print("game -> ",game)
     challenges = game.challenges.all()
+    print("challenges -> ",challenges)
     challenges_attach = Clue.objects.filter(challenge__in=challenges,
             main=True).values_list('pk', flat=True)
+    print("challenges_attach -> ",challenges_attach)
     challenges = game.challenges.exclude(pk__in=challenges_attach)
+    print("challenges -> ",challenges)
     avail_challenges = challenges.exclude(pk__in=challenges_attach)
+    print("avail_challenges -> ",avavail_challenges)
 
     if avail_challenges:
         clue = Clue(player=player, challenge=avail_challenges[0], main=True, event=event)

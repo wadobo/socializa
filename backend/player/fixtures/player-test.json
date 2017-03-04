@@ -182,5 +182,57 @@
     "name": "Twitter",
     "skip_authorization": false
   }
+},
+{
+  "model": "auth.user",
+  "pk": 50,
+  "fields": {
+    "password": "pbkdf2_sha256$30000$mQYHRclkzme4$7VK0hKz2iUr1dC/2S9cN4vYl0Gjj4COp9GkDMy+qhSk=",
+    "last_login": "2016-09-24T16:02:25.774Z",
+    "is_superuser": false,
+    "username": "rafa_1",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2016-09-17T13:59:10.267Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 51,
+  "fields": {
+    "password": "pbkdf2_sha256$30000$mQYHRclkzme4$7VK0hKz2iUr1dC/2S9cN4vYl0Gjj4COp9GkDMy+qhSk=",
+    "last_login": "2016-09-24T16:02:25.774Z",
+    "is_superuser": false,
+    "username": "rafa_2",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2016-09-17T13:59:10.267Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "player.player",
+  "pk": 50,
+  "fields": {
+    "user": 50,
+    "pos": "SRID=4326;POINT (-6.928866063832878 37.257269099074534)"
+  }
+},
+{
+  "model": "player.player",
+  "pk": 51,
+  "fields": {
+    "user": 51,
+    "pos": "SRID=4326;POINT (-6.928866063832878 37.257269099074534)"
+  }
 }
 ]
