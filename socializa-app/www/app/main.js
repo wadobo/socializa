@@ -5,7 +5,7 @@
  * @copyright Copyright (c) 2014 Yehuda Katz, Tom Dale, Stefan Penner and contributors (Conversion to ES6 API by Jake Archibald)
  * @license   Licensed under MIT license
  *            See https://raw.githubusercontent.com/stefanpenner/es6-promise/master/LICENSE
- * @version   3.3.1
+ * @version   4.0.5
  */
 
 (function (global, factory) {
@@ -80,9 +80,13 @@ function useNextTick() {
 
 // vertx
 function useVertxTimer() {
-  return function () {
-    vertxNext(flush);
-  };
+  if (typeof vertxNext !== 'undefined') {
+    return function () {
+      vertxNext(flush);
+    };
+  }
+
+  return useSetTimeout();
 }
 
 function useMutationObserver() {
@@ -1145,7 +1149,6 @@ function polyfill() {
     local.Promise = Promise;
 }
 
-polyfill();
 // Strange compat..
 Promise.polyfill = polyfill;
 Promise.Promise = Promise;
@@ -5366,6 +5369,13 @@ var API = function () {
             return customFetch(url, data);
         }
     }, {
+        key: 'myEvents',
+        value: function myEvents() {
+            var data = JSONGet();
+            var url = '/api/event/my-events/';
+            return customFetch(url, data);
+        }
+    }, {
         key: 'EventDetail',
         value: function EventDetail(id) {
             var data = JSONGet();
@@ -5630,6 +5640,10 @@ var _moment = require('moment');
 
 var _moment2 = _interopRequireDefault(_moment);
 
+var _htmlPurify = require('html-purify');
+
+var _htmlPurify2 = _interopRequireDefault(_htmlPurify);
+
 var _events = require('./events');
 
 var _loading = require('./loading');
@@ -5659,6 +5673,13 @@ var ClueRow = exports.ClueRow = function (_React$Component) {
     _createClass(ClueRow, [{
         key: 'render',
         value: function render() {
+            var self = this;
+            function createMarkup() {
+                var purifier = new _htmlPurify2.default();
+                var input = self.props.clue.challenge.desc;
+                var result = purifier.purify(input);
+                return { __html: result };
+            }
             return _react2.default.createElement(
                 'div',
                 { className: 'clue' },
@@ -5669,7 +5690,7 @@ var ClueRow = exports.ClueRow = function (_React$Component) {
                 ),
                 ':',
                 _react2.default.createElement('br', null),
-                this.props.clue.challenge.desc
+                _react2.default.createElement('div', { dangerouslySetInnerHTML: createMarkup() })
             );
         }
     }]);
@@ -5811,10 +5832,21 @@ var Event = function (_React$Component2) {
                             'div',
                             { className: 'event-desc' },
                             _react2.default.createElement(_events.EventRow, { ev: ev, expand: true, hiddenbuttons: true }),
-                            _react2.default.createElement(
+                            _this2.state.clues && _this2.state.clues.length ? _react2.default.createElement(
                                 'h2',
                                 null,
                                 'Clues'
+                            ) : _react2.default.createElement(
+                                'p',
+                                { className: 'text-center' },
+                                'No Clues yet,',
+                                _react2.default.createElement(
+                                    _reactRouter.Link,
+                                    { to: '/map' },
+                                    ' ',
+                                    _react2.default.createElement('i', { className: 'fa fa-fw fa-map-marker' }),
+                                    'go to find someone'
+                                )
                             ),
                             _this2.state.clues && _this2.state.clues.map(function (clue, i) {
                                 return _react2.default.createElement(ClueRow, { ev: ev, clue: clue });
@@ -5848,7 +5880,7 @@ var Event = function (_React$Component2) {
 
 exports.default = Event;
 
-},{"./api":39,"./auth":41,"./events":43,"./loading":46,"moment":"moment","react":"react","react-router":"react-router"}],43:[function(require,module,exports){
+},{"./api":39,"./auth":41,"./events":43,"./loading":46,"html-purify":"html-purify","moment":"moment","react":"react","react-router":"react-router"}],43:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5926,10 +5958,6 @@ var EventRow = exports.EventRow = function (_React$Component) {
             }).catch(function (error) {
                 alert(error);
             });
-
-            if (_this.props.active && _this.props.active.pk == _this.props.ev.pk) {
-                _this.props.unplay();
-            }
         }, _this.price = function (ev) {
             if (_this.props.hiddenbuttons) {
                 return _react2.default.createElement('span', null);
@@ -5968,33 +5996,17 @@ var EventRow = exports.EventRow = function (_React$Component) {
             if (_this.state.joined) {
                 return _react2.default.createElement(
                     'button',
-                    { onClick: _this.leave, className: 'btn btn-danger btn-circle' },
-                    _react2.default.createElement('i', { className: 'fa fa-sign-in' })
+                    { onClick: _this.leave, className: 'btn btn-danger btn-block' },
+                    _react2.default.createElement('i', { className: 'fa fa-sign-out' }),
+                    ' Leave'
                 );
             }
 
             return _react2.default.createElement(
                 'button',
-                { onClick: _this.join, className: 'btn btn-success btn-circle' },
-                _react2.default.createElement('i', { className: 'fa fa-sign-out' })
-            );
-        }, _this.playButton = function (ev) {
-            if (!_this.state.joined || _this.props.hiddenbuttons) {
-                return _react2.default.createElement('span', null);
-            }
-
-            if (_this.props.active && _this.props.active.pk == ev.pk) {
-                return _react2.default.createElement(
-                    'button',
-                    { onClick: _this.props.unplay, className: 'btn btn-primary btn-circle pull-right' },
-                    _react2.default.createElement('i', { className: 'fa fa-gamepad' })
-                );
-            }
-
-            return _react2.default.createElement(
-                'button',
-                { onClick: _this.props.play, className: 'btn btn-default btn-circle pull-right' },
-                _react2.default.createElement('i', { className: 'fa fa-gamepad' })
+                { onClick: _this.join, className: 'btn btn-success btn-block' },
+                _react2.default.createElement('i', { className: 'fa fa-sign-in' }),
+                ' Join'
             );
         }, _temp), _possibleConstructorReturn(_this, _ret);
     }
@@ -6010,7 +6022,7 @@ var EventRow = exports.EventRow = function (_React$Component) {
             if (!this.props.expand && !this.state.expand) {
                 return _react2.default.createElement(
                     'p',
-                    { className: 'text-muted small' },
+                    { className: 'small' },
                     this.props.ev.game.name
                 );
             }
@@ -6040,72 +6052,50 @@ var EventRow = exports.EventRow = function (_React$Component) {
                         null,
                         this.props.ev.game.desc
                     )
-                )
+                ),
+                _react2.default.createElement(
+                    'div',
+                    { className: 'dates' },
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'start label label-default' },
+                        (0, _moment2.default)(this.props.ev.start_date).format('lll')
+                    ),
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'end pull-right label label-danger' },
+                        (0, _moment2.default)(this.props.ev.end_date).format('lll')
+                    )
+                ),
+                _react2.default.createElement('div', { className: 'clearfix' }),
+                this.joinButton(this.props.ev)
             );
         }
     }, {
         key: 'render',
         value: function render() {
+            var classes = 'event';
+            if (!this.props.hiddenbuttons && this.state.joined) {
+                classes += ' joined';
+            }
             return _react2.default.createElement(
                 'div',
-                { className: 'event', onClick: this.expand.bind(this) },
+                { className: classes, onClick: this.expand.bind(this) },
+                this.price(this.props.ev),
+                this.maxp(this.props.ev),
                 _react2.default.createElement(
-                    'div',
-                    { className: 'row' },
-                    _react2.default.createElement(
-                        'div',
-                        { className: 'col-xs-1' },
-                        this.joinButton(this.props.ev)
-                    ),
-                    _react2.default.createElement(
-                        'div',
-                        { className: 'col-xs-10' },
-                        _react2.default.createElement(
-                            'div',
-                            { className: 'eventname' },
-                            _react2.default.createElement(
-                                'h2',
-                                null,
-                                this.props.ev.name
-                            ),
-                            this.shortDesc()
-                        )
-                    ),
-                    _react2.default.createElement(
-                        'div',
-                        { className: 'col-xs-1' },
-                        this.playButton(this.props.ev)
-                    )
+                    'h2',
+                    null,
+                    this.props.ev.name
                 ),
                 _react2.default.createElement(
-                    'div',
-                    { className: 'row' },
-                    _react2.default.createElement(
-                        'div',
-                        { className: 'col-xs-12' },
-                        this.renderDesc()
-                    )
+                    'p',
+                    { className: 'desc' },
+                    ' ',
+                    this.shortDesc(),
+                    ' '
                 ),
-                _react2.default.createElement(
-                    'div',
-                    { className: 'row' },
-                    _react2.default.createElement(
-                        'div',
-                        { className: 'col-xs-12' },
-                        _react2.default.createElement(
-                            'div',
-                            { className: 'start label label-default' },
-                            (0, _moment2.default)(this.props.ev.start_date).format('lll')
-                        ),
-                        _react2.default.createElement(
-                            'div',
-                            { className: 'end label label-danger' },
-                            (0, _moment2.default)(this.props.ev.end_date).format('lll')
-                        ),
-                        this.price(this.props.ev),
-                        this.maxp(this.props.ev)
-                    )
-                )
+                this.renderDesc()
             );
         }
     }]);
@@ -6130,7 +6120,6 @@ var Events = function (_React$Component2) {
         return _ret2 = (_temp2 = (_this2 = _possibleConstructorReturn(this, (_ref2 = Events.__proto__ || Object.getPrototypeOf(Events)).call.apply(_ref2, [this].concat(args))), _this2), _this2.state = {
             user: _auth.user,
             events: null,
-            active: _auth.user.activeEvent,
             loadingMore: false,
             q: null,
             page: 0
@@ -6161,34 +6150,6 @@ var Events = function (_React$Component2) {
                 title = title + ' - ' + _auth.user.activeEvent.name;
             }
             _this2.props.setAppState({ title: title, active: 'events' });
-        }, _this2.play = function (e, ev) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            var self = _this2;
-            _api2.default.setPlayingEvent(ev.pk).then(function () {
-                _auth.user.activeEvent = ev;
-                (0, _auth.storeUser)();
-                self.setState({ active: _auth.user.activeEvent });
-                self.retitle();
-            }).catch(function () {
-                alert("Error joining the game");
-            });
-        }, _this2.unplay = function (e) {
-            if (e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-
-            var self = _this2;
-            _api2.default.setPlayingEvent('').then(function () {
-                _auth.user.activeEvent = null;
-                (0, _auth.storeUser)();
-                self.setState({ active: _auth.user.activeEvent });
-                self.retitle();
-            }).catch(function () {
-                alert("Error leaving the game");
-            });
         }, _this2.searchChange = function (e) {
             var q = _this2.state.q || {};
             q.q = e.target.value;
@@ -6210,13 +6171,7 @@ var Events = function (_React$Component2) {
                 'div',
                 null,
                 this.state.events.map(function (ev, i) {
-                    function play(e) {
-                        self.play(e, ev);
-                    }
-                    return _react2.default.createElement(EventRow, { ev: ev, key: i,
-                        active: self.state.active,
-                        play: play.bind(self),
-                        unplay: self.unplay.bind(self) });
+                    return _react2.default.createElement(EventRow, { ev: ev, key: i, active: self.state.active });
                 }),
                 this.state.events.length ? _react2.default.createElement('span', null) : _react2.default.createElement(
                     'div',
@@ -6284,17 +6239,27 @@ var GEO = function () {
 
     _createClass(GEO, null, [{
         key: 'start',
-        value: function start(success, error) {
-            if (success) this.successCB = success;
-            if (error) this.errorCB = error;
+        value: function start() {
+            if (this.watchID == null) {
+                this.watchID = navigator.geolocation.watchPosition(this.success.bind(this), this.error.bind(this), this.options);
+            }
 
-            this.watchID = navigator.geolocation.watchPosition(this.successCB, this.errorCB, this.options);
             this.status = 'started';
+        }
+    }, {
+        key: 'success',
+        value: function success(p) {
+            if (this.successCB) this.successCB(p);
+        }
+    }, {
+        key: 'error',
+        value: function error(e) {
+            if (this.errorCB) this.errorCB(e);
         }
     }, {
         key: 'stop',
         value: function stop(pause) {
-            if (this.watchID) {
+            if (this.watchID != null) {
                 navigator.geolocation.clearWatch(this.watchID);
                 this.watchID = null;
             }
@@ -6467,6 +6432,21 @@ var Login = function (_React$Component) {
 
         var _this = _possibleConstructorReturn(this, (Login.__proto__ || Object.getPrototypeOf(Login)).call(this, props));
 
+        _this.getQueryParams = function () {
+            var qs = document.location.search;
+            qs = qs.split('+').join(' ');
+
+            var params = {},
+                tokens,
+                re = /[?&]?([^=]+)=([^&]*)/g;
+
+            while (tokens = re.exec(qs)) {
+                params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
+            }
+
+            return params;
+        };
+
         _this.emailChange = function (e) {
             _this.setState({ email: e.target.value });
         };
@@ -6501,8 +6481,11 @@ var Login = function (_React$Component) {
             guri += '&redirect_uri=' + redirect;
             guri += '&state=' + location.href;
 
-            // TODO make this work with the browser
-            _this.win = window.open(guri, '_blank', 'location=no');
+            if (window.HOST != '') {
+                _this.win = window.open(guri, '_blank', 'location=no');
+            } else {
+                location.href = guri;
+            }
 
             function loadCallBack(ev) {
                 var qs = ev.url;
@@ -6524,7 +6507,9 @@ var Login = function (_React$Component) {
                 self.win.close();
             }
 
-            _this.win.addEventListener('loadstart', loadCallBack);
+            if (_this.win) {
+                _this.win.addEventListener('loadstart', loadCallBack);
+            }
         };
 
         return _this;
@@ -6534,13 +6519,20 @@ var Login = function (_React$Component) {
         key: 'componentDidMount',
         value: function componentDidMount() {
             var self = this;
-            _api2.default.oauth2apps().then(function (resp) {
-                self.setState({
-                    gapp: resp.google,
-                    fapp: resp.facebook,
-                    tapp: resp.twitter
+
+            var q = this.getQueryParams();
+
+            if (q.token) {
+                self.authWithToken(q.token, q.email);
+            } else {
+                _api2.default.oauth2apps().then(function (resp) {
+                    self.setState({
+                        gapp: resp.google,
+                        fapp: resp.facebook,
+                        tapp: resp.twitter
+                    });
                 });
-            });
+            }
         }
     }, {
         key: 'authWithToken',
@@ -6752,7 +6744,7 @@ var Map = function (_React$Component) {
             args[_key] = arguments[_key];
         }
 
-        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = Map.__proto__ || Object.getPrototypeOf(Map)).call.apply(_ref, [this].concat(args))), _this), _this.state = { user: _auth.user, state: 'stopped' }, _this.playersUpdated = function (data) {
+        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = Map.__proto__ || Object.getPrototypeOf(Map)).call.apply(_ref, [this].concat(args))), _this), _this.state = { user: _auth.user, state: 'stopped', eventMenu: false, events: [] }, _this.playersUpdated = function (data) {
             _this.playerList.clear();
             var pl = _this;
             data.forEach(function (p) {
@@ -6776,8 +6768,11 @@ var Map = function (_React$Component) {
                 _this.updateTimer = setTimeout(_this.updatePlayers.bind(_this), 2000);
             }
         }, _this.connected = function (resp) {
-            alert("Connected: " + resp);
-            //TODO redirect to event if you are in an event
+            if (resp.player) {
+                _reactRouter.hashHistory.push('/event/' + _auth.user.activeEvent.pk);
+            } else {
+                alert("Connected!");
+            }
         }, _this.capturedQR = function (id, ev, resp) {
             var self = _this;
             _api2.default.captured(id, ev, resp.text).then(function (resp) {
@@ -6841,6 +6836,99 @@ var Map = function (_React$Component) {
         }, _this.stop = function (e) {
             _this.setState({ state: 'stopped' });
             _geo2.default.stop();
+            _this.unplay();
+        }, _this.toggleEventMenu = function () {
+            if (_this.state.eventMenu) {
+                _this.setState({ eventMenu: false });
+            } else {
+                _this.updateEvents();
+                _this.setState({ eventMenu: true });
+            }
+        }, _this.retitle = function () {
+            var title = 'Map';
+            if (_auth.user.activeEvent) {
+                title = title + ' - ' + _auth.user.activeEvent.name;
+            }
+            _this.props.setAppState({ title: title, active: 'map' });
+        }, _this.play = function (e, ev) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            var self = _this;
+            _api2.default.setPlayingEvent(ev.pk).then(function () {
+                _auth.user.activeEvent = ev;
+                (0, _auth.storeUser)();
+                self.setState({ active: _auth.user.activeEvent });
+                self.retitle();
+                self.start();
+                self.toggleEventMenu();
+            }).catch(function () {
+                alert("Error joining the game");
+            });
+        }, _this.unplay = function (e) {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            var self = _this;
+            _api2.default.setPlayingEvent('').then(function () {
+                _auth.user.activeEvent = null;
+                (0, _auth.storeUser)();
+                self.setState({ active: _auth.user.activeEvent });
+                self.retitle();
+            }).catch(function () {
+                alert("Error leaving the game");
+            });
+        }, _this.playGlobal = function (e) {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            var self = _this;
+            _api2.default.setPlayingEvent('').then(function () {
+                _auth.user.activeEvent = null;
+                (0, _auth.storeUser)();
+                self.setState({ active: _auth.user.activeEvent });
+                self.retitle();
+                self.start();
+                self.toggleEventMenu();
+            }).catch(function () {
+                alert("Error starting the game");
+            });
+        }, _this.renderEventMenu = function () {
+            var self = _this;
+            if (_this.state.eventMenu) {
+                return _react2.default.createElement(
+                    'div',
+                    { className: 'eventMenu' },
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'ev', onClick: function onClick(e) {
+                                return self.playGlobal(e);
+                            } },
+                        ' Global event '
+                    ),
+                    _this.state.events.map(function (ev, i) {
+                        return _react2.default.createElement(
+                            'div',
+                            { className: 'ev', onClick: function onClick(e) {
+                                    return self.play(e, ev);
+                                } },
+                            ' ',
+                            ev.name,
+                            ' '
+                        );
+                    })
+                );
+            } else {
+                return _react2.default.createElement(
+                    'button',
+                    { className: 'btn btn-fixed-bottom btn-success', onClick: _this.toggleEventMenu },
+                    'Start'
+                );
+            }
         }, _this.mapRender = function () {
             return _react2.default.createElement(
                 'div',
@@ -6855,11 +6943,7 @@ var Map = function (_React$Component) {
                                 'Stop'
                             );
                         default:
-                            return _react2.default.createElement(
-                                'button',
-                                { className: 'btn btn-fixed-bottom btn-success', onClick: _this.start },
-                                'Start'
-                            );
+                            return _this.renderEventMenu();
                     }
                 }()
             );
@@ -6932,6 +7016,14 @@ var Map = function (_React$Component) {
             window.removeEventListener("resize", this.updateDimensions.bind(this));
         }
     }, {
+        key: 'updateEvents',
+        value: function updateEvents() {
+            var self = this;
+            _api2.default.myEvents().then(function (events) {
+                self.setState({ events: events });
+            });
+        }
+    }, {
         key: 'onPosSuccess',
         value: function onPosSuccess(position) {
             var view = this.view;
@@ -6990,7 +7082,9 @@ var Map = function (_React$Component) {
             }
             // starting tracking
             if (this.state.state == 'started') {
-                _geo2.default.start(this.onPosSuccess.bind(this), this.onPosError.bind(this));
+                _geo2.default.successCB = this.onPosSuccess.bind(this);
+                _geo2.default.errorCB = this.onPosError.bind(this);
+                _geo2.default.start();
 
                 this.view.setZoom(18);
 
