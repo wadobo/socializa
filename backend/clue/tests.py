@@ -57,22 +57,21 @@ class ClueTestCase(APITestCase):
     def test_join_event_create_clue_two_players(self):
         player1 = 1
         player2 = 2
-        start_clues = Clue.objects.count()
 
-        response1 = self.c.authenticate(self.get_username_by_player(player1), self.pwd)
-        self.assertEqual(response1.status_code, 200)
-        response1 = self.c.post('/api/event/join/{0}/'.format(self.EVENT3_PK), {})
-        self.assertEqual(response1.status_code, 201)
+        response = self.c.authenticate(self.get_username_by_player(player1), self.pwd)
+        self.assertEqual(response.status_code, 200)
+        response = self.c.post('/api/event/join/{0}/'.format(self.EVENT3_PK), {})
+        self.assertEqual(response.status_code, 201)
 
-        response2 = self.c.authenticate(self.get_username_by_player(player2), self.pwd)
-        self.assertEqual(response2.status_code, 200)
-        response2 = self.c.post('/api/event/join/{0}/'.format(self.EVENT3_PK), {})
-        self.assertEqual(response2.status_code, 201)
+        response = self.c.authenticate(self.get_username_by_player(player2), self.pwd)
+        self.assertEqual(response.status_code, 200)
+        response = self.c.post('/api/event/join/{0}/'.format(self.EVENT3_PK), {})
+        self.assertEqual(response.status_code, 201)
 
-        end_clues1 = Clue.objects.filter(player=player1, main=True, event=Event.objects.get(pk=self.EVENT3_PK)).first()
-        end_clues2 = Clue.objects.filter(player=player2, main=True, event=Event.objects.get(pk=self.EVENT3_PK)).first()
-        print("p1",end_clues1.challenge.pk,"p2",end_clues2.challenge.pk)
-        self.assertNotEqual(end_clues1.challenge,end_clues2.challenge)
+        event = Event.objects.get(pk=self.EVENT3_PK)
+        clue1 = Clue.objects.filter(player=player1, main=True, event=event).first()
+        clue2 = Clue.objects.filter(player=player2, main=True, event=event).first()
+        self.assertNotEqual(clue1.challenge, clue2.challenge)
 
 
     def test_unjoin_event_delete_clue(self):

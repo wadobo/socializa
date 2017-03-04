@@ -12,7 +12,7 @@ def attach_clue(player, event, main=False):
     game = event.game
     challenges = game.challenges.all()
     challenges_attach = Clue.objects.filter(challenge__in=challenges,
-            main=True).values_list('pk', flat=True)
+            main=True).values_list('challenge__pk', flat=True)
     challenges = game.challenges.exclude(pk__in=challenges_attach)
     avail_challenges = challenges.exclude(pk__in=challenges_attach)
 
