@@ -156,7 +156,14 @@ export default class Event extends React.Component {
                     <div className="event-desc">
                         <EventRow ev={ev} expand={true} hiddenbuttons={true}/>
 
-                        <h2>Clues</h2>
+                        { this.state.clues && this.state.clues.length ?
+                            <h2>Clues</h2>
+                         : (<p className="text-center">No Clues yet,
+                                <Link to="/map"> <i className="fa fa-fw fa-map-marker"></i>
+                                    go to find someone
+                                </Link>
+                            </p>)
+                        }
 
                         {this.state.clues && this.state.clues.map(function(clue, i) {
                             return <ClueRow ev={ev} clue={clue}/>;

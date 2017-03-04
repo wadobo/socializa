@@ -86,22 +86,22 @@ export class EventRow extends React.Component {
 
         if (this.state.joined) {
             return (
-                <button onClick={ this.leave } className="btn btn-danger btn-circle">
-                    <i className="fa fa-sign-in"></i>
+                <button onClick={ this.leave } className="btn btn-danger btn-block">
+                    <i className="fa fa-sign-out"></i> Leave
                 </button>
             )
         }
 
         return (
-            <button onClick={ this.join } className="btn btn-success btn-circle">
-                <i className="fa fa-sign-out"></i>
+            <button onClick={ this.join } className="btn btn-success btn-block">
+                <i className="fa fa-sign-in"></i> Join
             </button>
         )
     }
 
     shortDesc() {
         if (!this.props.expand && !this.state.expand) {
-            return (<p className="text-muted small">{ this.props.ev.game.name }</p>)
+            return (<p className="small">{ this.props.ev.game.name }</p>)
         }
 
         return (<div></div>);
@@ -119,39 +119,32 @@ export class EventRow extends React.Component {
                     <h2>{ this.props.ev.game.name }</h2>
                     <p>{ this.props.ev.game.desc }</p>
                 </div>
+
+                <div className="dates">
+                    <div className="start label label-default">{ moment(this.props.ev.start_date).format('lll') }</div>
+                    <div className="end pull-right label label-danger">{ moment(this.props.ev.end_date).format('lll') }</div>
+                </div>
+                <div className="clearfix"></div>
+
+                { this.joinButton(this.props.ev) }
             </div>
         );
     }
 
     render() {
+        var classes = 'event';
+        if (!this.props.hiddenbuttons && this.state.joined) {
+            classes += ' joined';
+        }
         return (
-            <div className="event" onClick={ this.expand.bind(this) }>
-                <div className="row">
-                    <div className="col-xs-2">
-                        { this.joinButton(this.props.ev) }
-                    </div>
-                    <div className="col-xs-10">
-                        <div className="eventname">
-                            <h2>{ this.props.ev.name }</h2>
-                            { this.shortDesc() }
-                        </div>
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col-xs-12">
-                        { this.renderDesc() }
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col-xs-12">
-                        <div className="start label label-default">{ moment(this.props.ev.start_date).format('lll') }</div>
-                        <div className="end label label-danger">{ moment(this.props.ev.end_date).format('lll') }</div>
-                        { this.price(this.props.ev) }
-                        { this.maxp(this.props.ev) }
-                    </div>
-                </div>
+            <div className={ classes } onClick={ this.expand.bind(this) }>
+                { this.price(this.props.ev) }
+                { this.maxp(this.props.ev) }
 
+                <h2>{ this.props.ev.name }</h2>
+                <p className="desc"> { this.shortDesc() } </p>
 
+                { this.renderDesc() }
             </div>
         )
     }
