@@ -10,7 +10,15 @@ import GEO from './geo';
 
 
 export default class Map extends React.Component {
-    state = { user: user, state: 'stopped', eventMenu: false, events: [] }
+    state = {
+        user: user,
+        state: 'stopped',
+        eventMenu: false,
+        events: []
+    }
+
+    firstCentre = false;
+    lastPost = null;
 
     componentDidMount() {
       let title = 'Map';
@@ -72,9 +80,14 @@ export default class Map extends React.Component {
             });
     }
 
+    centre = (e) => {
+        this.map.getView().animate({
+          center: this.lastPost,
+          duration: 1000
+        });
+    }
+
     onPosSuccess(position) {
-        var view = this.view;
-        var map = this.map;
         var positionFeature = this.positionFeature;
 
         var lat = position.coords.latitude;
@@ -85,17 +98,18 @@ export default class Map extends React.Component {
 
         var coordinates = new ol.geom.Point(ol.proj.fromLonLat(coords));
         var center = ol.proj.transform([lon, lat], 'EPSG:4326', 'EPSG:3857');
-        map.getView().animate({
-          center: center,
-          duration: 1000
-        });
+        this.lastPost = center;
+
+        if (this.firstCentre) {
+            this.centre();
+            this.firstCentre = false;
+        }
         positionFeature.setGeometry(coordinates);
     }
 
     onPosError(error) { }
 
     startGeolocation() {
-      var view = this.view;
       var map = this.map;
 
       var positionFeature = new ol.Feature();
@@ -258,7 +272,7 @@ export default class Map extends React.Component {
     }
 
     startState = (e) => {
-        this.setState({ state: 'started' });
+        this.start();
     }
 
     showCamera = (id, ev) => {
@@ -291,6 +305,7 @@ export default class Map extends React.Component {
     }
 
     start = (e) => {
+        this.firstCentre = true;
         this.setState({ state: 'started' });
     }
 
@@ -393,6 +408,10 @@ export default class Map extends React.Component {
         return (
             <div>
                 <div id="socializa-map">
+                </div>
+
+                <div id="center-button" onClick={ this.centre } className="btn btn-circle btn-primary">
+                    <i className="fa fa-street-view"></i>
                 </div>
 
                 {(
