@@ -6755,12 +6755,13 @@ var Map = function (_React$Component) {
                 duration: 1000
             });
         }, _this.playersUpdated = function (data) {
+            var self = _this;
             _this.playerList.clear();
-            var pl = _this;
+
             data.forEach(function (p) {
                 var playerFeature = new _openlayers2.default.Feature();
                 playerFeature.setStyle(new _openlayers2.default.style.Style({
-                    image: new _openlayers2.default.style.Icon({ src: 'app/images/geo2.svg' }),
+                    image: self.getIcon(p),
                     zIndex: 100
                 }));
                 var coords = [parseFloat(p.pos.longitude), parseFloat(p.pos.latitude)];
@@ -6768,15 +6769,23 @@ var Map = function (_React$Component) {
                 playerFeature.customData = { id: p.pk, coords: point, name: p.username };
                 playerFeature.setGeometry(new _openlayers2.default.geom.Point(_openlayers2.default.proj.fromLonLat(coords)));
 
-                pl.playerList.addFeature(playerFeature);
+                self.playerList.addFeature(playerFeature);
             });
-        }, _this.updatePlayers = function () {
-            var ev = _auth.user.activeEvent ? _auth.user.activeEvent.pk : _auth.user.activeEvent;
-            _api2.default.nearPlayers(ev).then(_this.playersUpdated.bind(_this));
+        }, _this.setUpdateTimer = function (timeout) {
             if (_this.state.state == 'started') {
                 clearTimeout(_this.updateTimer);
-                _this.updateTimer = setTimeout(_this.updatePlayers.bind(_this), 2000);
+                _this.updateTimer = setTimeout(_this.updatePlayers.bind(_this), timeout);
             }
+        }, _this.updatePlayers = function () {
+            var ev = _auth.user.activeEvent ? _auth.user.activeEvent.pk : _auth.user.activeEvent;
+            var self = _this;
+
+            _api2.default.nearPlayers(ev).then(function (data) {
+                self.playersUpdated(data);
+                self.setUpdateTimer(2000);
+            }).catch(function () {
+                self.setUpdateTimer(5000);
+            });
         }, _this.connected = function (resp) {
             if (resp.player) {
                 _reactRouter.hashHistory.push('/event/' + _auth.user.activeEvent.pk);
@@ -7109,8 +7118,7 @@ var Map = function (_React$Component) {
                     stopEvent: false
                 });
                 this.map.addOverlay(this.popup);
-                clearTimeout(this.updateTimer);
-                this.updateTimer = setTimeout(this.updatePlayers.bind(this), 500);
+                this.setUpdateTimer(500);
             }
 
             var select = new _openlayers2.default.interaction.Select();
@@ -7149,6 +7157,19 @@ var Map = function (_React$Component) {
                     }, 200);
                 }
             });
+        }
+    }, {
+        key: 'getIcon',
+        value: function getIcon(p) {
+            // returns an icon based on the player id
+            var icons = {
+                player: ['geo2'],
+                ia: ['geo-ia']
+            };
+
+            var l = p.ia ? icons.ia : icons.player;
+            var icon = l[p.pk % l.length];
+            return new _openlayers2.default.style.Icon({ src: 'app/images/' + icon + '.svg' });
         }
     }, {
         key: 'render',
