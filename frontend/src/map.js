@@ -88,8 +88,6 @@ export default class Map extends React.Component {
     }
 
     onPosSuccess(position) {
-        var positionFeature = this.positionFeature;
-
         var lat = position.coords.latitude;
         var lon = position.coords.longitude;
         var coords = [parseFloat(lon), parseFloat(lat)];
@@ -104,7 +102,14 @@ export default class Map extends React.Component {
             this.centre();
             this.firstCentre = false;
         }
-        positionFeature.setGeometry(coordinates);
+        this.positionFeature.setGeometry(coordinates);
+
+        var vd = user.activeEvent ? user.activeEvent.vision_distance : 0;
+        var md = user.activeEvent ? user.activeEvent.meeting_distance : 0;
+        var circle = new ol.geom.Circle(center, vd);
+        this.visionFeature.setGeometry(circle);
+        circle = new ol.geom.Circle(center, md);
+        this.meetingFeature.setGeometry(circle);
     }
 
     onPosError(error) { }
@@ -112,20 +117,51 @@ export default class Map extends React.Component {
     startGeolocation() {
       var map = this.map;
 
-      var positionFeature = new ol.Feature();
-      this.positionFeature = positionFeature;
-      positionFeature.setStyle(new ol.style.Style({
+      this.positionFeature = new ol.Feature();
+      this.positionFeature.setStyle(new ol.style.Style({
         image: new ol.style.Icon({ src: 'app/images/geo1.svg' }),
         zIndex: 10
       }));
-      positionFeature.customData = {name: 'me'};
+      this.positionFeature.customData = {name: 'me'};
+
+      this.visionFeature = new ol.Feature();
+      this.meetingFeature = new ol.Feature();
+
+      // vision layer
+      new ol.layer.Vector({
+        map: map,
+
+        source: new ol.source.Vector({
+          features: [this.visionFeature]
+        }),
+
+        style: new ol.style.Style({
+            fill: new ol.style.Fill({ color: 'rgba(255, 255, 255, 0.2)' }),
+            stroke: new ol.style.Stroke({ width: 1, color: '#286090' })
+        })
+
+      });
+
+      // meeting distance layer
+      new ol.layer.Vector({
+        map: map,
+
+        source: new ol.source.Vector({
+          features: [this.meetingFeature]
+        }),
+
+        style: new ol.style.Style({
+            fill: new ol.style.Fill({ color: 'rgba(92, 184, 92, 0.1)' }),
+            stroke: new ol.style.Stroke({ width: 0.5, color: '#5cb85c' })
+        })
+      });
 
       // my position layer
       new ol.layer.Vector({
         map: map,
+
         source: new ol.source.Vector({
-          //features: [accuracyFeature, positionFeature]
-          features: [positionFeature]
+          features: [this.positionFeature]
         })
       });
 

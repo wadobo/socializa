@@ -14,6 +14,9 @@ class EventSerializer(serializers.Serializer):
     joined = serializers.SerializerMethodField('is_player_joined')
     solved = serializers.SerializerMethodField('solution')
 
+    vision_distance = serializers.IntegerField()
+    meeting_distance = serializers.IntegerField()
+
     def is_player_joined(self, event):
         player = self.context.get("player")
         if player in event.players.all():
