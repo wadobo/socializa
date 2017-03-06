@@ -6744,7 +6744,17 @@ var Map = function (_React$Component) {
             args[_key] = arguments[_key];
         }
 
-        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = Map.__proto__ || Object.getPrototypeOf(Map)).call.apply(_ref, [this].concat(args))), _this), _this.state = { user: _auth.user, state: 'stopped', eventMenu: false, events: [] }, _this.playersUpdated = function (data) {
+        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = Map.__proto__ || Object.getPrototypeOf(Map)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
+            user: _auth.user,
+            state: 'stopped',
+            eventMenu: false,
+            events: []
+        }, _this.firstCentre = false, _this.lastPost = null, _this.centre = function (e) {
+            _this.map.getView().animate({
+                center: _this.lastPost,
+                duration: 1000
+            });
+        }, _this.playersUpdated = function (data) {
             _this.playerList.clear();
             var pl = _this;
             data.forEach(function (p) {
@@ -6804,7 +6814,7 @@ var Map = function (_React$Component) {
                 self.qrcodePolling.bind(self)(id, ev);
             }, 500);
         }, _this.startState = function (e) {
-            _this.setState({ state: 'started' });
+            _this.start();
         }, _this.showCamera = function (id, ev) {
             var self = _this;
             window.scanQR(function (resp) {
@@ -6832,6 +6842,7 @@ var Map = function (_React$Component) {
                 }
             });
         }, _this.start = function (e) {
+            _this.firstCentre = true;
             _this.setState({ state: 'started' });
         }, _this.stop = function (e) {
             _this.setState({ state: 'stopped' });
@@ -6934,6 +6945,11 @@ var Map = function (_React$Component) {
                 'div',
                 null,
                 _react2.default.createElement('div', { id: 'socializa-map' }),
+                _react2.default.createElement(
+                    'div',
+                    { id: 'center-button', onClick: _this.centre, className: 'btn btn-circle btn-primary' },
+                    _react2.default.createElement('i', { className: 'fa fa-street-view' })
+                ),
                 function () {
                     switch (_this.state.state) {
                         case 'started':
@@ -7026,8 +7042,6 @@ var Map = function (_React$Component) {
     }, {
         key: 'onPosSuccess',
         value: function onPosSuccess(position) {
-            var view = this.view;
-            var map = this.map;
             var positionFeature = this.positionFeature;
 
             var lat = position.coords.latitude;
@@ -7038,10 +7052,12 @@ var Map = function (_React$Component) {
 
             var coordinates = new _openlayers2.default.geom.Point(_openlayers2.default.proj.fromLonLat(coords));
             var center = _openlayers2.default.proj.transform([lon, lat], 'EPSG:4326', 'EPSG:3857');
-            map.getView().animate({
-                center: center,
-                duration: 1000
-            });
+            this.lastPost = center;
+
+            if (this.firstCentre) {
+                this.centre();
+                this.firstCentre = false;
+            }
             positionFeature.setGeometry(coordinates);
         }
     }, {
@@ -7050,7 +7066,6 @@ var Map = function (_React$Component) {
     }, {
         key: 'startGeolocation',
         value: function startGeolocation() {
-            var view = this.view;
             var map = this.map;
 
             var positionFeature = new _openlayers2.default.Feature();
