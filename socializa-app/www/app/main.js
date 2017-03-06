@@ -7051,8 +7051,6 @@ var Map = function (_React$Component) {
     }, {
         key: 'onPosSuccess',
         value: function onPosSuccess(position) {
-            var positionFeature = this.positionFeature;
-
             var lat = position.coords.latitude;
             var lon = position.coords.longitude;
             var coords = [parseFloat(lon), parseFloat(lat)];
@@ -7067,7 +7065,14 @@ var Map = function (_React$Component) {
                 this.centre();
                 this.firstCentre = false;
             }
-            positionFeature.setGeometry(coordinates);
+            this.positionFeature.setGeometry(coordinates);
+
+            var vd = _auth.user.activeEvent ? _auth.user.activeEvent.vision_distance : 0;
+            var md = _auth.user.activeEvent ? _auth.user.activeEvent.meeting_distance : 0;
+            var circle = new _openlayers2.default.geom.Circle(center, vd);
+            this.visionFeature.setGeometry(circle);
+            circle = new _openlayers2.default.geom.Circle(center, md);
+            this.meetingFeature.setGeometry(circle);
         }
     }, {
         key: 'onPosError',
@@ -7077,20 +7082,51 @@ var Map = function (_React$Component) {
         value: function startGeolocation() {
             var map = this.map;
 
-            var positionFeature = new _openlayers2.default.Feature();
-            this.positionFeature = positionFeature;
-            positionFeature.setStyle(new _openlayers2.default.style.Style({
+            this.positionFeature = new _openlayers2.default.Feature();
+            this.positionFeature.setStyle(new _openlayers2.default.style.Style({
                 image: new _openlayers2.default.style.Icon({ src: 'app/images/geo1.svg' }),
                 zIndex: 10
             }));
-            positionFeature.customData = { name: 'me' };
+            this.positionFeature.customData = { name: 'me' };
+
+            this.visionFeature = new _openlayers2.default.Feature();
+            this.meetingFeature = new _openlayers2.default.Feature();
+
+            // vision layer
+            new _openlayers2.default.layer.Vector({
+                map: map,
+
+                source: new _openlayers2.default.source.Vector({
+                    features: [this.visionFeature]
+                }),
+
+                style: new _openlayers2.default.style.Style({
+                    fill: new _openlayers2.default.style.Fill({ color: 'rgba(255, 255, 255, 0.2)' }),
+                    stroke: new _openlayers2.default.style.Stroke({ width: 1, color: '#286090' })
+                })
+
+            });
+
+            // meeting distance layer
+            new _openlayers2.default.layer.Vector({
+                map: map,
+
+                source: new _openlayers2.default.source.Vector({
+                    features: [this.meetingFeature]
+                }),
+
+                style: new _openlayers2.default.style.Style({
+                    fill: new _openlayers2.default.style.Fill({ color: 'rgba(92, 184, 92, 0.1)' }),
+                    stroke: new _openlayers2.default.style.Stroke({ width: 0.5, color: '#5cb85c' })
+                })
+            });
 
             // my position layer
             new _openlayers2.default.layer.Vector({
                 map: map,
+
                 source: new _openlayers2.default.source.Vector({
-                    //features: [accuracyFeature, positionFeature]
-                    features: [positionFeature]
+                    features: [this.positionFeature]
                 })
             });
 
