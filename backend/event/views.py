@@ -126,7 +126,7 @@ class EventDetail(APIView):
         data = serializer.data
         return Response(data)
 
-    def post(self, request, event_id):
+    def post(self, request, event_id=None):
         """ Set current event for player. """
         if request.user.is_anonymous():
             return Response("Anonymous user", status=rf_status.HTTP_401_UNAUTHORIZED)
@@ -141,7 +141,10 @@ class EventDetail(APIView):
             playing_event = PlayingEvent(player=player, event=event)
             playing_event.save()
             status = rf_status.HTTP_201_CREATED
-        return Response({}, status=status)
+
+        serializer = EventSerializer(event, many=False, context={'player': request.user.player})
+        data = serializer.data
+        return Response(data, status=status)
 
 
 class SolveEvent(APIView):
