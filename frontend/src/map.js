@@ -153,8 +153,7 @@ export default class Map extends React.Component {
             stopEvent: false
         });
         this.map.addOverlay(this.popup);
-        clearTimeout(this.updateTimer);
-        this.updateTimer = setTimeout(this.updatePlayers.bind(this), 500);
+        this.setUpdateTimer(500);
       }
 
       var select = new ol.interaction.Select();
@@ -193,13 +192,26 @@ export default class Map extends React.Component {
       });
     }
 
+    getIcon(p) {
+        // returns an icon based on the player id
+        var icons = {
+            player: ['geo2'],
+            ia: ['geo-ia']
+        };
+
+        var l = p.ia ? icons.ia : icons.player;
+        var icon = l[p.pk % l.length];
+        return new ol.style.Icon({ src: 'app/images/'+ icon +'.svg' });
+    }
+
     playersUpdated = (data) => {
+        var self = this;
         this.playerList.clear();
-        var pl = this;
+
         data.forEach(function(p) {
             var playerFeature = new ol.Feature();
             playerFeature.setStyle(new ol.style.Style({
-              image: new ol.style.Icon({ src: 'app/images/geo2.svg' }),
+              image: self.getIcon(p),
               zIndex: 100
             }));
             var coords = [parseFloat(p.pos.longitude), parseFloat(p.pos.latitude)];
@@ -209,18 +221,27 @@ export default class Map extends React.Component {
                 new ol.geom.Point(ol.proj.fromLonLat(coords))
             );
 
-            pl.playerList.addFeature(playerFeature);
+            self.playerList.addFeature(playerFeature);
         });
+    }
+
+    setUpdateTimer = (timeout) => {
+        if (this.state.state == 'started') {
+            clearTimeout(this.updateTimer);
+            this.updateTimer = setTimeout(this.updatePlayers.bind(this), timeout);
+        }
     }
 
     updatePlayers = () => {
         var ev = user.activeEvent ? user.activeEvent.pk : user.activeEvent;
+        var self = this;
+
         API.nearPlayers(ev).
-            then(this.playersUpdated.bind(this));
-        if (this.state.state == 'started') {
-            clearTimeout(this.updateTimer);
-            this.updateTimer = setTimeout(this.updatePlayers.bind(this), 2000);
-        }
+            then((data) => {
+                self.playersUpdated(data);
+                self.setUpdateTimer(2000);
+            })
+            .catch(() => { self.setUpdateTimer(5000); });
     }
 
     connected = (resp) => {
