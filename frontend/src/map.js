@@ -231,34 +231,68 @@ export default class Map extends React.Component {
     getIcon(p) {
         // returns an icon based on the player id
         var icons = {
-            player: ['geo2'],
+            player: ['geo10', 'geo9', 'geo8', 'geo7', 'geo6', 'geo5', 'geo4', 'geo3', 'geo2'],
             ia: ['geo-ia']
         };
 
         var l = p.ia ? icons.ia : icons.player;
+        //var r = Math.floor(Math.random() * l.length);
         var icon = l[p.pk % l.length];
         return new ol.style.Icon({ src: 'app/images/'+ icon +'.svg' });
     }
 
     playersUpdated = (data) => {
         var self = this;
-        this.playerList.clear();
+        var fs = this.playerList.getFeatures();
+
+        var noremove = {};
 
         data.forEach(function(p) {
-            var playerFeature = new ol.Feature();
-            playerFeature.setStyle(new ol.style.Style({
-              image: self.getIcon(p),
-              zIndex: 100
-            }));
+            noremove[p.pk] = true;
+            var playerFeature = null;
+
+            var i = 0;
+            while (i < fs.length) {
+                var f = fs[i];
+                if (f.customData.id == p.pk) {
+                    playerFeature = f;
+                    break;
+                }
+                i++;
+            }
+
+            if (playerFeature == null) {
+                // adding not found features
+                playerFeature = new ol.Feature();
+                playerFeature.setStyle(new ol.style.Style({
+                  image: self.getIcon(p),
+                  zIndex: 100
+                }));
+                self.playerList.addFeature(playerFeature);
+            }
+
+            // moving the features
             var coords = [parseFloat(p.pos.longitude), parseFloat(p.pos.latitude)];
             var point = new ol.proj.transform([coords[0], coords[1]], 'EPSG:4326', 'EPSG:3857');
             playerFeature.customData = {id: p.pk, coords: point, name: p.username};
             playerFeature.setGeometry(
                 new ol.geom.Point(ol.proj.fromLonLat(coords))
             );
-
-            self.playerList.addFeature(playerFeature);
         });
+
+        // removing removed featured
+        var i = 0;
+        var l = fs.length;
+        while (i < l) {
+            var f = fs[i];
+            if (noremove[f.customData.id]) {
+                i++;
+                continue;
+            }
+
+            this.playerList.removeFeature(f);
+            l--;
+        }
     }
 
     setUpdateTimer = (timeout) => {
