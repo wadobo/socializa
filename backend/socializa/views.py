@@ -6,8 +6,6 @@ from django.http import HttpResponse
 from django.conf import settings
 from django.core.urlresolvers import reverse
 
-from rest_framework.decorators import api_view, renderer_classes
-
 from social_django.utils import load_backend, load_strategy
 from rest_framework import exceptions
 from rest_framework.authtoken.models import Token

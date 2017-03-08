@@ -1,6 +1,7 @@
 from django.db.models import Q
 from django.conf import settings
 from django.contrib.gis.measure import D
+from django.contrib.gis.geos import GEOSException
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import status as rf_status
@@ -256,7 +257,7 @@ class SetPosition(APIView):
         lon = request.data.get('lon', None)
         try:
             player.set_position(lon, lat)
-        except:
+        except (ValueError, GEOSException):
             return Response("Invalid position", status=rf_status.HTTP_400_BAD_REQUEST)
         return Response("Position changed", status=rf_status.HTTP_200_OK)
 
