@@ -21,5 +21,5 @@ def manage_ia():
                 player = create_random_player(event)
                 member = Membership(player=player, event=event)
                 member.save()
-                attach_clue(player=player, game=event.game, main=True)
+                attach_clue(player=player, event=event, main=True)
                 need_player -= 1
