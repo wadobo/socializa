@@ -19,4 +19,5 @@ urlpatterns = [
             views.meeting_create, name="meeting_qrclue_noevent"),
     url(r'^set-pos/$', views.set_position, name="set_position"),
     url(r'^profile/$', views.profile, name="profile"),
+    url(r'^profile/(?P<player_id>\d+)/$', views.profile, name="profile_user"),
 ]

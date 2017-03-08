@@ -274,11 +274,17 @@ set_position = SetPosition.as_view()
 
 class Profile(APIView):
 
-    def get(self, request):
+    def get(self, request, player_id=None):
         if request.user.is_anonymous():
             return Response("Anonymous user", status=rf_status.HTTP_401_UNAUTHORIZED)
 
-        p = request.user.player
+        if not player_id:
+            p = request.user.player
+        else:
+            p = Player.objects.get(pk=player_id)
+            if not p.visible(request.user.player):
+                return Response({})
+
         serializer = PlayerSerializer(p, many=False)
         return Response(serializer.data)
 

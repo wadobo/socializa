@@ -4,7 +4,7 @@ import { hashHistory } from 'react-router'
 import { Link } from 'react-router'
 import ol from 'openlayers'
 
-import { storeUser, user, logout } from './auth';
+import { storeUser, user, logout, getIcon } from './auth';
 import API from './api';
 import GEO from './geo';
 
@@ -35,8 +35,10 @@ export default class Map extends React.Component {
     }
 
     componentDidUpdate() {
+      var svq = ol.proj.fromLonLat([-5.9866369, 37.3580539]);
+      var c = this.lastPost ? this.lastPost : svq;
       this.view = new ol.View({
-        center: ol.proj.fromLonLat([-5.9866369, 37.3580539]),
+        center: c,
         zoom: 12
       });
 
@@ -209,36 +211,13 @@ export default class Map extends React.Component {
                 feature = f.getArray()[i];
               }
 
-              self.popup.setPosition(feature.customData.coords);
-              var id = feature.customData.id;
-              var content = $('<center>' + feature.customData.name + '<center><br/><button class="btn btn-primary">Connect</button>');
-              content.click(function() {
-                  self.connectPlayer(id, user.activeEvent);
-              });
-
-              setTimeout(function() {
-                $(element).popover({
-                    'placement': 'top',
-                    'html': true,
-                    'content': content
-                });
-                $(element).popover("show");
-              }, 200);
+              hashHistory.push('/connect/' + feature.customData.id);
           }
       });
     }
 
     getIcon(p) {
-        // returns an icon based on the player id
-        var icons = {
-            player: ['geo10', 'geo9', 'geo8', 'geo7', 'geo6', 'geo5', 'geo4', 'geo3', 'geo2'],
-            ia: ['geo-ia']
-        };
-
-        var l = p.ia ? icons.ia : icons.player;
-        //var r = Math.floor(Math.random() * l.length);
-        var icon = l[p.pk % l.length];
-        return new ol.style.Icon({ src: 'app/images/'+ icon +'.svg' });
+        return new ol.style.Icon({ src: getIcon(p) });
     }
 
     playersUpdated = (data) => {
