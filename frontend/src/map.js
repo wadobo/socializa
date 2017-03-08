@@ -1,5 +1,4 @@
 import React from 'react';
-import QRCode from 'qrcode.react'
 import { hashHistory } from 'react-router'
 import { Link } from 'react-router'
 import ol from 'openlayers'
@@ -7,6 +6,7 @@ import ol from 'openlayers'
 import { storeUser, user, logout, getIcon } from './auth';
 import API from './api';
 import GEO from './geo';
+import Bucket from './bucket';
 
 
 export default class Map extends React.Component {
@@ -18,7 +18,6 @@ export default class Map extends React.Component {
     }
 
     firstCentre = false;
-    lastPost = null;
 
     componentDidMount() {
       let title = 'Map';
@@ -36,7 +35,7 @@ export default class Map extends React.Component {
 
     componentDidUpdate() {
       var svq = ol.proj.fromLonLat([-5.9866369, 37.3580539]);
-      var c = this.lastPost ? this.lastPost : svq;
+      var c = Bucket.lastPost ? Bucket.lastPost : svq;
       this.view = new ol.View({
         center: c,
         zoom: 12
@@ -61,15 +60,12 @@ export default class Map extends React.Component {
     }
 
     updateDimensions() {
-        if (this.state.state != 'qrcode') {
-            $('canvas').height($(window).height() - 120);
-            this.map.updateSize();
-        }
+        $('canvas').height($(window).height() - 120);
+        this.map.updateSize();
     }
 
     componentWillUnmount() {
         clearTimeout(this.updateTimer);
-        clearTimeout(this.qrcodeTimer);
 
         window.removeEventListener("resize", this.updateDimensions.bind(this));
     }
@@ -84,7 +80,7 @@ export default class Map extends React.Component {
 
     centre = (e) => {
         this.map.getView().animate({
-          center: this.lastPost,
+          center: Bucket.lastPost,
           duration: 1000
         });
     }
@@ -98,7 +94,7 @@ export default class Map extends React.Component {
 
         var coordinates = new ol.geom.Point(ol.proj.fromLonLat(coords));
         var center = ol.proj.transform([lon, lat], 'EPSG:4326', 'EPSG:3857');
-        this.lastPost = center;
+        Bucket.lastPost = center;
 
         if (this.firstCentre) {
             this.centre();
@@ -174,9 +170,6 @@ export default class Map extends React.Component {
         source: this.playerList
       });
 
-      if (!document.getElementById('popup')) {
-        $("body").append('<div id="popup"></div>');
-      }
       // starting tracking
       if (this.state.state == 'started') {
         GEO.successCB = this.onPosSuccess.bind(this);
@@ -184,13 +177,6 @@ export default class Map extends React.Component {
         GEO.start();
 
         this.view.setZoom(18);
-
-        this.popup = new ol.Overlay({
-            element: document.getElementById('popup'),
-            positining: 'bottom-center',
-            stopEvent: false
-        });
-        this.map.addOverlay(this.popup);
         this.setUpdateTimer(500);
       }
 
@@ -199,9 +185,6 @@ export default class Map extends React.Component {
       map.addInteraction(select);
       select.on('select', function(e) {
           var f = e.target.getFeatures();
-
-          var element = document.getElementById('popup');
-          try { $(element).popover('destroy'); } catch (err) { }
 
           if (f.getLength()) {
               var i = 0;
@@ -293,85 +276,8 @@ export default class Map extends React.Component {
             .catch(() => { self.setUpdateTimer(5000); });
     }
 
-    connected = (resp) => {
-        if (resp.player) {
-            hashHistory.push('/event/' + user.activeEvent.pk);
-        } else {
-            alert("Connected!");
-        }
-    }
-
-    capturedQR = (id, ev, resp) => {
-        var self = this;
-        API.captured(id, ev, resp.text)
-            .then(function(resp) {
-                self.connected(resp.clue);
-            })
-            .catch(function(error) {
-                alert("Invalid code!");
-            });
-    }
-
-    qrcodePolling = (id, ev) => {
-        var self = this;
-        API.qrclue(id, ev)
-            .then(function(resp) {
-                if (resp.status == 'waiting') {
-                    clearTimeout(self.qrcodeTimer);
-                    self.qrcodeTimer = setTimeout(function() {
-                        self.qrcodePolling.bind(self)(id, ev);
-                    }, 1000);
-                } else if (resp.status == 'contected') {
-                    self.connected(resp.clue);
-                }
-            })
-            .catch(function(err) {
-                alert("error polling!");
-            });
-    }
-
-    showQRCode = (id, ev, code) => {
-        var self = this;
-        var qrsize = $(document).width() - 80;
-        this.setState({ state: 'qrcode', code: code, qrsize: qrsize });
-
-        clearTimeout(this.qrcodeTimer);
-        this.qrcodeTimer = setTimeout(function() {
-            self.qrcodePolling.bind(self)(id, ev);
-        }, 500);
-    }
-
     startState = (e) => {
         this.start();
-    }
-
-    showCamera = (id, ev) => {
-        var self = this;
-        window.scanQR(function(resp) {
-            self.capturedQR.bind(self)(id, ev, resp);
-        }, function(err) { });
-    }
-
-    connectPlayer = (id, ev=null) => {
-        var self = this;
-        ev = ev ? ev.pk : ev;
-        API.connectPlayer(id, ev)
-            .then(function(resp) {
-                switch (resp.status) {
-                    case 'connected':
-                        self.connected(resp.clue);
-                        break;
-                    case 'step1':
-                        self.showCamera(id, ev);
-                        break;
-                    case 'step2':
-                        self.showQRCode(id, ev, resp.secret);
-                        break;
-                    default:
-                        alert("too far, get near");
-                        break;
-                }
-            });
     }
 
     start = (e) => {
@@ -474,7 +380,7 @@ export default class Map extends React.Component {
         }
     }
 
-    mapRender = () => {
+    render() {
         return (
             <div>
                 <div id="socializa-map">
@@ -496,21 +402,5 @@ export default class Map extends React.Component {
                 )()}
             </div>
         );
-    }
-
-    mapQR = () => {
-        return (
-            <div id="qrcode">
-                <QRCode value={ this.state.code } size={ this.state.qrsize } />
-                <div className="closebtn" onClick={ this.startState }><i className="fa fa-close"></i></div>
-            </div>
-        )
-    }
-
-    render() {
-        if (this.state.state == 'qrcode') {
-            return this.mapQR();
-        }
-        return this.mapRender();
     }
 }

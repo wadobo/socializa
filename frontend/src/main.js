@@ -33,9 +33,9 @@ ReactDOM.render((
         <Route path="event/:pk" component={Event}/>
 
         <Route path="connect/:pk" component={Connect}/>
-        <Route path="qrcode" component={QRView}/>
-        <Route path="qrcapt" component={QRCapt}/>
-        <Route path="clue/:pk" component={Clue}/>
+        <Route path="qrcode/:user/:ev/:secret" component={QRView}/>
+        <Route path="qrcapt/:user/:ev" component={QRCapt}/>
+        <Route path="clue" component={Clue}/>
     </Route>
   </Router>
   </I18nextProvider>
