@@ -5,6 +5,7 @@ import { hashHistory } from 'react-router';
 import API from './api';
 
 import { user } from './auth';
+import { connected } from './connect';
 
 export default class QRView extends React.Component {
     qrcodeTimer = null;
@@ -21,15 +22,6 @@ export default class QRView extends React.Component {
         clearTimeout(this.qrcodeTimer);
     }
 
-    // TODO redirect to clue
-    connected = (resp) => {
-        if (user.activeEvent) {
-            hashHistory.push('/event/' + user.activeEvent.pk);
-        } else {
-            alert("Connected!");
-        }
-    }
-
     qrcodePolling = (id, ev) => {
         var self = this;
 
@@ -41,7 +33,7 @@ export default class QRView extends React.Component {
                         self.qrcodePolling.bind(self)(id, ev);
                     }, 1000);
                 } else if (resp.status == 'contected') {
-                    self.connected(resp.clue);
+                    connected(resp.clue);
                 }
             })
             .catch(function(err) {

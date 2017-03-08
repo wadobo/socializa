@@ -7,6 +7,17 @@ import API from './api';
 
 import Loading from './loading';
 
+
+export function connected(resp) {
+    if (user.activeEvent) {
+        hashHistory.push('/event/' + user.activeEvent.pk);
+    } else {
+        alert("Connected!");
+        hashHistory.push('/map');
+    }
+}
+
+
 export default class Connect extends React.Component {
     state = {
         user: user,
@@ -37,15 +48,6 @@ export default class Connect extends React.Component {
         this.connectPlayer(this.state.other.pk, user.activeEvent);
     }
 
-    // TODO redirect to clue
-    connected = (resp) => {
-        if (user.activeEvent) {
-            hashHistory.push('/event/' + user.activeEvent.pk);
-        } else {
-            alert("Connected!");
-        }
-    }
-
     connectPlayer = (id, ev=null) => {
         var self = this;
         ev = ev ? ev.pk : ev;
@@ -53,7 +55,7 @@ export default class Connect extends React.Component {
             .then(function(resp) {
                 switch (resp.status) {
                     case 'connected':
-                        self.connected(resp.clue);
+                        connected(resp.clue);
                         break;
                     case 'step1':
                         hashHistory.push('/qrcapt/' + id + '/' + ev);

@@ -3,6 +3,7 @@ import { hashHistory } from 'react-router';
 
 import API from './api';
 import { user } from './auth';
+import { connected } from './connect';
 
 export default class QRCapt extends React.Component {
     componentDidMount() {
@@ -19,20 +20,11 @@ export default class QRCapt extends React.Component {
         });
     }
 
-    // TODO redirect to clue
-    connected = (resp) => {
-        if (user.activeEvent) {
-            hashHistory.push('/event/' + user.activeEvent.pk);
-        } else {
-            alert("Connected!");
-        }
-    }
-
     capturedQR = (id, ev, resp) => {
         var self = this;
         API.captured(id, ev, resp.text)
             .then(function(resp) {
-                self.connected(resp.clue);
+                connected(resp.clue);
             })
             .catch(function(error) {
                 alert("Invalid code!");
