@@ -74,4 +74,5 @@ function showmap() {
 $(document).ready(function() {
     $("#addchallenge").click(addchallenge);
     $(".mapbtn").click(showmap);
+    $(".rmchallenge").unbind("click").click(rmchallenge);
 });

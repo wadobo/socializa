@@ -4,7 +4,7 @@
     <div class="col-sm-6">
         <div class="form-group">
             <input type="text" class="form-control name" name="challenge_name_{{ n }}"
-                   placeholder="{% trans 'Challenge name' %}"/>
+                   placeholder="{% trans 'Challenge name' %}" value="{{ challenge.name }}"/>
         </div>
         <!--
         <div class="form-group">
@@ -18,7 +18,7 @@
     <div class="col-sm-6">
         <div class="form-group">
             <textarea class="form-control desc" name="challenge_desc_{{ n }}"
-                   placeholder="{% trans 'Challenge description' %}"></textarea>
+                   placeholder="{% trans 'Challenge description' %}">{{ challenge.desc }}</textarea>
             <p class="help-block">{% trans "You can use here html" %}</p>
         </div>
     </div>
@@ -29,9 +29,9 @@
         <div class="form-group">
             <label for="type">{% trans "Challenge type:" %}</label>
             <select id="type" class="type" name="challenge_type_{{ n }}">
-                <option value="player">{% trans "Player" %}</option>
-                <option value="ia">{% trans "Position (ia)" %}</option>
-                <option value="actor">{% trans "Actor" %}</option>
+                <option value="player" {% if challenge.type == 'player' %}selected{% endif %}>{% trans "Player" %}</option>
+                <option value="ia" {% if challenge.type == 'ia' %}selected{% endif %}>{% trans "Position" %}</option>
+                <option value="actor" {% if challenge.type == 'actor' %}selected{% endif %}>{% trans "Actor" %}</option>
             </select>
         </div>
     </div>
@@ -45,6 +45,7 @@
                 </span>
                 <input type="text" class="form-control pos"
                        name="challenge_pos_{{ n }}"
+                       value="{{ challenge.pos }}"
                        placeholder="{% trans 'IA position in format: Lat, Lon' %}"/>
             </div>
             <p class="help-block">{% trans "for example: 37.3580539, -5.9866369" %}</p>
