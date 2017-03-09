@@ -38,7 +38,7 @@ class EditGame(TemplateView):
                 d[n] = {}
             d[n] = dict(**{attr: v}, **d[n])
 
-        game["challenges"] = [i[1] for i in sorted(d.items())][0:-1]
+        game["challenges"] = [i[1] for i in sorted(d.items())]
         return game
 
     def get_context_data(self, gameid=None):
