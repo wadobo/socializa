@@ -4,14 +4,17 @@ import Purifier from 'html-purify';
 
 import { user, getIcon } from './auth';
 import API from './api';
+import Bucket from './bucket';
 
 import Loading from './loading';
 
 
 export function connected(resp) {
-    if (user.activeEvent) {
-        hashHistory.push('/event/' + user.activeEvent.pk);
+    if (resp.pk) {
+        Bucket.clue = resp;
+        hashHistory.push('/clue');
     } else {
+        Bucket.clue = null;
         alert("Connected!");
         hashHistory.push('/map');
     }
@@ -82,7 +85,7 @@ export default class Connect extends React.Component {
         var icon = this.state.other ? getIcon(this.state.other) : '';
 
         return (
-            <div id="connect" className="container">
+            <div id="connect" className="container mbottom">
             { this.state.other ?
                 <div>
                     <div className="closebtn" onClick={ this.goBack }><i className="fa fa-close"></i></div>
@@ -92,7 +95,7 @@ export default class Connect extends React.Component {
                         <img src={ icon } />
                     </div>
                     <div className="text-center" dangerouslySetInnerHTML={ createMarkup() } />
-                    <button className="btn btn-fixed-bottom btn-primary" onClick={ this.connect }>Interactuar</button>
+                    <button className="btn btn-fixed-bottom btn-primary" onClick={ this.connect }>Interact</button>
                 </div>
              :
                 <Loading />

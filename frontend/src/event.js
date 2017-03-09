@@ -178,7 +178,7 @@ export default class Event extends React.Component {
 
     render() {
         return (
-            <div id="events" className="container">
+            <div id="events" className="container mbottom">
                 { this.renderEvent() }
             </div>
         );
