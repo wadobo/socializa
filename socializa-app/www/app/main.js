@@ -5421,9 +5421,13 @@ var API = function () {
         }
     }, {
         key: 'getProfile',
-        value: function getProfile() {
+        value: function getProfile(userid) {
             var data = JSONGet();
-            return customFetch('/api/player/profile/', data);
+            var url = '/api/player/profile/';
+            if (userid) {
+                url += userid + '/';
+            }
+            return customFetch(url, data);
         }
     }, {
         key: 'setProfile',
@@ -5530,7 +5534,7 @@ var App = function (_React$Component) {
 
 exports.default = App;
 
-},{"./navbar":50,"bootstrap":"bootstrap","jquery":"jquery","react":"react","react-router":"react-router"}],41:[function(require,module,exports){
+},{"./navbar":53,"bootstrap":"bootstrap","jquery":"jquery","react":"react","react-router":"react-router"}],41:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5544,6 +5548,7 @@ exports.login = login;
 exports.storeUser = storeUser;
 exports.logout = logout;
 exports.register = register;
+exports.getIcon = getIcon;
 
 var _jquery = require('jquery');
 
@@ -5616,7 +5621,312 @@ function register(email, password) {
     return true;
 };
 
+function getIcon(p) {
+    // returns an icon based on the player id
+    var icons = {
+        player: ['geo10', 'geo9', 'geo8', 'geo7', 'geo6', 'geo5', 'geo4', 'geo3', 'geo2'],
+        ia: ['geo-ia']
+    };
+
+    var l = p.ia ? icons.ia : icons.player;
+    //var r = Math.floor(Math.random() * l.length);
+    var icon = l[p.pk % l.length];
+    return 'app/images/' + icon + '.svg';
+}
+
 },{"jquery":"jquery"}],42:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Bucket = function Bucket() {
+    _classCallCheck(this, Bucket);
+};
+
+Bucket.lastPost = null;
+Bucket.clue = null;
+exports.default = Bucket;
+
+},{}],43:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRouter = require('react-router');
+
+var _htmlPurify = require('html-purify');
+
+var _htmlPurify2 = _interopRequireDefault(_htmlPurify);
+
+var _auth = require('./auth');
+
+var _bucket = require('./bucket');
+
+var _bucket2 = _interopRequireDefault(_bucket);
+
+var _loading = require('./loading');
+
+var _loading2 = _interopRequireDefault(_loading);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Clue = function (_React$Component) {
+    _inherits(Clue, _React$Component);
+
+    function Clue() {
+        var _ref;
+
+        var _temp, _this, _ret;
+
+        _classCallCheck(this, Clue);
+
+        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+            args[_key] = arguments[_key];
+        }
+
+        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = Clue.__proto__ || Object.getPrototypeOf(Clue)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
+            clue: null
+        }, _this.goBack = function () {
+            _reactRouter.hashHistory.push('/map');
+        }, _this.viewEvent = function () {
+            _reactRouter.hashHistory.push('/event/' + _auth.user.activeEvent.pk);
+        }, _temp), _possibleConstructorReturn(_this, _ret);
+    }
+
+    _createClass(Clue, [{
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            this.setState({ clue: _bucket2.default.clue });
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var self = this;
+            function createMarkup() {
+                var purifier = new _htmlPurify2.default();
+                var input = self.state.clue.desc;
+                var result = purifier.purify(input);
+                return { __html: result };
+            }
+
+            return _react2.default.createElement(
+                'div',
+                { id: 'clue', className: 'container mbottom' },
+                this.state.clue ? _react2.default.createElement(
+                    'div',
+                    null,
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'clue' },
+                        _react2.default.createElement(
+                            'h1',
+                            null,
+                            this.state.clue.name
+                        ),
+                        _react2.default.createElement('div', { dangerouslySetInnerHTML: createMarkup() })
+                    ),
+                    _react2.default.createElement(
+                        'button',
+                        { className: 'btn btn-primary btn-fixed-bottom-left', onClick: this.goBack },
+                        'Map'
+                    ),
+                    _react2.default.createElement(
+                        'button',
+                        { className: 'btn btn-success btn-fixed-bottom-right', onClick: this.viewEvent },
+                        'Event'
+                    )
+                ) : _react2.default.createElement(_loading2.default, null)
+            );
+        }
+    }]);
+
+    return Clue;
+}(_react2.default.Component);
+
+exports.default = Clue;
+
+},{"./auth":41,"./bucket":42,"./loading":49,"html-purify":"html-purify","react":"react","react-router":"react-router"}],44:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+exports.connected = connected;
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRouter = require('react-router');
+
+var _htmlPurify = require('html-purify');
+
+var _htmlPurify2 = _interopRequireDefault(_htmlPurify);
+
+var _auth = require('./auth');
+
+var _api = require('./api');
+
+var _api2 = _interopRequireDefault(_api);
+
+var _bucket = require('./bucket');
+
+var _bucket2 = _interopRequireDefault(_bucket);
+
+var _loading = require('./loading');
+
+var _loading2 = _interopRequireDefault(_loading);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+function connected(resp) {
+    if (resp.pk) {
+        _bucket2.default.clue = resp;
+        _reactRouter.hashHistory.push('/clue');
+    } else {
+        _bucket2.default.clue = null;
+        alert("Connected!");
+        _reactRouter.hashHistory.push('/map');
+    }
+}
+
+var Connect = function (_React$Component) {
+    _inherits(Connect, _React$Component);
+
+    function Connect() {
+        var _ref;
+
+        var _temp, _this, _ret;
+
+        _classCallCheck(this, Connect);
+
+        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+            args[_key] = arguments[_key];
+        }
+
+        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = Connect.__proto__ || Object.getPrototypeOf(Connect)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
+            user: _auth.user,
+            other: null
+        }, _this.getProfile = function () {
+            var self = _this;
+            _api2.default.getProfile(self.props.params.pk).then(function (profile) {
+                if (!profile.username) {
+                    alert("Too far!");
+                    _reactRouter.hashHistory.push('/map');
+                }
+                self.setState({ other: profile });
+            });
+        }, _this.goBack = function () {
+            _reactRouter.hashHistory.push('/map');
+        }, _this.connect = function () {
+            _this.connectPlayer(_this.state.other.pk, _auth.user.activeEvent);
+        }, _this.connectPlayer = function (id) {
+            var ev = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+            var self = _this;
+            ev = ev ? ev.pk : ev;
+            _api2.default.connectPlayer(id, ev).then(function (resp) {
+                switch (resp.status) {
+                    case 'connected':
+                        connected(resp.clue);
+                        break;
+                    case 'step1':
+                        _reactRouter.hashHistory.push('/qrcapt/' + id + '/' + ev);
+                        break;
+                    case 'step2':
+                        _reactRouter.hashHistory.push('/qrcode/' + id + '/' + ev + '/' + resp.secret);
+                        break;
+                    default:
+                        alert("too far, get near");
+                        break;
+                }
+            });
+        }, _temp), _possibleConstructorReturn(_this, _ret);
+    }
+
+    _createClass(Connect, [{
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            this.getProfile();
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var self = this;
+            function createMarkup() {
+                var purifier = new _htmlPurify2.default();
+                var input = self.state.other.about;
+                var result = purifier.purify(input);
+                return { __html: result };
+            }
+
+            var icon = this.state.other ? (0, _auth.getIcon)(this.state.other) : '';
+
+            return _react2.default.createElement(
+                'div',
+                { id: 'connect', className: 'container mbottom' },
+                this.state.other ? _react2.default.createElement(
+                    'div',
+                    null,
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'closebtn', onClick: this.goBack },
+                        _react2.default.createElement('i', { className: 'fa fa-close' })
+                    ),
+                    _react2.default.createElement(
+                        'h2',
+                        { className: 'text-center' },
+                        this.state.other.username
+                    ),
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'text-center' },
+                        _react2.default.createElement('img', { src: icon })
+                    ),
+                    _react2.default.createElement('div', { className: 'text-center', dangerouslySetInnerHTML: createMarkup() }),
+                    _react2.default.createElement(
+                        'button',
+                        { className: 'btn btn-fixed-bottom btn-primary', onClick: this.connect },
+                        'Interact'
+                    )
+                ) : _react2.default.createElement(_loading2.default, null)
+            );
+        }
+    }]);
+
+    return Connect;
+}(_react2.default.Component);
+
+exports.default = Connect;
+
+},{"./api":39,"./auth":41,"./bucket":42,"./loading":49,"html-purify":"html-purify","react":"react","react-router":"react-router"}],45:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5871,7 +6181,7 @@ var Event = function (_React$Component2) {
         value: function render() {
             return _react2.default.createElement(
                 'div',
-                { id: 'events', className: 'container' },
+                { id: 'events', className: 'container mbottom' },
                 this.renderEvent()
             );
         }
@@ -5882,7 +6192,7 @@ var Event = function (_React$Component2) {
 
 exports.default = Event;
 
-},{"./api":39,"./auth":41,"./events":43,"./loading":46,"html-purify":"html-purify","moment":"moment","react":"react","react-router":"react-router"}],43:[function(require,module,exports){
+},{"./api":39,"./auth":41,"./events":46,"./loading":49,"html-purify":"html-purify","moment":"moment","react":"react","react-router":"react-router"}],46:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6223,7 +6533,7 @@ var Events = function (_React$Component2) {
 
 exports.default = Events;
 
-},{"./api":39,"./auth":41,"./loading":46,"moment":"moment","react":"react","react-router":"react-router"}],44:[function(require,module,exports){
+},{"./api":39,"./auth":41,"./loading":49,"moment":"moment","react":"react","react-router":"react-router"}],47:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6245,6 +6555,8 @@ var GEO = function () {
             if (this.watchID == null) {
                 this.watchID = navigator.geolocation.watchPosition(this.success.bind(this), this.error.bind(this), this.options);
             }
+
+            navigator.geolocation.getCurrentPosition(this.success.bind(this), this.error.bind(this), this.options);
 
             this.status = 'started';
         }
@@ -6295,7 +6607,7 @@ document.addEventListener("resume", function () {
     }
 }, false);
 
-},{}],45:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6336,7 +6648,7 @@ _i18next2.default.use(_i18nextXhrBackend2.default).use(_i18nextBrowserLanguagede
 
 exports.default = _i18next2.default;
 
-},{"i18next":30,"i18next-browser-languagedetector":10,"i18next-xhr-backend":14}],46:[function(require,module,exports){
+},{"i18next":30,"i18next-browser-languagedetector":10,"i18next-xhr-backend":14}],49:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6387,7 +6699,7 @@ var Loading = function (_React$Component) {
 
 exports.default = Loading;
 
-},{"react":"react"}],47:[function(require,module,exports){
+},{"react":"react"}],50:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6621,7 +6933,7 @@ var Login = function (_React$Component) {
 
 exports.default = (0, _reactI18next.translate)(['login'], { wait: true })(Login);
 
-},{"./api":39,"./auth":41,"./i18n":45,"jquery":"jquery","react":"react","react-i18next":34,"react-router":"react-router"}],48:[function(require,module,exports){
+},{"./api":39,"./auth":41,"./i18n":48,"jquery":"jquery","react":"react","react-i18next":34,"react-router":"react-router"}],51:[function(require,module,exports){
 'use strict';
 
 var _react = require('react');
@@ -6664,6 +6976,22 @@ var _event = require('./event');
 
 var _event2 = _interopRequireDefault(_event);
 
+var _connect = require('./connect');
+
+var _connect2 = _interopRequireDefault(_connect);
+
+var _qrview = require('./qrview');
+
+var _qrview2 = _interopRequireDefault(_qrview);
+
+var _qrcapt = require('./qrcapt');
+
+var _qrcapt2 = _interopRequireDefault(_qrcapt);
+
+var _clue = require('./clue');
+
+var _clue2 = _interopRequireDefault(_clue);
+
 var _auth = require('./auth');
 
 var _i18n = require('./i18n');
@@ -6686,12 +7014,16 @@ _reactDom2.default.render(_react2.default.createElement(
       _react2.default.createElement(_reactRouter.Route, { path: 'map', component: _map2.default }),
       _react2.default.createElement(_reactRouter.Route, { path: 'profile', component: _profile2.default }),
       _react2.default.createElement(_reactRouter.Route, { path: 'events', component: _events2.default }),
-      _react2.default.createElement(_reactRouter.Route, { path: 'event/:pk', component: _event2.default })
+      _react2.default.createElement(_reactRouter.Route, { path: 'event/:pk', component: _event2.default }),
+      _react2.default.createElement(_reactRouter.Route, { path: 'connect/:pk', component: _connect2.default }),
+      _react2.default.createElement(_reactRouter.Route, { path: 'qrcode/:user/:ev/:secret', component: _qrview2.default }),
+      _react2.default.createElement(_reactRouter.Route, { path: 'qrcapt/:user/:ev', component: _qrcapt2.default }),
+      _react2.default.createElement(_reactRouter.Route, { path: 'clue', component: _clue2.default })
     )
   )
 ), document.getElementById('content')); // main.js
 
-},{"./app":40,"./auth":41,"./event":42,"./events":43,"./i18n":45,"./login":47,"./map":49,"./profile":51,"./register":52,"react":"react","react-dom":"react-dom","react-i18next":34,"react-router":"react-router"}],49:[function(require,module,exports){
+},{"./app":40,"./auth":41,"./clue":43,"./connect":44,"./event":45,"./events":46,"./i18n":48,"./login":50,"./map":52,"./profile":54,"./qrcapt":55,"./qrview":56,"./register":57,"react":"react","react-dom":"react-dom","react-i18next":34,"react-router":"react-router"}],52:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6703,10 +7035,6 @@ var _createClass = function () { function defineProperties(target, props) { for 
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
-
-var _qrcode = require('qrcode.react');
-
-var _qrcode2 = _interopRequireDefault(_qrcode);
 
 var _reactRouter = require('react-router');
 
@@ -6723,6 +7051,10 @@ var _api2 = _interopRequireDefault(_api);
 var _geo = require('./geo');
 
 var _geo2 = _interopRequireDefault(_geo);
+
+var _bucket = require('./bucket');
+
+var _bucket2 = _interopRequireDefault(_bucket);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -6751,9 +7083,9 @@ var Map = function (_React$Component) {
             state: 'stopped',
             eventMenu: false,
             events: []
-        }, _this.firstCentre = false, _this.lastPost = null, _this.centre = function (e) {
+        }, _this.firstCentre = false, _this.centre = function (e) {
             _this.map.getView().animate({
-                center: _this.lastPost,
+                center: _bucket2.default.lastPost,
                 duration: 1000
             });
         }, _this.playersUpdated = function (data) {
@@ -6821,70 +7153,8 @@ var Map = function (_React$Component) {
             }).catch(function () {
                 self.setUpdateTimer(5000);
             });
-        }, _this.connected = function (resp) {
-            if (resp.player) {
-                _reactRouter.hashHistory.push('/event/' + _auth.user.activeEvent.pk);
-            } else {
-                alert("Connected!");
-            }
-        }, _this.capturedQR = function (id, ev, resp) {
-            var self = _this;
-            _api2.default.captured(id, ev, resp.text).then(function (resp) {
-                self.connected(resp.clue);
-            }).catch(function (error) {
-                alert("Invalid code!");
-            });
-        }, _this.qrcodePolling = function (id, ev) {
-            var self = _this;
-            _api2.default.qrclue(id, ev).then(function (resp) {
-                if (resp.status == 'waiting') {
-                    clearTimeout(self.qrcodeTimer);
-                    self.qrcodeTimer = setTimeout(function () {
-                        self.qrcodePolling.bind(self)(id, ev);
-                    }, 1000);
-                } else if (resp.status == 'contected') {
-                    self.connected(resp.clue);
-                }
-            }).catch(function (err) {
-                alert("error polling!");
-            });
-        }, _this.showQRCode = function (id, ev, code) {
-            var self = _this;
-            var qrsize = $(document).width() - 80;
-            _this.setState({ state: 'qrcode', code: code, qrsize: qrsize });
-
-            clearTimeout(_this.qrcodeTimer);
-            _this.qrcodeTimer = setTimeout(function () {
-                self.qrcodePolling.bind(self)(id, ev);
-            }, 500);
         }, _this.startState = function (e) {
             _this.start();
-        }, _this.showCamera = function (id, ev) {
-            var self = _this;
-            window.scanQR(function (resp) {
-                self.capturedQR.bind(self)(id, ev, resp);
-            }, function (err) {});
-        }, _this.connectPlayer = function (id) {
-            var ev = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-
-            var self = _this;
-            ev = ev ? ev.pk : ev;
-            _api2.default.connectPlayer(id, ev).then(function (resp) {
-                switch (resp.status) {
-                    case 'connected':
-                        self.connected(resp.clue);
-                        break;
-                    case 'step1':
-                        self.showCamera(id, ev);
-                        break;
-                    case 'step2':
-                        self.showQRCode(id, ev, resp.secret);
-                        break;
-                    default:
-                        alert("too far, get near");
-                        break;
-                }
-            });
         }, _this.start = function (e) {
             _this.firstCentre = true;
             _this.setState({ state: 'started' });
@@ -6984,40 +7254,6 @@ var Map = function (_React$Component) {
                     'Start'
                 );
             }
-        }, _this.mapRender = function () {
-            return _react2.default.createElement(
-                'div',
-                null,
-                _react2.default.createElement('div', { id: 'socializa-map' }),
-                _react2.default.createElement(
-                    'div',
-                    { id: 'center-button', onClick: _this.centre, className: 'btn btn-circle btn-primary' },
-                    _react2.default.createElement('i', { className: 'fa fa-street-view' })
-                ),
-                function () {
-                    switch (_this.state.state) {
-                        case 'started':
-                            return _react2.default.createElement(
-                                'button',
-                                { className: 'btn btn-fixed-bottom btn-danger', onClick: _this.stop },
-                                'Stop'
-                            );
-                        default:
-                            return _this.renderEventMenu();
-                    }
-                }()
-            );
-        }, _this.mapQR = function () {
-            return _react2.default.createElement(
-                'div',
-                { id: 'qrcode' },
-                _react2.default.createElement(_qrcode2.default, { value: _this.state.code, size: _this.state.qrsize }),
-                _react2.default.createElement(
-                    'div',
-                    { className: 'closebtn', onClick: _this.startState },
-                    _react2.default.createElement('i', { className: 'fa fa-close' })
-                )
-            );
         }, _temp), _possibleConstructorReturn(_this, _ret);
     }
 
@@ -7039,8 +7275,10 @@ var Map = function (_React$Component) {
     }, {
         key: 'componentDidUpdate',
         value: function componentDidUpdate() {
+            var svq = _openlayers2.default.proj.fromLonLat([-5.9866369, 37.3580539]);
+            var c = _bucket2.default.lastPost ? _bucket2.default.lastPost : svq;
             this.view = new _openlayers2.default.View({
-                center: _openlayers2.default.proj.fromLonLat([-5.9866369, 37.3580539]),
+                center: c,
                 zoom: 12
             });
 
@@ -7062,16 +7300,13 @@ var Map = function (_React$Component) {
     }, {
         key: 'updateDimensions',
         value: function updateDimensions() {
-            if (this.state.state != 'qrcode') {
-                $('canvas').height($(window).height() - 120);
-                this.map.updateSize();
-            }
+            $('canvas').height($(window).height() - 120);
+            this.map.updateSize();
         }
     }, {
         key: 'componentWillUnmount',
         value: function componentWillUnmount() {
             clearTimeout(this.updateTimer);
-            clearTimeout(this.qrcodeTimer);
 
             window.removeEventListener("resize", this.updateDimensions.bind(this));
         }
@@ -7094,7 +7329,7 @@ var Map = function (_React$Component) {
 
             var coordinates = new _openlayers2.default.geom.Point(_openlayers2.default.proj.fromLonLat(coords));
             var center = _openlayers2.default.proj.transform([lon, lat], 'EPSG:4326', 'EPSG:3857');
-            this.lastPost = center;
+            _bucket2.default.lastPost = center;
 
             if (this.firstCentre) {
                 this.centre();
@@ -7172,9 +7407,6 @@ var Map = function (_React$Component) {
                 source: this.playerList
             });
 
-            if (!document.getElementById('popup')) {
-                $("body").append('<div id="popup"></div>');
-            }
             // starting tracking
             if (this.state.state == 'started') {
                 _geo2.default.successCB = this.onPosSuccess.bind(this);
@@ -7182,13 +7414,6 @@ var Map = function (_React$Component) {
                 _geo2.default.start();
 
                 this.view.setZoom(18);
-
-                this.popup = new _openlayers2.default.Overlay({
-                    element: document.getElementById('popup'),
-                    positining: 'bottom-center',
-                    stopEvent: false
-                });
-                this.map.addOverlay(this.popup);
                 this.setUpdateTimer(500);
             }
 
@@ -7198,11 +7423,6 @@ var Map = function (_React$Component) {
             select.on('select', function (e) {
                 var f = e.target.getFeatures();
 
-                var element = document.getElementById('popup');
-                try {
-                    $(element).popover('destroy');
-                } catch (err) {}
-
                 if (f.getLength()) {
                     var i = 0;
                     var feature = f.getArray()[i];
@@ -7211,45 +7431,42 @@ var Map = function (_React$Component) {
                         feature = f.getArray()[i];
                     }
 
-                    self.popup.setPosition(feature.customData.coords);
-                    var id = feature.customData.id;
-                    var content = $('<center>' + feature.customData.name + '<center><br/><button class="btn btn-primary">Connect</button>');
-                    content.click(function () {
-                        self.connectPlayer(id, _auth.user.activeEvent);
-                    });
-
-                    setTimeout(function () {
-                        $(element).popover({
-                            'placement': 'top',
-                            'html': true,
-                            'content': content
-                        });
-                        $(element).popover("show");
-                    }, 200);
+                    _reactRouter.hashHistory.push('/connect/' + feature.customData.id);
                 }
             });
         }
     }, {
         key: 'getIcon',
         value: function getIcon(p) {
-            // returns an icon based on the player id
-            var icons = {
-                player: ['geo10', 'geo9', 'geo8', 'geo7', 'geo6', 'geo5', 'geo4', 'geo3', 'geo2'],
-                ia: ['geo-ia']
-            };
-
-            var l = p.ia ? icons.ia : icons.player;
-            //var r = Math.floor(Math.random() * l.length);
-            var icon = l[p.pk % l.length];
-            return new _openlayers2.default.style.Icon({ src: 'app/images/' + icon + '.svg' });
+            return new _openlayers2.default.style.Icon({ src: (0, _auth.getIcon)(p) });
         }
     }, {
         key: 'render',
         value: function render() {
-            if (this.state.state == 'qrcode') {
-                return this.mapQR();
-            }
-            return this.mapRender();
+            var _this2 = this;
+
+            return _react2.default.createElement(
+                'div',
+                null,
+                _react2.default.createElement('div', { id: 'socializa-map' }),
+                _react2.default.createElement(
+                    'div',
+                    { id: 'center-button', onClick: this.centre, className: 'btn btn-circle btn-primary' },
+                    _react2.default.createElement('i', { className: 'fa fa-street-view' })
+                ),
+                function () {
+                    switch (_this2.state.state) {
+                        case 'started':
+                            return _react2.default.createElement(
+                                'button',
+                                { className: 'btn btn-fixed-bottom btn-danger', onClick: _this2.stop },
+                                'Stop'
+                            );
+                        default:
+                            return _this2.renderEventMenu();
+                    }
+                }()
+            );
         }
     }]);
 
@@ -7258,7 +7475,7 @@ var Map = function (_React$Component) {
 
 exports.default = Map;
 
-},{"./api":39,"./auth":41,"./geo":44,"openlayers":"openlayers","qrcode.react":"qrcode.react","react":"react","react-router":"react-router"}],50:[function(require,module,exports){
+},{"./api":39,"./auth":41,"./bucket":42,"./geo":47,"openlayers":"openlayers","react":"react","react-router":"react-router"}],53:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7406,7 +7623,7 @@ var NavBar = function (_React$Component) {
 
 exports.default = NavBar;
 
-},{"./auth":41,"react":"react","react-router":"react-router"}],51:[function(require,module,exports){
+},{"./auth":41,"react":"react","react-router":"react-router"}],54:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7596,7 +7813,195 @@ var Profile = function (_React$Component) {
 
 exports.default = Profile;
 
-},{"./api":39,"./auth":41,"./loading":46,"react":"react","react-router":"react-router"}],52:[function(require,module,exports){
+},{"./api":39,"./auth":41,"./loading":49,"react":"react","react-router":"react-router"}],55:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRouter = require('react-router');
+
+var _api = require('./api');
+
+var _api2 = _interopRequireDefault(_api);
+
+var _auth = require('./auth');
+
+var _connect = require('./connect');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var QRCapt = function (_React$Component) {
+    _inherits(QRCapt, _React$Component);
+
+    function QRCapt() {
+        var _ref;
+
+        var _temp, _this, _ret;
+
+        _classCallCheck(this, QRCapt);
+
+        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+            args[_key] = arguments[_key];
+        }
+
+        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = QRCapt.__proto__ || Object.getPrototypeOf(QRCapt)).call.apply(_ref, [this].concat(args))), _this), _this.capturedQR = function (id, ev, resp) {
+            var self = _this;
+            _api2.default.captured(id, ev, resp.text).then(function (resp) {
+                (0, _connect.connected)(resp.clue);
+            }).catch(function (error) {
+                alert("Invalid code!");
+            });
+        }, _temp), _possibleConstructorReturn(_this, _ret);
+    }
+
+    _createClass(QRCapt, [{
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            var self = this;
+            var id = this.props.params.user;
+            var ev = this.props.params.ev;
+
+            window.scanQR(function (resp) {
+                self.capturedQR.bind(self)(id, ev, resp);
+            }, function (err) {});
+
+            $("#overlay .close").click(function () {
+                _reactRouter.hashHistory.push('/map');
+            });
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            return _react2.default.createElement('div', { id: 'qrcapt', className: 'container' });
+        }
+    }]);
+
+    return QRCapt;
+}(_react2.default.Component);
+
+exports.default = QRCapt;
+
+},{"./api":39,"./auth":41,"./connect":44,"react":"react","react-router":"react-router"}],56:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _qrcode = require('qrcode.react');
+
+var _qrcode2 = _interopRequireDefault(_qrcode);
+
+var _reactRouter = require('react-router');
+
+var _api = require('./api');
+
+var _api2 = _interopRequireDefault(_api);
+
+var _auth = require('./auth');
+
+var _connect = require('./connect');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var QRView = function (_React$Component) {
+    _inherits(QRView, _React$Component);
+
+    function QRView() {
+        var _ref;
+
+        var _temp, _this, _ret;
+
+        _classCallCheck(this, QRView);
+
+        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+            args[_key] = arguments[_key];
+        }
+
+        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = QRView.__proto__ || Object.getPrototypeOf(QRView)).call.apply(_ref, [this].concat(args))), _this), _this.qrcodeTimer = null, _this.qrcodePolling = function (id, ev) {
+            var self = _this;
+
+            _api2.default.qrclue(id, ev).then(function (resp) {
+                if (resp.status == 'waiting') {
+                    clearTimeout(self.qrcodeTimer);
+                    self.qrcodeTimer = setTimeout(function () {
+                        self.qrcodePolling.bind(self)(id, ev);
+                    }, 1000);
+                } else if (resp.status == 'contected') {
+                    (0, _connect.connected)(resp.clue);
+                }
+            }).catch(function (err) {
+                alert("error polling!");
+            });
+        }, _this.goBack = function () {
+            _reactRouter.hashHistory.push('/map');
+        }, _temp), _possibleConstructorReturn(_this, _ret);
+    }
+
+    _createClass(QRView, [{
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            var self = this;
+            clearTimeout(this.qrcodeTimer);
+            this.qrcodeTimer = setTimeout(function () {
+                self.qrcodePolling.bind(self)(self.props.params.user, self.props.params.ev);
+            }, 500);
+        }
+    }, {
+        key: 'componentWillUnmount',
+        value: function componentWillUnmount() {
+            clearTimeout(this.qrcodeTimer);
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var qrsize = $(document).width() - 80;
+
+            return _react2.default.createElement(
+                'div',
+                { id: 'qrcode' },
+                _react2.default.createElement(_qrcode2.default, { value: this.props.params.secret, size: qrsize }),
+                _react2.default.createElement(
+                    'div',
+                    { className: 'closebtn', onClick: this.goBack },
+                    _react2.default.createElement('i', { className: 'fa fa-close' })
+                )
+            );
+        }
+    }]);
+
+    return QRView;
+}(_react2.default.Component);
+
+exports.default = QRView;
+
+},{"./api":39,"./auth":41,"./connect":44,"qrcode.react":"qrcode.react","react":"react","react-router":"react-router"}],57:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7692,4 +8097,4 @@ var Register = function (_React$Component) {
 
 exports.default = Register;
 
-},{"./auth":41,"jquery":"jquery","react":"react","react-router":"react-router"}]},{},[48]);
+},{"./auth":41,"jquery":"jquery","react":"react","react-router":"react-router"}]},{},[51]);
