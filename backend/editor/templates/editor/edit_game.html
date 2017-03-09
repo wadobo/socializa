@@ -1,0 +1,41 @@
+{% extends "editor/base.html" %}
+{% load i18n %}
+
+{% block head %}
+    {% if game %}
+        <h1>{% trans "Edit:" %} {{ game }}</h1>
+    {% else %}
+        <h1>{% trans "Create a new Game" %}</h1>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <form method="POST" action="">
+        {% csrf_token %}
+
+        {% include "editor/forms/game.html" %}
+
+        {% for challenge in game.challenges.all %}
+        <fieldset>
+            <legend>{{ challenge.name }}</legend>
+            {% include "editor/forms/challenge.html" with n=forloop.counter0 %}
+        </fieldset>
+        {% endfor %}
+
+        <!-- one more to add -->
+        <fieldset>
+            <legend>{% trans "New challenge" %}</legend>
+            {% include "editor/forms/challenge.html" with n=n %}
+        </fieldset>
+
+        <button id="addchallenge" class="btn btn-success">
+            {% trans "Add challenge" %}
+        </button>
+
+        <hr/>
+
+        <button class="btn btn-block btn-primary">
+            {% trans "Save" %}
+        </button>
+    </form>
+{% endblock %}
