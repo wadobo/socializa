@@ -2,6 +2,17 @@
 {% load i18n %}
 {% load static %}
 
+{% block extrahead %}
+    <link rel="stylesheet" href="{% static "vendors/ol/ol.css" %}" />
+    <style>
+        .map {
+            height: 500px;
+            width: 100%;
+        }
+    </style>
+    <link href="//cdn.jsdelivr.net/openlayers.geocoder/latest/ol3-geocoder.min.css" rel="stylesheet">
+{% endblock %}
+
 {% block head %}
     {% if game %}
         <h1>{% trans "Edit:" %} {{ game }}</h1>
@@ -59,8 +70,25 @@
             {% trans "Save" %}
         </button>
     </form>
+
+<!-- position modal -->
+<div id="posModal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">{% trans "Select position" %}</h4>
+      </div>
+      <div class="modal-body">
+        <div id="map" class="map"></div>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 {% endblock %}
 
 {% block extrabody %}
+    <script src="{% static "vendors/ol/ol.js" %}"></script>
+    <script src="//cdn.jsdelivr.net/openlayers.geocoder/latest/ol3-geocoder.js"></script>
     <script src="{% static "edit_game.js" %}"></script>
 {% endblock %}
