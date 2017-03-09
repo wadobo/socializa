@@ -1,0 +1,46 @@
+{% load i18n %}
+
+<div class="row">
+    <div class="col-sm-6">
+        <div class="form-group">
+            <input type="text" class="form-control" name="challenge_name_{{ n }}"
+                   placeholder="{% trans 'Challenge name' %}"/>
+        </div>
+        <!--
+        <div class="form-group">
+            <input type="text" class="form-control" name="challenge_solution_{{ n }}"
+                   placeholder="{% trans 'Game solution' %}"/>
+            <p class="help-block">{% trans "Write here the solution" %}</p>
+        </div>
+        -->
+    </div>
+
+    <div class="col-sm-6">
+        <div class="form-group">
+            <textarea class="form-control" name="challenge_desc_{{ n }}"
+                   placeholder="{% trans 'Challenge description' %}"></textarea>
+            <p class="help-block">{% trans "You can use here html" %}</p>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label for="type">{% trans "Challenge type:" %}</label>
+            <select id="type" name="challenge_type_{{ n }}">
+                <option value="player">{% trans "Player" %}</option>
+                <option value="ia">{% trans "Position (ia)" %}</option>
+                <option value="actor">{% trans "Actor" %}</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <input type="text" class="form-control"
+                   name="challenge_pos_{{ n }}"
+                   placeholder="{% trans 'IA position in format: Lon, Lat' %}"/>
+            <p class="help-block">{% trans "for example: -5.9866369, 37.3580539" %}</p>
+        </div>
+    </div>
+</div>

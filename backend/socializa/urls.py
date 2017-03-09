@@ -27,6 +27,7 @@ schema_view = get_swagger_view(title="Socializa API")
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^docs/', schema_view),
+    url(r"^editor/", include("editor.urls")),
     url(r'^oauth2callback/$', oauth2callback),
     url(r'^api/oauth2apps/$', oauth2apps),
     url(r'^api/oauth2redirect/$', oauth2redirect, name='oauth2redirect'),
@@ -34,7 +35,7 @@ urlpatterns = [
     url(r"^api/social/", include("rest_framework_social_oauth2.urls")),
     url(r"^api/player/", include("player.urls")),
     url(r"^api/event/", include("event.urls")),
-    url(r"^api/clue/", include("clue.urls"))
+    url(r"^api/clue/", include("clue.urls")),
 ]
 
 if 'silk' in settings.INSTALLED_APPS:
