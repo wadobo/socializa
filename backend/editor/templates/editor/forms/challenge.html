@@ -37,10 +37,17 @@
     </div>
     <div class="col-sm-6">
         <div class="form-group">
-            <input type="text" class="form-control pos"
-                   name="challenge_pos_{{ n }}"
-                   placeholder="{% trans 'IA position in format: Lon, Lat' %}"/>
-            <p class="help-block">{% trans "for example: -5.9866369, 37.3580539" %}</p>
+            <div class="input-group">
+                <span class="input-group-btn">
+                    <button class="btn btn-primary mapbtn">
+                        <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>
+                    </button>
+                </span>
+                <input type="text" class="form-control pos"
+                       name="challenge_pos_{{ n }}"
+                       placeholder="{% trans 'IA position in format: Lat, Lon' %}"/>
+            </div>
+            <p class="help-block">{% trans "for example: 37.3580539, -5.9866369" %}</p>
         </div>
     </div>
 </div>
