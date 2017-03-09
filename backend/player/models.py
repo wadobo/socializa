@@ -1,4 +1,4 @@
-from random import choice
+from random import SystemRandom
 from string import ascii_uppercase, digits
 
 from django.conf import settings
@@ -72,7 +72,7 @@ class Meeting(models.Model):
         """ generate a secret for convert in QR and change to status 'step2' """
         chars = ascii_uppercase + digits
         length = settings.QR_LENGTH
-        self.secret = ''.join([choice(chars) for i in range(length)])
+        self.secret = ''.join([SystemRandom().choice(chars) for i in range(length)])
         self.status = 'step2'
         self.save()
 

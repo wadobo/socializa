@@ -1,5 +1,5 @@
 from math import cos, pi, sin, sqrt
-from random import choice, random
+from random import SystemRandom
 from string import ascii_lowercase, digits
 
 from django.contrib.auth.models import User
@@ -16,7 +16,7 @@ def create_player(backend, user, *args, **kwargs):
 
 
 def get_random_string(length=32, chars=ascii_lowercase + digits):
-    return ''.join([choice(chars) for i in range(length)])
+    return ''.join([SystemRandom().choice(chars) for i in range(length)])
 
 
 def get_random_username(length=32, chars=ascii_lowercase + digits):
@@ -37,8 +37,8 @@ def get_random_pos(event):
     center = poly.centroid
     CONVERT_RADIUS_IN_DEGREES = 111300
     ratio = event.get_max_ratio() / CONVERT_RADIUS_IN_DEGREES
-    w = ratio * sqrt(random())
-    t = 2 * pi * random()
+    w = ratio * sqrt(SystemRandom().random())
+    t = 2 * pi * SystemRandom().random()
     x = w * cos(t)
 
     sum_x = x / cos(center.y)
