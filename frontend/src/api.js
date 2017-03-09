@@ -172,9 +172,13 @@ export default class API {
         return customFetch('/api/event/solve/'+eventid+'/', data);
     }
 
-    static getProfile() {
+    static getProfile(userid) {
         var data = JSONGet();
-        return customFetch('/api/player/profile/', data);
+        var url = '/api/player/profile/';
+        if (userid) {
+            url += userid + '/';
+        }
+        return customFetch(url, data);
     }
 
     static setProfile(data) {

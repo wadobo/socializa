@@ -31,7 +31,11 @@ def current_event(player):
 
 def create_meeting(player1, player2, event_id=None):
     m_status = 'connected' if player2.ia else 'step1'
-    meeting = Meeting(player1=player1, player2=player2, event_id=event_id, status=m_status)
+    meeting, created = Meeting.objects.get_or_create(
+                                        player1=player1,
+                                        player2=player2,
+                                        event_id=event_id)
+    meeting.status = m_status
     meeting.save()
     return meeting
 
@@ -274,11 +278,17 @@ set_position = SetPosition.as_view()
 
 class Profile(APIView):
 
-    def get(self, request):
+    def get(self, request, player_id=None):
         if request.user.is_anonymous():
             return Response("Anonymous user", status=rf_status.HTTP_401_UNAUTHORIZED)
 
-        p = request.user.player
+        if not player_id:
+            p = request.user.player
+        else:
+            p = Player.objects.get(pk=player_id)
+            if not p.visible(request.user.player):
+                return Response({})
+
         serializer = PlayerSerializer(p, many=False)
         return Response(serializer.data)
 

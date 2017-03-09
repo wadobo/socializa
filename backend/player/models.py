@@ -25,6 +25,17 @@ class Player(models.Model):
     def get_coords(self):
         return self.pos.coords if self.pos else "(None, None)"
 
+    def visible(self, p):
+        from player.views import distance
+
+        try:
+            ev = self.playing_event.event
+            max_distance = ev.get_meeting_distance()
+        except:
+            max_distance = settings.DEFAULT_MEETING_DISTANCE
+
+        return distance(self.pos, p.pos, unit='m') <= max_distance
+
     def __str__(self):
         return self.user.username
 

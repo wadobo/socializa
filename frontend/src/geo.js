@@ -11,6 +11,8 @@ export default class GEO {
             this.watchID = navigator.geolocation.watchPosition(this.success.bind(this), this.error.bind(this), this.options);
         }
 
+        navigator.geolocation.getCurrentPosition(this.success.bind(this), this.error.bind(this), this.options);
+
         this.status = 'started';
     }
 
