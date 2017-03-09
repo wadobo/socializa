@@ -31,7 +31,11 @@ def current_event(player):
 
 def create_meeting(player1, player2, event_id=None):
     m_status = 'connected' if player2.ia else 'step1'
-    meeting = Meeting(player1=player1, player2=player2, event_id=event_id, status=m_status)
+    meeting, created = Meeting.objects.get_or_create(
+                                        player1=player1,
+                                        player2=player2,
+                                        event_id=event_id)
+    meeting.status = m_status
     meeting.save()
     return meeting
 
