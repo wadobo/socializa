@@ -4,11 +4,11 @@
     <div class="col-sm-6">
         <div class="form-group">
             <input type="text" class="form-control" name="game_name"
-                   placeholder="{% trans 'Game name' %}"/>
+                   placeholder="{% trans 'Game name' %}" value="{{ data.name }}"/>
         </div>
         <div class="form-group">
             <input type="text" class="form-control" name="game_solution"
-                   placeholder="{% trans 'Game solution' %}"/>
+                   placeholder="{% trans 'Game solution' %}" value="{{ data.solution }}"/>
             <p class="help-block">{% trans "Write here the solution" %}</p>
         </div>
     </div>
@@ -16,7 +16,7 @@
     <div class="col-sm-6">
         <div class="form-group">
             <textarea class="form-control" name="game_desc"
-                   placeholder="{% trans 'Game description' %}"></textarea>
+                   placeholder="{% trans 'Game description' %}">{{ data.desc }}</textarea>
             <p class="help-block">{% trans "You can use here html" %}</p>
         </div>
     </div>

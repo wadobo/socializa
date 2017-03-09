@@ -45,17 +45,33 @@
         {% endfor %}
 
         <!-- one more to add -->
-        <div id="challenge_{{ n }}" n="{{ n }}" class="orig_challenge well">
+        {% for challenge in data.challenges %}
+            <div id="challenge_{{ n|add:forloop.counter0 }}" n="{{ n|add:forloop.counter0 }}" class="orig_challenge well">
+            <fieldset>
+                <legend>
+                    {% trans "New challenge" %} (<span class="n">{{ n|add:forloop.counter0 }}</span>)
+                    <button class="btn btn-danger rmchallenge pull-right" n="{{ n|add:forloop.counter0 }}">
+                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                    </button>
+                </legend>
+                {% include "editor/forms/challenge.html" with n=n|add:forloop.counter0 %}
+            </fieldset>
+            </div>
+        {% endfor %}
+
+        {% with nl=data.challenges|length %}
+        <div id="challenge_{{ n|add:nl }}" n="{{ n|add:nl }}" class="orig_challenge well">
         <fieldset>
             <legend>
-                {% trans "New challenge" %} (<span class="n">{{ n }}</span>)
-                <button class="btn btn-danger rmchallenge hidden pull-right" n="{{ n }}">
+                {% trans "New challenge" %} (<span class="n">{{ n|add:nl }}</span>)
+                <button class="btn btn-danger rmchallenge hidden pull-right" n="{{ n|add:nl }}">
                     <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                 </button>
             </legend>
-            {% include "editor/forms/challenge.html" with n=n %}
+            {% include "editor/forms/challenge.html" with n=n|add:nl %}
         </fieldset>
         </div>
+        {% endwith %}
 
         <div id="challenges">
         </div>
