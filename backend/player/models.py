@@ -29,7 +29,7 @@ class Player(models.Model):
         from player.views import distance
 
         try:
-            ev = self.playing_event
+            ev = self.playing_event.event
             max_distance = ev.get_meeting_distance()
         except:
             max_distance = settings.DEFAULT_MEETING_DISTANCE
