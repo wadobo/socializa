@@ -1,5 +1,6 @@
 {% extends "editor/base.html" %}
 {% load i18n %}
+{% load static %}
 
 {% block head %}
     {% if game %}
@@ -16,17 +17,37 @@
         {% include "editor/forms/game.html" %}
 
         {% for challenge in game.challenges.all %}
+        <div class="well">
         <fieldset>
-            <legend>{{ challenge.name }}</legend>
+            <legend>
+                {{ challenge.name }}
+                <form method="POST" action="">
+                    <input type="hidden" name="challenge" value="{{ challenge.pk }}" />
+                    <button name="rmchallenge" class="btn btn-danger">
+                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                    </button>
+                </form>
+            </legend>
             {% include "editor/forms/challenge.html" with n=forloop.counter0 %}
         </fieldset>
+        </div>
         {% endfor %}
 
         <!-- one more to add -->
+        <div id="challenge_{{ n }}" n="{{ n }}" class="orig_challenge well">
         <fieldset>
-            <legend>{% trans "New challenge" %}</legend>
+            <legend>
+                {% trans "New challenge" %} (<span class="n">{{ n }}</span>)
+                <button class="btn btn-danger rmchallenge hidden pull-right" n="{{ n }}">
+                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                </button>
+            </legend>
             {% include "editor/forms/challenge.html" with n=n %}
         </fieldset>
+        </div>
+
+        <div id="challenges">
+        </div>
 
         <button id="addchallenge" class="btn btn-success">
             {% trans "Add challenge" %}
@@ -38,4 +59,8 @@
             {% trans "Save" %}
         </button>
     </form>
+{% endblock %}
+
+{% block extrabody %}
+    <script src="{% static "edit_game.js" %}"></script>
 {% endblock %}

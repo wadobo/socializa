@@ -18,11 +18,14 @@
       <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+
+    {% block extrahead %}{% endblock %}
   </head>
   <body>
     <div class="container">
         {% block head %}
         {% endblock %}
+        <hr/>
 
         {% if messages %}
             <div class="messages">
@@ -44,5 +47,7 @@
 
     <script src="{% static "vendors/jquery.min.js" %}"></script>
     <script src="{% static "vendors/bootstrap/js/bootstrap.min.js" %}"></script>
+
+    {% block extrabody %}{% endblock %}
   </body>
 </html>
