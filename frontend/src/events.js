@@ -207,7 +207,6 @@ export default class Events extends React.Component {
     }
 
     filterEvents = (v) => {
-        console.log("filter:", v);
         var q = this.state.q || {};
         q.filter = v;
         this.setState({q: q});
