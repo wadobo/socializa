@@ -206,6 +206,14 @@ export default class Events extends React.Component {
         this.setState({q: q});
     }
 
+    filterEvents = (v) => {
+        console.log("filter:", v);
+        var q = this.state.q || {};
+        q.filter = v;
+        this.setState({q: q});
+        this.updateEvents();
+    }
+
     renderEvents() {
         var self = this;
         return (
@@ -235,6 +243,19 @@ export default class Events extends React.Component {
                         <button type="button" onClick={ this.updateEvents } className="btn btn-success">
                           <i className="fa fa-sw fa-search"></i>
                         </button>
+                    </div>
+                </div>
+                <div className="filters">
+                    <div className="btn-group btn-group-justified" data-toggle="buttons">
+                      <label className="btn btn-default active" onClick={ this.filterEvents.bind(this, 'all') }>
+                        <input type="radio" name="options" autocomplete="off" checked/> All
+                      </label>
+                      <label className="btn btn-default" onClick={ this.filterEvents.bind(this, 'mine') }>
+                        <input type="radio" name="options" autocomplete="off"/> Mine
+                      </label>
+                      <label className="btn btn-default" onClick={ this.filterEvents.bind(this, 'admin') }>
+                        <input type="radio" name="options" autocomplete="off"/> Admin
+                      </label>
                     </div>
                 </div>
 
