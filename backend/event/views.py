@@ -90,11 +90,22 @@ class AllEvents(APIView):
 
         events = Event.objects.filter(end_date__gt=timezone.now())
 
+        query = Q()
+
+        f = request.GET.get('filter', 'all')
+        if f == 'mine':
+            p = request.user.player
+            query &= Q(membership__player=p)
+        elif f == 'admin':
+            # TODO: implement this
+            pass
+
         q = request.GET.get('q', '')
         if q:
-            query = (Q(name__icontains=q) | Q(place__icontains=q) |
-                     Q(game__name__icontains=q) | Q(game__desc__icontains=q))
-            events = events.filter(query)
+            query &= (Q(name__icontains=q) | Q(place__icontains=q) |
+                      Q(game__name__icontains=q) | Q(game__desc__icontains=q))
+
+        events = events.filter(query)
 
         events = events.order_by('-start_date', '-pk')
 
