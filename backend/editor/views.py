@@ -55,6 +55,12 @@ class EditGame(TemplateView):
         return redirect('add_game')
 
     def post(self, request, gameid=None):
+        if gameid:
+            game = get_object_or_404(Game, pk=gameid)
+            if game.author != request.user:
+                messages.error(request, _("Unauthorized user"))
+                return render(request, self.template_name, {}, status=401)
+
         data = self.parse_input(request)
 
         title = data.get('title')
@@ -63,7 +69,6 @@ class EditGame(TemplateView):
         challenges = data.get('challenges')
 
         if gameid:
-            game = get_object_or_404(Game, pk=gameid)
             game.name = title
             game.desc = desc
             game.solution = solution
