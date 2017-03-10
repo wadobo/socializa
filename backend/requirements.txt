@@ -8,7 +8,7 @@ django-nose==1.4.4
 django-rest-framework-social-oauth2==1.0.5
 django-rest-swagger==2.1.1
 django==1.10.6
-djangorestframework==3.6.1
+djangorestframework==3.5.3
 psycopg2==2.7
 pylint==1.6.5
 radon==1.4.2
