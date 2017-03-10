@@ -54,7 +54,7 @@ class EditGame(TemplateView):
         messages.warning(request, _("Not implemented yet!"))
         return redirect('add_game')
 
-    def post(self, request, gameid):
+    def post(self, request, gameid=None):
         data = self.parse_input(request)
 
         title = data.get('title')
