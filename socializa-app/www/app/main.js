@@ -6466,6 +6466,11 @@ var Events = function (_React$Component2) {
             var q = _this2.state.q || {};
             q.q = e.target.value;
             _this2.setState({ q: q });
+        }, _this2.filterEvents = function (v) {
+            var q = _this2.state.q || {};
+            q.filter = v;
+            _this2.setState({ q: q });
+            _this2.updateEvents();
         }, _temp2), _possibleConstructorReturn(_this2, _ret2);
     }
 
@@ -6520,6 +6525,32 @@ var Events = function (_React$Component2) {
                             'button',
                             { type: 'button', onClick: this.updateEvents, className: 'btn btn-success' },
                             _react2.default.createElement('i', { className: 'fa fa-sw fa-search' })
+                        )
+                    )
+                ),
+                _react2.default.createElement(
+                    'div',
+                    { className: 'filters' },
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'btn-group btn-group-justified', 'data-toggle': 'buttons' },
+                        _react2.default.createElement(
+                            'label',
+                            { className: 'btn btn-default active', onClick: this.filterEvents.bind(this, 'all') },
+                            _react2.default.createElement('input', { type: 'radio', name: 'options', autocomplete: 'off', checked: true }),
+                            ' All'
+                        ),
+                        _react2.default.createElement(
+                            'label',
+                            { className: 'btn btn-default', onClick: this.filterEvents.bind(this, 'mine') },
+                            _react2.default.createElement('input', { type: 'radio', name: 'options', autocomplete: 'off' }),
+                            ' Mine'
+                        ),
+                        _react2.default.createElement(
+                            'label',
+                            { className: 'btn btn-default', onClick: this.filterEvents.bind(this, 'admin') },
+                            _react2.default.createElement('input', { type: 'radio', name: 'options', autocomplete: 'off' }),
+                            ' Admin'
                         )
                     )
                 ),
