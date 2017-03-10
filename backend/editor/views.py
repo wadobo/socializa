@@ -33,12 +33,12 @@ class EditGame(TemplateView):
 
         d = {}
         for k, v in cs:
-            _, attr, n = k.split("_")
+            attr, n = k.rsplit("_", 1)
             if not n in d:
                 d[n] = {}
-            d[n] = dict(**{attr: v}, **d[n])
+            d[n].update({attr: v})
 
-        game["challenges"] = [i[1] for i in sorted(d.items())]
+        game["challenges"] = [d.get(k) for k in sorted(list(d.keys()))]
         return game
 
     def get_context_data(self, gameid=None):
@@ -56,12 +56,57 @@ class EditGame(TemplateView):
 
     def post(self, request, gameid=None):
         data = self.parse_input(request)
-        if gameid:
-            return self.edit(request, gameid)
 
-        messages.error(request, _("Not implemented yet!"))
-        ctx = self.get_context_data(gameid)
-        ctx['data'] = data
-        return render(request, self.template_name, ctx)
+        title = data.get('title')
+        desc = data.get('desc')
+        solution = data.get('solution')
+        challenges = data.get('challenges')
+
+        if gameid:
+            game = get_object_or_404(Game, pk=gameid)
+            game.name = title
+            game.desc = desc
+            game.solution = solution
+            game.save()
+        else:
+            game = Game(name=title, desc=desc, solution=solution)
+            game.save()
+
+        num_challenge = 0
+        for cha in challenges:
+            cha_title = cha.get('challenge_title')
+            cha_desc = cha.get('challenge_desc')
+            cha_solution = cha.get('challenge_solution')
+            if gameid and game.challenges.count() > num_challenge:
+                challenge = game.challenges.order_by('pk')[num_challenge]
+                challenge.name = cha_title
+                challenge.desc = cha_desc
+                challenge.solution = cha_solution
+                challenge.save()
+            else:
+                game.challenges.create(name=cha_title, desc=cha_desc, solution=cha_solution)
+                game.save()
+            num_challenge += 1
+
+        if gameid:
+            messages.info(request, _("Updated game"))
+            status = 200
+        else:
+            messages.info(request, _("Created game with {0} challenges".format(game.challenges.count())))
+            status = 201
+        return render(request, self.template_name, {}, status=status)
+
+    def delete(self, request, gameid):
+        game = get_object_or_404(Game, pk=gameid)
+        if game.author == request.user:
+            name = game.name
+            game.challenges.all().delete()
+            game.delete()
+            messages.info(request, _("Deleted game: {0}".format(name)))
+            status = 200
+        else:
+            messages.error(request, _("Unauthorized user"))
+            status = 401
+        return render(request, self.template_name, {}, status=status)
 
 edit_game = is_editor(EditGame.as_view())

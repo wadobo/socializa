@@ -1,0 +1,42 @@
+[
+{
+  "model": "game.game",
+  "pk": 4,
+  "fields": {
+    "name": "game for test delete",
+    "desc": "description game",
+    "solution": "solution game",
+    "challenges": [
+      15
+    ],
+    "author": 1
+  }
+},
+{
+  "model": "game.challenge",
+  "pk": 15,
+  "fields": {
+    "name": "challenge 1 for game edito",
+    "desc": "description for game editor",
+    "solution": "have solve"
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 10,
+  "fields": {
+    "password": "pbkdf2_sha256$30000$mQYHRclkzme4$7VK0hKz2iUr1dC/2S9cN4vYl0Gjj4COp9GkDMy+qhSk=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "editor",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2016-09-20T14:36:23.947Z",
+    "groups": [],
+    "user_permissions": []
+  }
+}
+]
