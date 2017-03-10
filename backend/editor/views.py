@@ -82,11 +82,15 @@ class EditGame(TemplateView):
             cha_title = cha.get('challenge_title')
             cha_desc = cha.get('challenge_desc')
             cha_solution = cha.get('challenge_solution')
+            cha_type = cha.get('challenge_type')
+            cha_extra = cha.get('challenge_extra')
             if gameid and game.challenges.count() > num_challenge:
                 challenge = game.challenges.order_by('pk')[num_challenge]
                 challenge.name = cha_title
                 challenge.desc = cha_desc
                 challenge.solution = cha_solution
+                challenge.ctype = cha_type
+                challenge.extra = cha_extra
                 challenge.save()
             else:
                 game.challenges.create(name=cha_title, desc=cha_desc, solution=cha_solution)
