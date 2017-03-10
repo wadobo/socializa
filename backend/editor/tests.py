@@ -67,8 +67,6 @@ class GameTestCase(APITestCase):
     def test_game_update_unauthorized(self):
         """ test update game without authorization. editor try to edit an admin's game """
         gameid = 4
-        ini_games = Game.objects.count()
-        ini_challenges = Challenge.objects.count()
         self.c.login(username='editor', password='qweqweqwe')
         response = self.c.post('/editor/game/{0}/'.format(gameid), self.game_data)
         self.assertEqual(response.status_code, 401)
