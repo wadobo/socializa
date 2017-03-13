@@ -39,7 +39,7 @@ class EditGame(TemplateView):
                 d[n] = {}
             d[n].update({attr: v})
 
-        game["challenges"] = [d.get(k) for k in sorted(list(d.keys()))]
+        game["challenges"] = [d.get(k) for k in sorted(list(d.keys())) if d[k].get('challenge_name')]
         return game
 
     def get_context_data(self, gameid=None):
@@ -52,10 +52,6 @@ class EditGame(TemplateView):
             ctx['n'] = 0
         return ctx
 
-    def edit(self, request, gameid):
-        messages.warning(request, _("Not implemented yet!"))
-        return redirect('add_game')
-
     def post(self, request, gameid=None):
         if gameid:
             game = get_object_or_404(Game, pk=gameid)
@@ -65,7 +61,7 @@ class EditGame(TemplateView):
 
         data = self.parse_input(request)
 
-        title = data.get('title')
+        title = data.get('name')
         desc = data.get('desc')
         solution = data.get('solution')
         challenges = data.get('challenges')
@@ -81,11 +77,12 @@ class EditGame(TemplateView):
 
         num_challenge = 0
         for cha in challenges:
-            cha_title = cha.get('challenge_title')
+            cha_title = cha.get('challenge_name')
             cha_desc = cha.get('challenge_desc')
             cha_solution = cha.get('challenge_solution')
             cha_type = cha.get('challenge_type')
             cha_extra = cha.get('challenge_extra')
+
             if gameid and game.challenges.count() > num_challenge:
                 challenge = game.challenges.order_by('pk')[num_challenge]
                 challenge.name = cha_title
@@ -105,7 +102,8 @@ class EditGame(TemplateView):
         else:
             messages.info(request, _("Created game with {0} challenges".format(game.challenges.count())))
             status = 201
-        return render(request, self.template_name, {}, status=status)
+
+        return redirect('edit_game', gameid=game.id)
 
     def delete(self, request, gameid):
         game = get_object_or_404(Game, pk=gameid)
@@ -129,7 +127,8 @@ class EditEvent(TemplateView):
     def get_context_data(self, evid=None):
         ctx = super().get_context_data(evid=evid)
         if evid:
-            ctx['ev'] = get_object_or_404(Event, pk=evid)
+            ev = get_object_or_404(Event, pk=evid)
+            ctx['ev'] = ev
 
         # TODO, paginate this or show by ajax, in the future we can't show
         # all games in one page if there's a lot.

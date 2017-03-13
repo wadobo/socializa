@@ -49,7 +49,7 @@
         <div class="form-group">
             <div class="input-group">
                 <input type="text" class="form-control" name="ev_start_date"
-                       placeholder="{% trans 'Start date' %}" value="{{ data.start_date }}"/>
+                       placeholder="{% trans 'Start date' %}" value="{{ data.start_date|date:"o/m/d H:i" }}"/>
                 <span class="input-group-addon">
                     <span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>
                 </span>
@@ -59,7 +59,7 @@
         <div class="form-group">
             <div class="input-group">
                 <input type="text" class="form-control" name="ev_end_date"
-                       placeholder="{% trans 'End date' %}" value="{{ data.end_date }}"/>
+                       placeholder="{% trans 'End date' %}" value="{{ data.end_date|date:"o/m/d H:i" }}"/>
                 <span class="input-group-addon">
                     <span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>
                 </span>
