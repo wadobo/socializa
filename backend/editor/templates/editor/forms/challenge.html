@@ -29,9 +29,8 @@
         <div class="form-group">
             <label for="type">{% trans "Challenge type:" %}</label>
             <select id="type" class="type" name="challenge_type_{{ n }}">
-                <option value="player" {% if challenge.type == 'player' %}selected{% endif %}>{% trans "Player" %}</option>
-                <option value="ia" {% if challenge.type == 'ia' %}selected{% endif %}>{% trans "Position" %}</option>
-                <option value="actor" {% if challenge.type == 'actor' %}selected{% endif %}>{% trans "Actor" %}</option>
+                <option value="p" {% if challenge.type == 'p' %}selected{% endif %}>{% trans "Player" %}</option>
+                <option value="np" {% if challenge.type == 'np' %}selected{% endif %}>{% trans "Position / Actor" %}</option>
             </select>
         </div>
     </div>
