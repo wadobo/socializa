@@ -2,15 +2,15 @@ from django.contrib.auth.models import User
 from django.db import models
 
 CHALLENGES_TYPE = (
-    ('pj', 'player jugable'),
-    ('pnj', 'player no jugable'),
+    ('p', 'playable player'),
+    ('np', 'not playable player'),
 )
 
 class Challenge(models.Model):
     name = models.CharField(max_length=200, blank=True, null=True)
     desc = models.TextField(max_length=1024, blank=True, null=True)
     solution = models.TextField(max_length=1024, blank=True, null=True)
-    ctype = models.CharField(max_length=8, choices=CHALLENGES_TYPE, default='pj')
+    ctype = models.CharField(max_length=8, choices=CHALLENGES_TYPE, default='p')
     extra = models.TextField(max_length=1024, blank=True, null=True)
 
     def __str__(self):
