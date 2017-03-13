@@ -1,0 +1,79 @@
+{% load i18n %}
+
+<div class="row">
+    <div class="col-sm-5">
+        <div class="form-group">
+            <input type="text" class="form-control" name="ev_name"
+                   placeholder="{% trans 'Name' %}" value="{{ data.name }}"/>
+        </div>
+        <div class="form-group">
+            <div class="input-group">
+                <input type="text" class="form-control" name="ev_price"
+                       placeholder="{% trans 'Price' %}" value="{{ data.price }}"/>
+                <span class="input-group-addon">€</span>
+            </div>
+            <p class="help-block">{% trans "Use 0 for free events" %}</p>
+        </div>
+        <div class="form-group">
+            <div class="input-group">
+                <input type="text" class="form-control" name="ev_max_players"
+                       placeholder="{% trans 'Max players' %}" value="{{ data.max_players }}"/>
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                </span>
+            </div>
+            <p class="help-block">{% trans "Use 0 for unlimited" %}</p>
+        </div>
+        <div class="form-group">
+            <div class="input-group">
+                <input type="text" class="form-control" name="ev_vision_distance"
+                       placeholder="{% trans 'Vision distance' %}" value="{{ data.vision_distance }}"/>
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+                </span>
+            </div>
+            <p class="help-block">{% trans "Vision distance in meters" %}</p>
+        </div>
+        <div class="form-group">
+            <div class="input-group">
+                <input type="text" class="form-control" name="ev_meeting_distance"
+                       placeholder="{% trans 'Interaction distance' %}" value="{{ data.meeting_distance }}"/>
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-qrcode" aria-hidden="true"></span>
+                </span>
+            </div>
+            <p class="help-block">{% trans "Interaction distance in meters" %}</p>
+        </div>
+
+        <!-- TODO: use a datetime widget here -->
+        <div class="form-group">
+            <div class="input-group">
+                <input type="text" class="form-control" name="ev_start_date"
+                       placeholder="{% trans 'Start date' %}" value="{{ data.start_date }}"/>
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>
+                </span>
+            </div>
+            <p class="help-block">{% trans "Use the form: yyyy/mm/dd HH:MM" %}</p>
+        </div>
+        <div class="form-group">
+            <div class="input-group">
+                <input type="text" class="form-control" name="ev_end_date"
+                       placeholder="{% trans 'End date' %}" value="{{ data.end_date }}"/>
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>
+                </span>
+            </div>
+            <p class="help-block">{% trans "Use the form: yyyy/mm/dd HH:MM" %}</p>
+        </div>
+    </div>
+
+    <div class="col-sm-7">
+        <label>{% trans "Event place" %}</label>
+        <button class="btn btn-danger pull-right" id="clearmap">{% trans "Clear" %}</button>
+        <p class="help-block">{% trans "Select a region where the event take place" %}</p>
+        <input type="hidden" value="{{ data.place }}" id="mapinput" />
+        <div id="map" class="map"></div>
+    </div>
+</div>
+

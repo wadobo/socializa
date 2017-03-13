@@ -1,0 +1,9 @@
+.games label {
+    width: 100%;
+    border-bottom: 2px dashed #bbb;
+}
+
+.map {
+    height: 500px;
+    width: 100%;
+}

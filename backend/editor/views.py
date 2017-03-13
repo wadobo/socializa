@@ -7,6 +7,7 @@ from django.shortcuts import render
 from django.contrib import messages
 
 from game.models import Game
+from event.models import Event
 
 
 def is_editor(user):
@@ -119,3 +120,27 @@ class EditGame(TemplateView):
         return render(request, self.template_name, {}, status=status)
 
 edit_game = is_editor(EditGame.as_view())
+
+
+class EditEvent(TemplateView):
+    template_name = 'editor/edit_event.html'
+
+    def get_context_data(self, evid=None):
+        ctx = super().get_context_data(evid=evid)
+        if evid:
+            ctx['ev'] = get_object_or_404(Event, pk=evid)
+
+        # TODO, paginate this or show by ajax, in the future we can't show
+        # all games in one page if there's a lot.
+        ctx['games'] = Game.objects.all()
+        return ctx
+edit_event = is_editor(EditEvent.as_view())
+
+
+class EventChallenges(TemplateView):
+    '''
+    View to assign challenges to players/actors or positions in the map
+    '''
+
+    template_name = 'editor/event_challenges.html'
+event_challenges = is_editor(EventChallenges.as_view())

@@ -1,0 +1,50 @@
+{% extends "editor/base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block extrahead %}
+    <link rel="stylesheet" href="{% static "vendors/ol/ol.css" %}" />
+    <link rel="stylesheet" href="{% static "edit_event.css" %}" />
+    <link href="//cdn.jsdelivr.net/openlayers.geocoder/latest/ol3-geocoder.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block head %}
+    {% if ev %}
+        <h1>{% trans "Edit:" %} {{ ev }}</h1>
+    {% else %}
+        <h1>{% trans "Create a new Event" %}</h1>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <form method="POST" action="">
+        {% csrf_token %}
+
+        {% include "editor/forms/ev.html" %}
+
+        <h2>{% trans "Select the game" %}</h2>
+        <hr/>
+        <div class="games">
+        {% for game in games %}
+            <label>
+                <input type="radio" name="game" value="{{ game.id }}" class="col-sm-1"/>
+                <div class="col-sm-11">
+                    {{ game.name }} /
+                    <span class="text-primary">{{ game.challenges.all|length }} {% trans "challenges" %}</span>
+                    <p class="text-muted text-small">{{ game.desc|truncatewords:50 }}</p>
+                </div>
+            </label>
+        {% endfor %}
+        </div>
+
+        <button class="btn btn-block btn-primary">
+            {% trans "Save and continue" %}
+        </button>
+    </form>
+{% endblock %}
+
+{% block extrabody %}
+    <script src="{% static "vendors/ol/ol.js" %}"></script>
+    <script src="//cdn.jsdelivr.net/openlayers.geocoder/latest/ol3-geocoder.js"></script>
+    <script src="{% static "edit_event.js" %}"></script>
+{% endblock %}
