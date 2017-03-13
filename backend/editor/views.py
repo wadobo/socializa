@@ -45,8 +45,9 @@ class EditGame(TemplateView):
     def get_context_data(self, gameid=None):
         ctx = super().get_context_data(gameid=gameid)
         if gameid:
-            ctx['game'] = get_object_or_404(Game, pk=gameid)
-            ctx['n'] = ctx['game'].challenges.count()
+            game = get_object_or_404(Game, pk=gameid)
+            ctx['game'] = game
+            ctx['n'] = game.challenges.count()
         else:
             ctx['n'] = 0
         return ctx

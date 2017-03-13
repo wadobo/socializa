@@ -25,7 +25,11 @@
     <form method="POST" action="">
         {% csrf_token %}
 
-        {% include "editor/forms/game.html" %}
+        {% if game and not data %}
+            {% include "editor/forms/game.html" with data=game %}
+        {% else %}
+            {% include "editor/forms/game.html" %}
+        {% endif %}
 
         {% for challenge in game.challenges.all %}
         <div class="well">
