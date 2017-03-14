@@ -3,8 +3,10 @@ from rest_framework.test import APITestCase
 
 from .models import Event
 from .models import Membership
+from .models import PlayingEvent
 from player.models import Player
 from player.test_client import JClient
+from event.utils import manage_ias
 
 
 class EventTestCase(APITestCase):
@@ -411,3 +413,78 @@ class PlayingEventTestCase(APITestCase):
         response = self.c.post('/api/event//', {})
         self.assertEqual(response.status_code, 200)
 
+
+class EventTasksTestCase(APITestCase):
+    """ Test tasks for check taht work well """
+    fixtures = ['player-test.json', 'event.json']
+
+    def setUp(self):
+        self.event1 = Event.objects.get(pk=1)
+        self.event2 = Event.objects.get(pk=2)
+        self.event2.start_date = timezone.now() - timezone.timedelta(hours=2)
+        self.event2.end_date = timezone.now() + timezone.timedelta(hours=2)
+        self.ini_players = Player.objects.count()
+
+    def get_member_players(self, event):
+        return Membership.objects.filter(event=event).count()
+
+    def get_playing_players(self, event):
+        return PlayingEvent.objects.filter(event=event).count()
+
+    def get_need_players(self, event):
+        return event.max_players - event.players.count()
+
+    def test_manage_ias_not_change(self):
+        """ test manage_ias fails:
+            * event is None
+            * event have date out of current date
+            * event haven't place
+        """
+        ini_member_players = self.get_member_players(self.event1)
+        ini_playing_players = self.get_playing_players(self.event1)
+
+        manage_ias(None)
+        manage_ias(self.event1)
+        self.event1.start_date = timezone.now() - timezone.timedelta(hours=2)
+        self.event1.end_date = timezone.now() + timezone.timedelta(hours=2)
+        manage_ias(self.event1)
+
+        end_players = Player.objects.count()
+        end_member_players = self.get_member_players(self.event1)
+        end_playing_players = self.get_playing_players(self.event1)
+
+        self.assertEqual(self.ini_players, end_players)
+        self.assertEqual(ini_member_players, end_member_players)
+        self.assertEqual(ini_playing_players, end_playing_players)
+
+    def test_manage_ias_fill_event(self):
+        """ Check that add players and these are add like member and like playing in event """
+        ini_member_players = self.get_member_players(self.event2)
+        ini_playing_players = self.get_playing_players(self.event2)
+        need_players = self.get_need_players(self.event2)
+
+        manage_ias(self.event2)
+
+        end_players = Player.objects.count()
+        end_member_players = self.get_member_players(self.event2)
+        end_playing_players = self.get_playing_players(self.event2)
+
+        self.assertEqual(self.ini_players + need_players, end_players)
+        self.assertEqual(ini_member_players + need_players, end_member_players)
+        self.assertEqual(ini_playing_players + need_players, end_playing_players)
+
+    def test_manage_ias_amount(self):
+        """ Check that add players and these are add like member and like playing in event """
+        ini_member_players = self.get_member_players(self.event2)
+        ini_playing_players = self.get_playing_players(self.event2)
+        need_players = 20
+
+        manage_ias(self.event2, amount=need_players)
+
+        end_players = Player.objects.count()
+        end_member_players = self.get_member_players(self.event2)
+        end_playing_players = self.get_playing_players(self.event2)
+
+        self.assertEqual(self.ini_players + need_players, end_players)
+        self.assertEqual(ini_member_players + need_players, end_member_players)
+        self.assertEqual(ini_playing_players + need_players, end_playing_players)
