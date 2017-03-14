@@ -36,12 +36,10 @@
         <fieldset>
             <legend>
                 {{ challenge.name }}
-                <form method="POST" action="">
-                    <input type="hidden" name="challenge" value="{{ challenge.pk }}" />
-                    <button name="rmchallenge" class="btn btn-danger">
-                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                    </button>
-                </form>
+                <input type="hidden" name="challenge" value="{{ challenge.pk }}" />
+                <button name="rmchallenge" class="btn btn-danger">
+                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                </button>
             </legend>
             {% include "editor/forms/challenge.html" with n=forloop.counter0 %}
         </fieldset>

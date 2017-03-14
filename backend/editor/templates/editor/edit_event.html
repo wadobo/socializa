@@ -20,7 +20,11 @@
     <form method="POST" action="">
         {% csrf_token %}
 
-        {% include "editor/forms/ev.html" %}
+        {% if ev and not data %}
+            {% include "editor/forms/ev.html" with data=ev %}
+        {% else %}
+            {% include "editor/forms/ev.html" %}
+        {% endif %}
 
         <h2>{% trans "Select the game" %}</h2>
         <hr/>
