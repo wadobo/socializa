@@ -32,6 +32,10 @@ class PlayerTestCase(APITestCase):
     def tearDown(self):
         self.c = None
 
+    def authenticate(self, username='test1', pwd='qweqweqwe'):
+        response = self.c.authenticate(username, pwd)
+        self.assertEqual(response.status_code, 200)
+
     def test_players_near_without_login(self):
         response = self.c.get('/api/player/near/', {})
         self.assertEqual(response.status_code, 401)
@@ -42,8 +46,7 @@ class PlayerTestCase(APITestCase):
         self.assertEqual(response.json(), 'Anonymous user')
 
     def test_meeting_with_login_far(self):
-        response = self.c.authenticate(self.username, self.pwd)
-        self.assertEqual(response.status_code, 200)
+        self.authenticate()
         response = self.c.post('/api/player/meeting/{0}/'.format(self.PLAYER5_PK), {})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), 'User is far for meeting')
@@ -53,8 +56,7 @@ class PlayerTestCase(APITestCase):
         self.assertEqual(response.status_code, 401)
 
     def test_change_position(self):
-        response = self.c.authenticate(self.username, self.pwd)
-        self.assertEqual(response.status_code, 200)
+        self.authenticate()
         response = self.c.post('/api/player/set-pos/', {'lat': '-6', 'lon': '37'})
         self.assertEqual(response.status_code, 200)
 
@@ -63,14 +65,12 @@ class PlayerTestCase(APITestCase):
         self.assertEqual(response.status_code, 401)
 
     def test_delete_position(self):
-        response = self.c.authenticate(self.username, self.pwd)
-        self.assertEqual(response.status_code, 200)
+        self.authenticate()
         response = self.c.delete('/api/player/set-pos/', {})
         self.assertEqual(response.status_code, 200)
 
     def test_change_position_invalid(self):
-        response = self.c.authenticate(self.username, self.pwd)
-        self.assertEqual(response.status_code, 200)
+        self.authenticate()
         response = self.c.post('/api/player/set-pos/', {'lat': 'bad', 'lon': '37'})
         self.assertEqual(response.status_code, 400)
         response = self.c.post('/api/player/set-pos/', {'lat': '', 'lon': ''})
@@ -79,8 +79,7 @@ class PlayerTestCase(APITestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_profile(self):
-        response = self.c.authenticate(self.username, self.pwd)
-        self.assertEqual(response.status_code, 200)
+        self.authenticate()
 
         interests = ['sports', 'books', 'music']
         interests2 = ['music']
@@ -104,9 +103,6 @@ class PlayerTestCase(APITestCase):
 
 
 class MeetingTestCase(APITestCase):
-    """
-
-    """
     fixtures = ['meeting-test.json']
     PLAYER2_PK = 2
 
@@ -116,6 +112,10 @@ class MeetingTestCase(APITestCase):
 
     def tearDown(self):
         self.c = None
+
+    def authenticate(self, username, pwd='qweqweqwe'):
+        response = self.c.authenticate(username, pwd)
+        self.assertEqual(response.status_code, 200)
 
     @classmethod
     def get_username(cls, pk):
@@ -142,8 +142,7 @@ class MeetingTestCase(APITestCase):
         player1 = 1
         player2 = 6
         event = 1
-        response = self.c.authenticate(self.get_username(player1), self.pwd)
-        self.assertEqual(response.status_code, 200)
+        self.authenticate(self.get_username(player1), self.pwd)
         response = self.c.post('/api/player/meeting/{0}/{1}/'.format(player2, event), {})
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json(), "Other player not join at this event")
@@ -153,8 +152,7 @@ class MeetingTestCase(APITestCase):
         player1 = 1
         player2 = 2
         event = 1
-        response = self.c.authenticate(self.get_username(player1), self.pwd)
-        self.assertEqual(response.status_code, 200)
+        self.authenticate(self.get_username(player1), self.pwd)
         response = self.c.post('/api/player/meeting/{0}/{1}/'.format(player2, event), {})
         self.assertEqual(response.status_code, 201)
         res = {'clue': self.get_challenge_from_player(player2)}
@@ -166,8 +164,7 @@ class MeetingTestCase(APITestCase):
         player1 = 1
         player2 = 3
         event = 1
-        response = self.c.authenticate(self.get_username(player1), self.pwd)
-        self.assertEqual(response.status_code, 200)
+        self.authenticate(self.get_username(player1), self.pwd)
         response = self.c.post('/api/player/meeting/{0}/{1}/'.format(player2, event), {})
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json(), {'status': 'step1'})
@@ -177,8 +174,7 @@ class MeetingTestCase(APITestCase):
         player1 = 4
         player2 = 3
         event = 1
-        response = self.c.authenticate(self.get_username(player1), self.pwd)
-        self.assertEqual(response.status_code, 200)
+        self.authenticate(self.get_username(player1), self.pwd)
         response = self.c.post('/api/player/meeting/{0}/{1}/'.format(player2, event), {})
         self.assertEqual(response.status_code, 200)
         secret = Meeting.objects.get(player1=player2, player2=player1, event_id=event).secret
@@ -190,8 +186,7 @@ class MeetingTestCase(APITestCase):
         player2 = 5
         event = 1
         secret = 'INCORRECT'
-        response = self.c.authenticate(self.get_username(player1), self.pwd)
-        self.assertEqual(response.status_code, 200)
+        self.authenticate(self.get_username(player1), self.pwd)
         response = self.c.post('/api/player/meeting/{0}/{1}/captured/{2}/'.format(player2, event, secret), {})
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json(), "Invalid secret")
@@ -202,8 +197,7 @@ class MeetingTestCase(APITestCase):
         player2 = 5
         event = 1
         secret = '0123456789ABCDEF'
-        response = self.c.authenticate(self.get_username(player1), self.pwd)
-        self.assertEqual(response.status_code, 200)
+        self.authenticate(self.get_username(player1), self.pwd)
         response = self.c.post('/api/player/meeting/{0}/{1}/captured/{2}/'.format(player2, event, secret), {})
         self.assertEqual(response.status_code, 200)
         res = {'clue': self.get_challenge_from_player(player2)}
@@ -215,8 +209,7 @@ class MeetingTestCase(APITestCase):
         player1 = 5
         player2 = 4
         event = 1
-        response = self.c.authenticate(self.get_username(player1), self.pwd)
-        self.assertEqual(response.status_code, 200)
+        self.authenticate(self.get_username(player1), self.pwd)
         response = self.c.get('/api/player/meeting/{0}/{1}/qrclue/'.format(player2, event), {})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), {'status': 'waiting'})
@@ -230,8 +223,7 @@ class MeetingTestCase(APITestCase):
         prev_status = meeting.status
         meeting.status = 'connected'
         meeting.save()
-        response = self.c.authenticate(self.get_username(player1), self.pwd)
-        self.assertEqual(response.status_code, 200)
+        self.authenticate(self.get_username(player1), self.pwd)
         response = self.c.get('/api/player/meeting/{0}/{1}/qrclue/'.format(player2, event), {})
         self.assertEqual(response.status_code, 200)
         res = {'clue': self.get_challenge_from_player(player2)}
@@ -249,27 +241,23 @@ class MeetingTestCase(APITestCase):
         player_2 = Player(user=user_2, pos=pos)
         player_2.save()
 
-        response = self.c.authenticate(self.get_username(player_1.pk), self.pwd)
-        self.assertEqual(response.status_code, 200)
+        self.authenticate(self.get_username(player_1.pk), self.pwd)
         # step 1
         response = self.c.post('/api/player/meeting/{0}/'.format(player_2.pk), {})
         self.assertEqual(response.status_code, 201)
 
-        response = self.c.authenticate(self.get_username(player_2.pk), self.pwd)
-        self.assertEqual(response.status_code, 200)
+        self.authenticate(self.get_username(player_2.pk), self.pwd)
         # step 2
         response = self.c.post('/api/player/meeting/{0}/'.format(player_1.pk), {})
         self.assertEqual(response.status_code, 200)
 
         secret = Meeting.objects.get(player1=player_1, player2=player_2).secret
-        response = self.c.authenticate(self.get_username(player_1.pk), self.pwd)
-        self.assertEqual(response.status_code, 200)
+        self.authenticate(self.get_username(player_1.pk), self.pwd)
         # step 3
         response = self.c.post('/api/player/meeting/{0}/captured/{1}/'.format(player_2.pk, secret), {})
         self.assertEqual(response.status_code, 200)
 
-        response = self.c.authenticate(self.get_username(player_2.pk), self.pwd)
-        self.assertEqual(response.status_code, 200)
+        self.authenticate(self.get_username(player_2.pk), self.pwd)
         # step 4
         response = self.c.get('/api/player/meeting/{0}/qrclue/'.format(player_1.pk), {})
         self.assertEqual(response.status_code, 200)
