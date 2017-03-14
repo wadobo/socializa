@@ -50221,12 +50221,6 @@ function done(stream, er, data) {
 
 module.exports = Writable;
 
-function WriteReq(chunk, encoding, cb) {
-  this.chunk = chunk;
-  this.encoding = encoding;
-  this.callback = cb;
-  this.next = null;
-}
 // It seems a linked list but it is not
 // there will be only 2 of these for each stream
 function CorkedRequest(state) {
@@ -50778,6 +50772,7 @@ function CorkedRequest(state) {
     }
   };
 }
+
 }).call(this,require('_process'))
 },{"./_stream_duplex":317,"_process":119,"buffer":20,"buffer-shims":19,"core-util-is":24,"events":33,"inherits":101,"process-nextick-args":118,"util-deprecate":337}],322:[function(require,module,exports){
 'use strict';
