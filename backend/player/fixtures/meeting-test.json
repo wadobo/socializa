@@ -300,7 +300,8 @@
     "player": 2,
     "challenge": 1,
     "main": true,
-    "event": 1
+    "event": 1,
+    "created": "2016-10-05T09:00:00Z"
   }
 },
 {
@@ -310,7 +311,8 @@
     "player": 3,
     "challenge": 2,
     "main": true,
-    "event": 1
+    "event": 1,
+    "created": "2016-10-05T09:00:00Z"
   }
 },
 {
@@ -320,7 +322,8 @@
     "player": 4,
     "challenge": 3,
     "main": true,
-    "event": 1
+    "event": 1,
+    "created": "2016-10-05T09:00:00Z"
   }
 },
 {
@@ -330,7 +333,8 @@
     "player": 5,
     "challenge": 4,
     "main": true,
-    "event": 1
+    "event": 1,
+    "created": "2016-10-05T09:00:00Z"
   }
 },
 {
