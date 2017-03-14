@@ -103,7 +103,7 @@ class EditGame(TemplateView):
             messages.info(request, _("Created game with {0} challenges".format(game.challenges.count())))
             status = 201
 
-        return redirect('edit_game', gameid=game.id)
+        return render(request, self.template_name, {}, status=status)
 
     def delete(self, request, gameid):
         game = get_object_or_404(Game, pk=gameid)

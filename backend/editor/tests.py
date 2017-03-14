@@ -44,7 +44,7 @@ class GameTestCase(APITestCase):
         pass
 
     def test_authentication(self):
-        # TODO: change in the futuro when group editor exist
+        # TODO: change in the future when group editor exist
         self.c.login(username='test1', password='qweqweqwe')
         response = self.c.get('/editor/game/', {}, follow=True)
         self.assertEqual(response.request.get('PATH_INFO'), '/admin/login/')
@@ -57,7 +57,7 @@ class GameTestCase(APITestCase):
         ini_games = Game.objects.count()
         ini_challenges = Challenge.objects.count()
         self.c.login(username='admin', password='qweqweqwe')
-        response = self.c.post('/editor/game/', self.game_data)
+        response = self.c.post('/editor/game/', self.game_data, follow=True)
         self.assertEqual(response.status_code, 201)
         end_games = Game.objects.count()
         end_challenges = Challenge.objects.count()
@@ -77,7 +77,7 @@ class GameTestCase(APITestCase):
         ini_games = Game.objects.count()
         ini_challenges = Challenge.objects.count()
         self.c.login(username='admin', password='qweqweqwe')
-        response = self.c.post('/editor/game/{0}/'.format(gameid), self.game_data)
+        response = self.c.post('/editor/game/{0}/'.format(gameid), self.game_data, follow=True)
         self.assertEqual(response.status_code, 200)
         end_games = Game.objects.count()
         end_challenges = Challenge.objects.count()
