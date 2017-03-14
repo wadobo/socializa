@@ -1,4 +1,3 @@
-from django.contrib.auth.models import User
 from django.test import Client
 from rest_framework.test import APITestCase
 

@@ -2,7 +2,6 @@ from django.utils.translation import ugettext as _
 from django.views.generic.base import TemplateView
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import get_object_or_404
-from django.shortcuts import redirect
 from django.shortcuts import render
 from django.contrib import messages
 
@@ -21,7 +20,8 @@ is_editor = user_passes_test(is_editor, login_url='/admin/login/')
 class EditGame(TemplateView):
     template_name = 'editor/edit_game.html'
 
-    def parse_input(self, request):
+    @classmethod
+    def parse_input(cls, request):
         data = request.POST
         game = {
             "name": data.get("game_name", ""),
