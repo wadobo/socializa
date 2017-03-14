@@ -12,14 +12,14 @@ class ClueTestCase(APITestCase):
     - 1: Einstein Game: with 4 challenge (without solution in challenge)
     - 2: Easy Game: with 1 challeng (with solution in challenge)
     Players:
-    - 1: belong to event 1 and 2. have 2 clue in event 1 with pk 1 and 2
+    - 1: belong to event 1 and 2. have 3 clue in event 1 with pk 1, 2 and 3
     - 1: belong to event 2. have 1 clue in event 2 with pk 3
 
     """
     fixtures = ['player-test.json', 'clue.json']
     EVENT_PK = 1
     GAME_PK = 1
-    USER_CLUES = 2
+    ORDERER_CLUES_BY_PK = [1, 2, 4]
     EVENT3_PK = 3
 
     def setUp(self):
@@ -35,13 +35,21 @@ class ClueTestCase(APITestCase):
     def get_username_by_player(cls, pk):
         return Player.objects.get(pk=pk).user.username
 
-    def test_get_my_clues(self):
+    def get_my_clues(self):
         player = 1
         response = self.c.authenticate(self.get_username_by_player(player), self.pwd)
         self.assertEqual(response.status_code, 200)
         response = self.c.get('/api/clue/my-clues/{0}/'.format(self.GAME_PK), {})
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.json()), self.USER_CLUES)
+        return response
+
+    def test_get_my_clues(self):
+        response = self.get_my_clues()
+        self.assertEqual(len(response.json()), len(self.ORDERER_CLUES_BY_PK))
+
+    def test_get_my_clues_ordered(self):
+        response = self.get_my_clues()
+        self.assertEqual([cha.get('pk') for cha in response.json()], self.ORDERER_CLUES_BY_PK)
 
     def test_join_event_create_clue(self):
         player = 2
@@ -87,7 +95,7 @@ class ClueTestCase(APITestCase):
     def test_solve_clue_not_exist(self):
         """ User try solve clue with clue_id not exist. """
         player = 1
-        clue_id = 4
+        clue_id = 5
         data = {'solution': 'solution'}
         response = self.c.authenticate(self.get_username_by_player(player), self.pwd)
         self.assertEqual(response.status_code, 200)
