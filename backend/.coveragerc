@@ -1,4 +1,20 @@
 [run]
+
+[report]
+exclude_lines =
+  pragma: no cover
+
+    def __str__
+    if DEBUG
+
+
 omit =
     */env/*
     */xml/*
+    */locustfile.py
+    */*/migrations/*
+    */*/apps.py
+    */socializa/settings.py
+    */socializa/wsgi.py
+
+show_missing = True
