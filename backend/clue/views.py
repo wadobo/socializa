@@ -38,7 +38,8 @@ class MyClues(APIView):
 
         player = request.user.player
         game = get_object_or_404(Game, pk=game_id)
-        clues = Clue.objects.filter(player=player, challenge__in=game.challenges.all())
+        challenges = game.challenges.all()
+        clues = Clue.objects.filter(player=player, challenge__in=challenges).order_by('created')
         serializer = ClueSerializer(clues, many=True)
         data = serializer.data
         return Response(data)

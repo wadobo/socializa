@@ -196,7 +196,8 @@
     "challenge": 1,
     "main": true,
     "status": "acquired",
-    "event": 1
+    "event": 1,
+    "created": "2016-10-05T09:00:00Z"
   }
 },
 {
@@ -207,7 +208,8 @@
     "challenge": 2,
     "main": false,
     "status": "acquired",
-    "event": 1
+    "event": 1,
+    "created": "2016-10-05T10:00:00Z"
   }
 },
 {
@@ -218,7 +220,20 @@
     "challenge": 8,
     "main": true,
     "status": "acquired",
-    "event": 2
+    "event": 2,
+    "created": "2016-10-05T09:00:00Z"
+  }
+},
+{
+  "model": "clue.clue",
+  "pk": 4,
+  "fields": {
+    "player": 1,
+    "challenge": 3,
+    "main": false,
+    "status": "acquired",
+    "event": 1,
+    "created": "2016-10-05T10:30:00Z"
   }
 }
 ]
