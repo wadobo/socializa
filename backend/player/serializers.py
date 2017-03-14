@@ -6,7 +6,7 @@ from rest_framework import serializers
 class PlayerSerializer(serializers.Serializer):
     pk = serializers.IntegerField(read_only=True)
     pos = PointField(required=False)
-    ia = serializers.BooleanField()
+    ptype = serializers.CharField()
     about = serializers.CharField()
     interests = serializers.SerializerMethodField('player_interests')
     username = serializers.SerializerMethodField('player_username')

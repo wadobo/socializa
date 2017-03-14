@@ -148,8 +148,8 @@ class MeetingTestCase(APITestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json(), "Other player not join at this event")
 
-    def test_meeting_near_step1_ia(self):
-        """ player1 near player2 (IA) """
+    def test_meeting_near_step1_ai(self):
+        """ player1 near player2 (AI) """
         player1 = 1
         player2 = 2
         event = 1
@@ -161,7 +161,7 @@ class MeetingTestCase(APITestCase):
         res.update({'status': 'connected'})
         self.assertEqual(response.json(), res)
 
-    def test_meeting_near_step1_no_ia(self):
+    def test_meeting_near_step1_no_ai(self):
         """ no meeting between player1 and player3. player1 near player3. """
         player1 = 1
         player2 = 3

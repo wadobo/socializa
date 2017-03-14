@@ -54,7 +54,7 @@ def create_random_player(event):
     user = User.objects.create_user(
         username=get_random_username(),
         password=get_random_string())
-    player = Player(user=user, ia=True)
+    player = Player(user=user, ptype='ai')
     pos = get_random_pos(event)
     player.set_position(pos[0], pos[1])
     player.save()

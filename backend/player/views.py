@@ -30,7 +30,7 @@ def current_event(player):
 
 
 def create_meeting(player1, player2, event_id=None):
-    m_status = 'connected' if player2.ia else 'step1'
+    m_status = 'connected' if player2.ptype == 'ai' else 'step1'
     meeting, created = Meeting.objects.get_or_create(
                                         player1=player1,
                                         player2=player2,
@@ -73,7 +73,7 @@ class PlayersNear(APIView):
             q &= Q(playing_event__event=event.pk)
         else:
             _vision = settings.DEFAULT_VISION_DISTANCE
-            q &= Q(ia=False)
+            q &= ~Q(ptype='ai')  # ~ not equal not equal
             q &= Q(playing_event__event=None)
         q &= Q(pos__distance_lte=(self.player.pos, D(m=_vision)))
         near_players = Player.objects.filter(q).exclude(pk=self.player.pk)
@@ -150,7 +150,7 @@ class MeetingCreate(APIView):
     def post(self, request, player_id, event_id=None, secret=None):
         """ For create a meeting there are 4 steps:
             1: player1 try to connect with player2 (create meeting with status step1)
-               - Exception (if player2 is ia, return clue)
+               - Exception (if player2 is ai, return clue)
             2: player2 try to connect with player1 (change meeting to status step2 and generate secret)
             3: player1 check the secret of meeting (if correct, status connected and return clue)
             4: player2 make polling for check status (if correct, return clue)
@@ -174,7 +174,7 @@ class MeetingCreate(APIView):
             meeting1 = Meeting.objects.filter(query1).first()
             meeting2 = Meeting.objects.filter(query2).first()
 
-            if self.player2.ia:  # STEP1: exception player2 is ia
+            if self.player2.ptype == 'ai':  # STEP1: exception player2 is ai
                 meeting = create_meeting(self.player1, self.player2, event_id)
                 status = rf_status.HTTP_201_CREATED
                 challenge = self.get_challenge(self.player2, self.event)
