@@ -6,7 +6,7 @@ from .models import Membership
 from .models import PlayingEvent
 from player.models import Player
 from player.test_client import JClient
-from event.utils import manage_ias
+from event.utils import manage_ais
 
 
 class EventTestCase(APITestCase):
@@ -293,7 +293,7 @@ class PlayerEventTestCase(APITestCase):
         self.assertEqual(response.status_code, 200)
         response = self.c.get('/api/player/near/{0}/'.format(self.EVENT_PK_4), {})
         self.assertEqual(response.status_code, 200)
-        players = [d for d in response.json() if d.get('ia') is False]
+        players = [d for d in response.json() if not d.get('ptype') is 'ai']
         self.assertEqual(len(players), self.NEAR_PLAYER_4_EVENT_4)
 
     def test_players_near_in_event3(self):
@@ -434,8 +434,8 @@ class EventTasksTestCase(APITestCase):
     def get_need_players(self, event):
         return event.max_players - event.players.count()
 
-    def test_manage_ias_not_change(self):
-        """ test manage_ias fails:
+    def test_manage_ais_not_change(self):
+        """ test manage_ais fails:
             * event is None
             * event have date out of current date
             * event haven't place
@@ -443,11 +443,11 @@ class EventTasksTestCase(APITestCase):
         ini_member_players = self.get_member_players(self.event1)
         ini_playing_players = self.get_playing_players(self.event1)
 
-        manage_ias(None)
-        manage_ias(self.event1)
+        manage_ais(None)
+        manage_ais(self.event1)
         self.event1.start_date = timezone.now() - timezone.timedelta(hours=2)
         self.event1.end_date = timezone.now() + timezone.timedelta(hours=2)
-        manage_ias(self.event1)
+        manage_ais(self.event1)
 
         end_players = Player.objects.count()
         end_member_players = self.get_member_players(self.event1)
@@ -457,13 +457,13 @@ class EventTasksTestCase(APITestCase):
         self.assertEqual(ini_member_players, end_member_players)
         self.assertEqual(ini_playing_players, end_playing_players)
 
-    def test_manage_ias_fill_event(self):
+    def test_manage_ais_fill_event(self):
         """ Check that add players and these are add like member and like playing in event """
         ini_member_players = self.get_member_players(self.event2)
         ini_playing_players = self.get_playing_players(self.event2)
         need_players = self.get_need_players(self.event2)
 
-        manage_ias(self.event2)
+        manage_ais(self.event2)
 
         end_players = Player.objects.count()
         end_member_players = self.get_member_players(self.event2)
@@ -473,13 +473,13 @@ class EventTasksTestCase(APITestCase):
         self.assertEqual(ini_member_players + need_players, end_member_players)
         self.assertEqual(ini_playing_players + need_players, end_playing_players)
 
-    def test_manage_ias_amount(self):
+    def test_manage_ais_amount(self):
         """ Check that add players and these are add like member and like playing in event """
         ini_member_players = self.get_member_players(self.event2)
         ini_playing_players = self.get_playing_players(self.event2)
         need_players = 20
 
-        manage_ias(self.event2, amount=need_players)
+        manage_ais(self.event2, amount=need_players)
 
         end_players = Player.objects.count()
         end_member_players = self.get_member_players(self.event2)

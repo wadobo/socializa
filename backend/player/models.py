@@ -8,10 +8,16 @@ from django.contrib.gis.geos import GEOSGeometry
 from django.core.exceptions import ValidationError
 
 
+PLAYER_TYPE = (
+    ('ai', 'AI'),
+    ('actor', 'actor'),
+    ('player', 'player'),
+)
+
 class Player(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="player")
     pos = models.PointField(null=True, blank=True)
-    ia = models.BooleanField(default=False)
+    ptype = models.CharField(max_length=16, choices=PLAYER_TYPE, default='player')
     about = models.TextField(blank=True, null=True)
 
     def set_position(self, lon, lat):
