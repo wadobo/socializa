@@ -142,5 +142,14 @@ class EventChallenges(TemplateView):
     View to assign challenges to players/actors or positions in the map
     '''
 
+    def get_context_data(self, evid):
+        ctx = super().get_context_data()
+        ev = get_object_or_404(Event, pk=evid)
+        cs = ev.game.challenges.all()
+        ctx['ev'] = ev
+        ctx['players'] = cs.filter(ctype='p')
+        ctx['actors'] = cs.filter(ctype='np')
+        return ctx
+
     template_name = 'editor/event_challenges.html'
 event_challenges = is_editor(EventChallenges.as_view())
