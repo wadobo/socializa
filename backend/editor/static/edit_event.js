@@ -62,6 +62,15 @@ function showmap() {
     map.addInteraction(draw);
 
     draw.on('drawend', updateInput);
+
+    if (evplace != null) {
+        var feature = format.readFeatures(evplace, {featureProjection: 'EPSG:3857'});
+        if (feature.length == 1) {
+            feature = feature[0];
+            featureOverlay.getSource().addFeature(feature);
+            map.getView().fit(feature.getGeometry(), {padding: [80, 50, 50, 50], constrainResolution: false});
+        }
+    }
 }
 
 $(document).ready(function() {
