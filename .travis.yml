@@ -25,7 +25,7 @@ install:
   - pip install codacy-coverage
 script:
   - cd backend
-  - pylint -f parseable --ignore-patterns="env/" * | tee pylint.out
+  - pylint --load-plugins pylint_django -f parseable --ignore-patterns="env/" * | tee pylint.out
   - coverage run --branch --source=. ./manage.py test --keepdb --with-xunit
   - coverage xml
   - python-codacy-coverage -r coverage.xml
