@@ -1,5 +1,6 @@
 from decimal import Decimal
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import Point
 
@@ -23,6 +24,7 @@ class Event(models.Model):
                                                    null=True,
                                                    blank=True,
                                                    help_text='max meeting ditance in m')
+    owners = models.ManyToManyField(User, related_name="events")
 
     def status(self):
         return "[{0}/{1}]".format(self.players.count(), self.max_players)
