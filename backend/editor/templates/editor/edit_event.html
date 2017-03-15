@@ -30,20 +30,35 @@
         <hr/>
         <div class="games">
         {% for game in games %}
-            <label>
-                <input type="radio" name="game" value="{{ game.id }}" class="col-sm-1"/>
-                <div class="col-sm-11">
-                    {{ game.name }} /
-                    <span class="text-primary">{{ game.challenges.all|length }} {% trans "challenges" %}</span>
-                    <p class="text-muted text-small">{{ game.desc|truncatewords:50 }}</p>
+            {% if forloop.counter|divisibleby:"3" %}
+                <div class="row">
+            {% endif %}
+
+            <div class="col-sm-4">
+                <label class="row">
+                    <input type="radio" name="game" value="{{ game.id }}" class="col-sm-1"
+                    {% if ev.game == game %}
+                        checked="checked"
+                    {% endif %}
+                    />
+                    <div class="col-sm-11">
+                        {{ game.name }} /
+                        <span class="text-primary">{{ game.challenges.all|length }} {% trans "challenges" %}</span>
+                        <p class="text-muted text-small">{{ game.desc|truncatewords:50 }}</p>
+                    </div>
+                </label>
+            </div>
+
+            {% if forloop.counter|divisibleby:"3" %}
                 </div>
-            </label>
+            {% endif %}
         {% endfor %}
         </div>
 
         <button class="btn btn-block btn-primary">
             {% trans "Save and continue" %}
         </button>
+        <hr/>
     </form>
 {% endblock %}
 
