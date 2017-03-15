@@ -57,7 +57,7 @@ function showmap() {
 
     var draw = new ol.interaction.Draw({
       features: features,
-      type: 'Polygon'
+      type: 'MultiPolygon'
     });
     map.addInteraction(draw);
 
@@ -69,6 +69,9 @@ function showmap() {
             feature = feature[0];
             featureOverlay.getSource().addFeature(feature);
             map.getView().fit(feature.getGeometry(), {padding: [80, 50, 50, 50], constrainResolution: false});
+
+            var f = format.writeFeature(feature, {featureProjection: 'EPSG:3857'});
+            $("#mapinput").val(f);
         }
     }
 }
