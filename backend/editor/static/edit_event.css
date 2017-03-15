@@ -1,6 +1,8 @@
 .games label {
     width: 100%;
-    border-bottom: 2px dashed #bbb;
+    border: 1px solid #bbb;
+    padding: 5px;
+    margin: 10px;
 }
 
 .map {
