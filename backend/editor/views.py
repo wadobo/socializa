@@ -1,6 +1,9 @@
+import json
+from django.utils.dateparse import parse_datetime
 from django.utils.translation import ugettext as _
 from django.views.generic.base import TemplateView
 from django.contrib.auth.decorators import user_passes_test
+from django.contrib.gis.geos import GEOSGeometry
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 from django.contrib import messages
@@ -134,6 +137,82 @@ class EditEvent(TemplateView):
         # all games in one page if there's a lot.
         ctx['games'] = Game.objects.all()
         return ctx
+
+    def post(self, request, evid=None):
+        if evid:
+            event = get_object_or_404(Event, pk=evid)
+            if not request.user.pk in event.owners.values_list('pk', flat=True):
+                messages.error(request, _("Unauthorized user"))
+                return render(request, self.template_name, {}, status=401)
+
+        data = request.POST
+
+        _name = data.get('ev_name')
+        _price = data.get('ev_price')
+        _max_players = data.get('ev_max_players')
+        _vision_distance = data.get('ev_vision_distance')
+        _meeting_distance = data.get('ev_meeting_distance')
+        _start_date = data.get('ev_start_date', None)
+        _start_date = parse_datetime(_start_date)
+        _end_date = data.get('ev_end_date', None)
+        _end_date = parse_datetime(_end_date)
+        _place = data.get('ev_place', None)
+        if _place:
+            _place = json.loads(_place)
+        _place = GEOSGeometry(_place.get('geometry').__str__()) if _place else None
+        _game = data.get('ev_game')
+
+        game = get_object_or_404(Game, pk=_game)
+
+        if evid:
+            event.name = _name
+            event.place = _place
+            event.start_date = _start_date
+            event.end_date = _end_date
+            event.max_players = _max_players
+            event.price = _price
+            event.game = game
+            event.vision_distance = _vision_distance
+            event.meeting_distance = _meeting_distance
+            event.save()
+        else:
+            event = Event(name=_name,
+                          place=_place,
+                          start_date=_start_date,
+                          end_date=_end_date,
+                          max_players=_max_players,
+                          price=_price,
+                          game=game,
+                          vision_distance=_vision_distance,
+                          meeting_distance=_meeting_distance)
+            event.save()
+
+        event.owners.add(request.user)
+        event.save()
+
+        if evid:
+            messages.info(request, _("Updated event"))
+            status = 200
+        else:
+            messages.info(request, _("Created event."))
+            status = 201
+
+        return render(request, self.template_name, {}, status=status)
+
+    def delete(self, request, evid):
+        event = get_object_or_404(Event, pk=evid)
+        if request.user in event.owners.all():
+            name = event.name
+            # remove actors
+            # TODO
+            # remove event
+            event.delete()
+            messages.info(request, _("Deleted event: {0}".format(name)))
+            status = 200
+        else:
+            messages.error(request, _("Unauthorized user"))
+            status = 401
+        return render(request, self.template_name, {}, status=status)
 edit_event = is_editor(EditEvent.as_view())
 
 
