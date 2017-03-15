@@ -24,11 +24,6 @@ def distance(pos1, pos2, unit='m'):
         return dis * 1000
 
 
-def current_event(player):
-    now = timezone.now()
-    return player.event_set.filter(start_date__lt=now, end_date__gt=now).first()
-
-
 def create_meeting(player1, player2, event_id=None):
     m_status = 'connected' if player2.ptype == 'ai' else 'step1'
     meeting, created = Meeting.objects.get_or_create(
