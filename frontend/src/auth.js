@@ -82,7 +82,7 @@ export function getIcon(p) {
         ia: ['geo-ia']
     };
 
-    var l = p.ia ? icons.ia : icons.player;
+    var l = p.ptype == 'ia' ? icons.ia : icons.player;
     //var r = Math.floor(Math.random() * l.length);
     var icon = l[p.pk % l.length];
     return 'app/images/'+ icon +'.svg';
