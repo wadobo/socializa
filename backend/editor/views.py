@@ -10,11 +10,13 @@ from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 
-from game.models import Game
+from game.models import Game, Challenge
 from event.models import Event
 
 from player.serializers import PlayerSerializer
-from player.models import Player
+from player.models import Player, User
+
+from clue.models import Clue
 
 
 def is_editor(user):
@@ -232,8 +234,82 @@ class EventChallenges(TemplateView):
         cs = ev.game.challenges.all()
         ctx['ev'] = ev
         ctx['players'] = cs.filter(ctype='p')
-        ctx['actors'] = cs.filter(ctype='np')
+        actors = cs.filter(ctype='np')
+
+        # getting assigned information
+        for c in actors:
+            clue = c.mainclues().first()
+            if clue:
+                p = clue.player
+                c.pos = "%s, %s" % (p.pos.y, p.pos.x)
+                c.actor = p.user.username
+                c.ptype = p.ptype
+                c.assigned = True
+
+        ctx['actors'] = actors
         return ctx
+
+    @classmethod
+    def parse_input(cls, request):
+        data = request.POST
+        cs = [(k, v) for k, v in data.items() if k.startswith("challenge_")]
+
+        d = {}
+        for k, v in cs:
+            attr, n = k.rsplit("_", 1)
+            if not n in d:
+                d[n] = {}
+            d[n].update({attr: v})
+
+        return d
+
+    def post(self, request, evid):
+        if evid:
+            event = get_object_or_404(Event, pk=evid)
+            if not request.user.pk in event.owners.values_list('pk', flat=True):
+                messages.error(request, _("Unauthorized user"))
+                return render(request, self.template_name, {}, status=401)
+
+        data = self.parse_input(request)
+        for cid, options in data.items():
+            c = Challenge.objects.get(pk=cid)
+            if options['challenge_type'] == 'ai':
+                pos = options['challenge_pos']
+                lat, lon = map(float, pos.split(','))
+
+                clue = c.mainclues().first()
+                if not clue:
+                    newu = User(username=username)
+                    newu.save()
+                    p = Player(user=newu, ptype='ia')
+                    p.save()
+
+                    clue = Clue(player=p, event=event, challenge=c, main=True)
+                    clue.save()
+
+                clue.player.set_position(lon, lat)
+
+            elif options['challenge_type'] == 'actor':
+                username = options['challenge_player']
+
+                clue = c.mainclues().first()
+                if not clue:
+                    clue = Clue(event=event, challenge=c, main=True)
+
+                if username != clue.player:
+                    newu, created = User.objects.get_or_create(username=username)
+                    if created:
+                        # TODO: set password and store it somewhere in
+                        # plain text to be able to show to the admin
+                        newu.set_password('123')
+                        newu.save()
+                        p = Player(user=newu, ptype='actor')
+                        p.save()
+
+                    clue.player = newu.player
+                    clue.save()
+
+        return redirect('event_challenges', evid=evid)
 
     template_name = 'editor/event_challenges.html'
 event_challenges = is_editor(EventChallenges.as_view())
