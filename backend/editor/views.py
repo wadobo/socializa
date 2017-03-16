@@ -5,7 +5,7 @@ from django.views.generic.base import TemplateView, View
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.gis.geos import GEOSGeometry
 from django.shortcuts import get_object_or_404
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
@@ -202,7 +202,7 @@ class EditEvent(TemplateView):
             messages.info(request, _("Created event."))
             status = 201
 
-        return render(request, self.template_name, {}, status=status)
+        return redirect('event_challenges', event.id)
 
     def delete(self, request, evid):
         event = get_object_or_404(Event, pk=evid)

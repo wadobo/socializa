@@ -9,7 +9,10 @@
 {% endblock %}
 
 {% block head %}
-    <h1>{% trans "Challenges for:" %} {{ ev }}</h1>
+    <h1>
+        <a class="pull-right btn btn-primary" href="{% url 'edit_event' ev.id %}">{% trans "Edit event" %}</a>
+        {% trans "Challenges for:" %} {{ ev }}
+    </h1>
 {% endblock %}
 
 {% block content %}

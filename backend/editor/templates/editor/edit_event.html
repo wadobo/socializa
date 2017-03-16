@@ -10,7 +10,10 @@
 
 {% block head %}
     {% if ev %}
-        <h1>{% trans "Edit:" %} {{ ev }}</h1>
+        <h1>
+            <a class="pull-right btn btn-primary" href="{% url 'event_challenges' ev.id %}">{% trans "Assign challenges" %}</a>
+            {% trans "Edit:" %} {{ ev }}
+        </h1>
     {% else %}
         <h1>{% trans "Create a new Event" %}</h1>
     {% endif %}
@@ -36,7 +39,7 @@
 
             <div class="col-sm-4">
                 <label class="row">
-                    <input type="radio" name="game" value="{{ game.id }}" class="col-sm-1"
+                    <input type="radio" name="ev_game" value="{{ game.id }}" class="col-sm-1"
                     {% if ev.game == game %}
                         checked="checked"
                     {% endif %}
