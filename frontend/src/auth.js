@@ -79,10 +79,10 @@ export function getIcon(p) {
     // returns an icon based on the player id
     var icons = {
         player: ['geo10', 'geo9', 'geo8', 'geo7', 'geo6', 'geo5', 'geo4', 'geo3', 'geo2'],
-        ia: ['geo-ia']
+        ai: ['geo-ia']
     };
 
-    var l = p.ptype == 'ia' ? icons.ia : icons.player;
+    var l = p.ptype == 'ai' ? icons.ai : icons.player;
     //var r = Math.floor(Math.random() * l.length);
     var icon = l[p.pk % l.length];
     return 'app/images/'+ icon +'.svg';

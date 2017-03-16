@@ -46,11 +46,11 @@ function showmap() {
 function ctypeChange() {
     var id = $(this).data("id");
     var value = $(this).val();
-    if (value == 'ia') {
-        $("#ia_"+id).show();
+    if (value == 'ai') {
+        $("#ai_"+id).show();
         $("#actor_"+id).hide();
     } else {
-        $("#ia_"+id).hide();
+        $("#ai_"+id).hide();
         $("#actor_"+id).show();
     }
 }

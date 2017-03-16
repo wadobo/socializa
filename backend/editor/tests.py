@@ -147,8 +147,9 @@ class EventTestCase(APITestCase):
         ini_events = Event.objects.count()
         ini_event_owners = User.objects.get(username=username).events.count()
         self.c.login(username=username, password='qweqweqwe')
-        response = self.c.post('/editor/event/', self.event_data, follow=True)
-        self.assertEqual(response.status_code, 201)
+        response = self.c.post('/editor/event/', self.event_data)
+        self.assertEqual(response.status_code, 302)
+
         end_events = Event.objects.count()
         end_event_owners = User.objects.get(username=username).events.count()
         self.assertEqual(ini_events + 1, end_events)

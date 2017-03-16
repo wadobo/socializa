@@ -9,14 +9,17 @@
 {% endblock %}
 
 {% block head %}
-    <h1>{% trans "Challenges for:" %} {{ ev }}</h1>
+    <h1>
+        <a class="pull-right btn btn-primary" href="{% url 'edit_event' ev.id %}">{% trans "Edit event" %}</a>
+        {% trans "Challenges for:" %} {{ ev }}
+    </h1>
 {% endblock %}
 
 {% block content %}
     <form method="POST" action="">
         {% csrf_token %}
 
-        <h2> {% trans "Actors / IA" %} </h2>
+        <h2> {% trans "Actors / AI" %} </h2>
         <div class="challenges">
         {% for c in actors %}
             <div class="row">
@@ -30,13 +33,13 @@
                 <div class="col-sm-2 text-right">
                     <div class="form-group">
                         <select class="from-control ctype" data-id="{{ c.id }}" name="challenge_type_{{ c.id }}">
-                            <option value="ia">{% trans "IA" %}</option>
-                            <option value="actor">{% trans "Actor" %}</option>
+                            <option value="ai" {% if c.ptype == 'ai' %}selected{% endif %}>{% trans "AI" %}</option>
+                            <option value="actor" {% if c.ptype and c.ptype != 'ai' %}selected{% endif %}>{% trans "Actor" %}</option>
                         </select>
                     </div>
                 </div>
                 <div class="col-sm-5">
-                    <div class="form-group" id="ia_{{ c.id }}">
+                    <div class="form-group" id="ai_{{ c.id }}">
                         <div class="input-group">
                             <span class="input-group-btn">
                                 <button class="btn btn-primary mapbtn">
@@ -45,10 +48,10 @@
                             </span>
                             <input type="text" class="form-control pos"
                                    name="challenge_pos_{{ c.id }}"
-                                   value=""
-                                   placeholder="{% trans 'IA position in format: Lat, Lon' %}"/>
+                                   value="{{ c.pos }}"
+                                   placeholder="{% trans 'AI position in format: Lat, Lon' %}"/>
                         </div>
-                        <p class="help-block">{% trans "Position, only if it's an IA. For example: 37.3580539, -5.9866369" %}</p>
+                        <p class="help-block">{% trans "Position, only if it's an AI. For example: 37.3580539, -5.9866369" %}</p>
                     </div>
                     <div class="form-group" id="actor_{{ c.id }}">
                         <div class="input-group">
@@ -57,7 +60,7 @@
                             </span>
                             <input type="text" class="form-control player"
                                    name="challenge_player_{{ c.id }}"
-                                   value=""
+                                   value="{{ c.actor }}"
                                    placeholder="{% trans 'Player name' %}"/>
                         </div>
                         <p class="help-block">{% trans "Player name, to assign this challenge. If not exists, we'll create a new one" %}</p>
