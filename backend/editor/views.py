@@ -62,7 +62,31 @@ class EditGame(TemplateView):
             ctx['n'] = 0
         return ctx
 
+    def update_challenges(self, game, challenges):
+        num_challenge = 0
+        for cha in challenges:
+            cha_title = cha.get('challenge_name')
+            cha_desc = cha.get('challenge_desc')
+            cha_solution = cha.get('challenge_solution')
+            cha_type = cha.get('challenge_type')
+            cha_extra = cha.get('challenge_extra')
+
+            if game.challenges.count() > num_challenge:
+                challenge = game.challenges.order_by('pk')[num_challenge]
+                challenge.name = cha_title
+                challenge.desc = cha_desc
+                challenge.solution = cha_solution
+                challenge.ctype = cha_type
+                challenge.extra = cha_extra
+                challenge.save()
+            else:
+                game.challenges.create(name=cha_title, desc=cha_desc, solution=cha_solution)
+                game.save()
+            num_challenge += 1
+
     def post(self, request, gameid=None):
+        game = None
+
         if gameid:
             game = get_object_or_404(Game, pk=gameid)
             if game.author != request.user:
@@ -76,35 +100,15 @@ class EditGame(TemplateView):
         solution = data.get('solution')
         challenges = data.get('challenges')
 
-        if gameid:
-            game.name = title
-            game.desc = desc
-            game.solution = solution
-            game.save()
-        else:
-            game = Game(name=title, desc=desc, solution=solution)
-            game.save()
+        if not game:
+            game = Game()
 
-        num_challenge = 0
-        for cha in challenges:
-            cha_title = cha.get('challenge_name')
-            cha_desc = cha.get('challenge_desc')
-            cha_solution = cha.get('challenge_solution')
-            cha_type = cha.get('challenge_type')
-            cha_extra = cha.get('challenge_extra')
+        game.name = title
+        game.desc = desc
+        game.solution = solution
+        game.save()
 
-            if gameid and game.challenges.count() > num_challenge:
-                challenge = game.challenges.order_by('pk')[num_challenge]
-                challenge.name = cha_title
-                challenge.desc = cha_desc
-                challenge.solution = cha_solution
-                challenge.ctype = cha_type
-                challenge.extra = cha_extra
-                challenge.save()
-            else:
-                game.challenges.create(name=cha_title, desc=cha_desc, solution=cha_solution)
-                game.save()
-            num_challenge += 1
+        self.update_challenges(game, challenges)
 
         if gameid:
             messages.info(request, _("Updated game"))
@@ -263,51 +267,56 @@ class EventChallenges(TemplateView):
 
         return d
 
+    def update_ai(self, c, options):
+        pos = options['challenge_pos']
+        lat, lon = map(float, pos.split(','))
+
+        clue = c.mainclues().first()
+        if not clue:
+            newu = User(username=username)
+            newu.save()
+            p = Player(user=newu, ptype='ia')
+            p.save()
+
+            clue = Clue(player=p, event=event, challenge=c, main=True)
+            clue.save()
+
+        clue.player.set_position(lon, lat)
+
+    def update_actor(self, c, options):
+        username = options['challenge_player']
+
+        clue = c.mainclues().first()
+        if not clue:
+            clue = Clue(event=event, challenge=c, main=True)
+
+        if username != clue.player:
+            newu, created = User.objects.get_or_create(username=username)
+            if created:
+                # TODO: set random password and store it somewhere in
+                # plain text to be able to show to the admin
+                newu.set_password('123')
+                newu.save()
+                p = Player(user=newu, ptype='actor')
+                p.save()
+
+            clue.player = newu.player
+            clue.save()
+
     def post(self, request, evid):
-        if evid:
-            event = get_object_or_404(Event, pk=evid)
-            if not request.user.pk in event.owners.values_list('pk', flat=True):
-                messages.error(request, _("Unauthorized user"))
-                return render(request, self.template_name, {}, status=401)
+        event = get_object_or_404(Event, pk=evid)
+        if not request.user.pk in event.owners.values_list('pk', flat=True):
+            messages.error(request, _("Unauthorized user"))
+            return render(request, self.template_name, {}, status=401)
 
         data = self.parse_input(request)
+
         for cid, options in data.items():
             c = Challenge.objects.get(pk=cid)
             if options['challenge_type'] == 'ai':
-                pos = options['challenge_pos']
-                lat, lon = map(float, pos.split(','))
-
-                clue = c.mainclues().first()
-                if not clue:
-                    newu = User(username=username)
-                    newu.save()
-                    p = Player(user=newu, ptype='ia')
-                    p.save()
-
-                    clue = Clue(player=p, event=event, challenge=c, main=True)
-                    clue.save()
-
-                clue.player.set_position(lon, lat)
-
+                self.update_ai(c, options)
             elif options['challenge_type'] == 'actor':
-                username = options['challenge_player']
-
-                clue = c.mainclues().first()
-                if not clue:
-                    clue = Clue(event=event, challenge=c, main=True)
-
-                if username != clue.player:
-                    newu, created = User.objects.get_or_create(username=username)
-                    if created:
-                        # TODO: set password and store it somewhere in
-                        # plain text to be able to show to the admin
-                        newu.set_password('123')
-                        newu.save()
-                        p = Player(user=newu, ptype='actor')
-                        p.save()
-
-                    clue.player = newu.player
-                    clue.save()
+                self.update_actor(c, options)
 
         return redirect('event_challenges', evid=evid)
 
