@@ -13069,7 +13069,6 @@ var parsePath = exports.parsePath = function parsePath(path) {
   var search = '';
   var hash = '';
 
-  pathname = decodeURI(pathname);
   var hashIndex = pathname.indexOf('#');
   if (hashIndex !== -1) {
     hash = pathname.substr(hashIndex);
@@ -13081,6 +13080,8 @@ var parsePath = exports.parsePath = function parsePath(path) {
     search = pathname.substr(searchIndex);
     pathname = pathname.substr(0, searchIndex);
   }
+
+  pathname = decodeURI(pathname);
 
   return {
     pathname: pathname,
@@ -13095,13 +13096,13 @@ var createPath = exports.createPath = function createPath(location) {
       hash = location.hash;
 
 
-  var path = pathname || '/';
+  var path = encodeURI(pathname || '/');
 
   if (search && search !== '?') path += search.charAt(0) === '?' ? search : '?' + search;
 
   if (hash && hash !== '#') path += hash.charAt(0) === '#' ? hash : '#' + hash;
 
-  return encodeURI(path);
+  return path;
 };
 },{}],60:[function(require,module,exports){
 'use strict';
@@ -47334,14 +47335,6 @@ function done(stream, er, data) {
 
 module.exports = Writable;
 
-// It seems a linked list but it is not
-// there will be only 2 of these for each stream
-function CorkedRequest(state) {
-  this.next = null;
-  this.entry = null;
-  this.finish = onCorkedFinish.bind(undefined, this, state);
-}
-
 /*<replacement>*/
 var processNextTick = require('process-nextick-args');
 /*</replacement>*/
@@ -47885,7 +47878,6 @@ function CorkedRequest(state) {
     }
   };
 }
-
 }).call(this,require('_process'))
 },{"./_stream_duplex":281,"_process":107,"buffer":20,"buffer-shims":19,"core-util-is":24,"events":33,"inherits":87,"process-nextick-args":106,"util-deprecate":301}],286:[function(require,module,exports){
 'use strict';
