@@ -1,15 +1,20 @@
 import json
 from django.utils.dateparse import parse_datetime
 from django.utils.translation import ugettext as _
-from django.views.generic.base import TemplateView
+from django.views.generic.base import TemplateView, View
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.gis.geos import GEOSGeometry
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 from django.contrib import messages
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
 
 from game.models import Game
 from event.models import Event
+
+from player.serializers import PlayerSerializer
+from player.models import Player
 
 
 def is_editor(user):
@@ -232,3 +237,16 @@ class EventChallenges(TemplateView):
 
     template_name = 'editor/event_challenges.html'
 event_challenges = is_editor(EventChallenges.as_view())
+
+
+class AjaxPlayerSearch(View):
+    def post(self, request):
+        q = request.POST.get('q', '')
+        if not q or len(q) < 3:
+            return JsonResponse([], safe=False)
+
+        players = Player.objects.filter(user__username__startswith=q)
+        serializer = PlayerSerializer(players, many=True)
+        data = serializer.data
+        return JsonResponse(data, safe=False)
+ajax_player_search = csrf_exempt(is_editor(AjaxPlayerSearch.as_view()))
