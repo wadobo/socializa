@@ -1,7 +1,7 @@
 {% load i18n %}
 
 <div class="row">
-    <div class="col-sm-6">
+    <div class="col-sm-4">
         <div class="form-group">
             <input type="text" class="form-control name" name="challenge_name_{{ n }}"
                    placeholder="{% trans 'Challenge name' %}" value="{{ challenge.name }}"/>
@@ -14,6 +14,14 @@
         </div>
         -->
     </div>
+    <div class="col-sm-2">
+        <div class="form-group">
+            <select id="type" class="type" name="challenge_type_{{ n }}">
+                <option value="p" {% if challenge.type == 'p' %}selected{% endif %}>{% trans "Player" %}</option>
+                <option value="np" {% if challenge.type == 'np' %}selected{% endif %}>{% trans "Position / Actor" %}</option>
+            </select>
+        </div>
+    </div>
 
     <div class="col-sm-6">
         <div class="form-group">
@@ -25,29 +33,4 @@
 </div>
 
 <div class="row">
-    <div class="col-sm-6">
-        <div class="form-group">
-            <label for="type">{% trans "Challenge type:" %}</label>
-            <select id="type" class="type" name="challenge_type_{{ n }}">
-                <option value="p" {% if challenge.type == 'p' %}selected{% endif %}>{% trans "Player" %}</option>
-                <option value="np" {% if challenge.type == 'np' %}selected{% endif %}>{% trans "Position / Actor" %}</option>
-            </select>
-        </div>
-    </div>
-    <div class="col-sm-6">
-        <div class="form-group">
-            <div class="input-group">
-                <span class="input-group-btn">
-                    <button class="btn btn-primary mapbtn">
-                        <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>
-                    </button>
-                </span>
-                <input type="text" class="form-control pos"
-                       name="challenge_pos_{{ n }}"
-                       value="{{ challenge.pos }}"
-                       placeholder="{% trans 'IA position in format: Lat, Lon' %}"/>
-            </div>
-            <p class="help-block">{% trans "for example: 37.3580539, -5.9866369" %}</p>
-        </div>
-    </div>
 </div>
