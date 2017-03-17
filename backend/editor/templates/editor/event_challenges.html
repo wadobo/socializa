@@ -59,9 +59,12 @@
                             </span>
                             <input type="text" class="form-control player"
                                    name="challenge_player_{{ c.id }}"
-                                   value="{{ c.actor }}"
+                                   value="{{ c.actor.user.username }}"
                                    placeholder="{% trans 'Player name' %}"/>
                         </div>
+                       {% if c.actor %}
+                            <p class="help-block">{% trans "Actor password:" %} {{ c.actor.extra }}</p>
+                       {% endif %}
                         <p class="help-block">{% trans "Player name, to assign this challenge. If not exists, we'll create a new one" %}</p>
                     </div>
                 </div>

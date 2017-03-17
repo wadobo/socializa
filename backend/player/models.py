@@ -19,6 +19,7 @@ class Player(models.Model):
     pos = models.PointField(null=True, blank=True)
     ptype = models.CharField(max_length=16, choices=PLAYER_TYPE, default='player')
     about = models.TextField(blank=True, null=True)
+    extra = models.TextField(max_length=1024, blank=True, null=True)
 
     def set_position(self, lon, lat):
         self.pos = GEOSGeometry('POINT({0} {1})'.format(lon, lat))
