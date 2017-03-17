@@ -41,6 +41,12 @@
             </div>
         {% endif %}
 
+        <ol class="breadcrumb">
+        {% block breadcrumb %}
+            <li><a href="{% url 'editor' %}">{% trans "Editor" %}</a></li>
+        {% endblock %}
+        </ol>
+
         {% block content %}
         {% endblock %}
 

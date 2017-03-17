@@ -2,6 +2,15 @@
 {% load i18n %}
 {% load static %}
 
+{% block breadcrumb %}
+    {{ block.super }}
+    {% if game %}
+        <li><a href="{% url 'edit_game' game.pk %}">{{ game.name }}</a></li>
+    {% else %}
+        <li><a href="{% url 'add_game' %}">{% trans "Add Game" %}</a></li>
+    {% endif %}
+{% endblock %}
+
 {% block extrahead %}
     <link rel="stylesheet" href="{% static "vendors/ol/ol.css" %}" />
     <style>

@@ -240,6 +240,8 @@ class EventChallenges(TemplateView):
     View to assign challenges to players/actors or positions in the map
     '''
 
+    template_name = 'editor/event_challenges.html'
+
     def get_context_data(self, evid):
         ctx = super().get_context_data()
         ev = get_object_or_404(Event, pk=evid)
@@ -327,8 +329,6 @@ class EventChallenges(TemplateView):
                 self.update_actor(c, options)
 
         return redirect('event_challenges', evid=evid)
-
-    template_name = 'editor/event_challenges.html'
 event_challenges = is_editor(EventChallenges.as_view())
 
 
@@ -343,3 +343,14 @@ class AjaxPlayerSearch(View):
         data = serializer.data
         return JsonResponse(data, safe=False)
 ajax_player_search = csrf_exempt(is_editor(AjaxPlayerSearch.as_view()))
+
+
+class Editor(TemplateView):
+    template_name = 'editor/editor.html'
+
+    def get_context_data(self):
+        ctx = super().get_context_data()
+        ctx['games'] = self.request.user.games.all()
+        ctx['events'] = self.request.user.events.all()
+        return ctx
+editor = is_editor(Editor.as_view())

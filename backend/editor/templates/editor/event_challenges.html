@@ -1,11 +1,10 @@
-{% extends "editor/base.html" %}
+{% extends "editor/edit_event.html" %}
 {% load i18n %}
 {% load static %}
 
-{% block extrahead %}
-    <link rel="stylesheet" href="{% static "vendors/ol/ol.css" %}" />
-    <link rel="stylesheet" href="{% static "edit_event.css" %}" />
-    <link href="//cdn.jsdelivr.net/openlayers.geocoder/latest/ol3-geocoder.min.css" rel="stylesheet">
+{% block breadcrumb %}
+    {{ block.super }}
+    <li><a href="{% url 'event_challenges' ev.pk %}">{% trans "Challenges" %}</a></li>
 {% endblock %}
 
 {% block head %}
