@@ -85,6 +85,26 @@ class GameTestCase(APITestCase):
         self.assertEqual(ini_games, end_games)
         self.assertEqual(ini_challenges + 2, end_challenges)
 
+    def test_game_challenge_delete(self):
+        """ test game challenge delete: deletes a challenge from an existing game """
+        gameid = 4
+        ini_games = Game.objects.count()
+        ini_challenges = Challenge.objects.count()
+        game = Game.objects.get(pk=gameid)
+        game_challenges = game.challenges.count()
+        self.c.login(username='admin', password='qweqweqwe')
+
+        data = { 'rmchallenge': game.challenges.all().first().pk }
+
+        response = self.c.post('/editor/game/{0}/'.format(gameid), data)
+        self.assertEqual(response.status_code, 302)
+        end_games = Game.objects.count()
+        end_challenges = Challenge.objects.count()
+        end_game_challenges = Game.objects.get(pk=4).challenges.count()
+        self.assertEqual(ini_games, end_games)
+        self.assertEqual(ini_challenges - 1, end_challenges)
+        self.assertEqual(game_challenges - 1, end_game_challenges)
+
     def test_game_delete_not_exists(self):
         gameid = 20
         self.c.login(username='editor', password='qweqweqwe')
