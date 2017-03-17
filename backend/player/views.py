@@ -84,8 +84,10 @@ near = PlayersNear.as_view()
 class MeetingCreate(APIView):
 
     def create_clue(self, challenge):
-        clue = Clue(player=self.player1, event=self.event, challenge=challenge)
-        clue.save()
+        query = Q(player=self.player1, event=self.event, challenge=challenge)
+        if not Clue.objects.filter(query).exists():
+            clue = Clue(query)
+            clue.save()
 
     @classmethod
     def get_challenge(cls, player, event):
