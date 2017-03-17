@@ -4,6 +4,8 @@ from . import views
 
 
 urlpatterns = [
+    url(r'^$', views.editor, name="editor"),
+
     url(r'^game/$', views.edit_game, name="add_game"),
     url(r'^game/(?P<gameid>\d+)/$', views.edit_game, name="edit_game"),
 

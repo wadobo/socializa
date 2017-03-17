@@ -2,6 +2,15 @@
 {% load i18n %}
 {% load static %}
 
+{% block breadcrumb %}
+    {{ block.super }}
+    {% if ev %}
+        <li><a href="{% url 'edit_event' ev.pk %}">{{ ev.name }}</a></li>
+    {% else %}
+        <li><a href="{% url 'add_event' %}">{% trans "Add Event" %}</a></li>
+    {% endif %}
+{% endblock %}
+
 {% block extrahead %}
     <link rel="stylesheet" href="{% static "vendors/ol/ol.css" %}" />
     <link rel="stylesheet" href="{% static "edit_event.css" %}" />
