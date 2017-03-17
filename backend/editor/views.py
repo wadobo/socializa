@@ -255,8 +255,9 @@ class EventChallenges(TemplateView):
             clue = c.mainclues().first()
             if clue:
                 p = clue.player
-                c.pos = "%s, %s" % (p.pos.y, p.pos.x)
-                c.actor = p.user.username
+                if p.pos:
+                    c.pos = "%s, %s" % (p.pos.y, p.pos.x)
+                c.actor = p
                 c.ptype = p.ptype
                 c.assigned = True
 
@@ -277,15 +278,16 @@ class EventChallenges(TemplateView):
 
         return d
 
-    def update_ai(self, c, options):
+    def update_ai(self, c, event, options):
         pos = options['challenge_pos']
         lat, lon = map(float, pos.split(','))
 
         clue = c.mainclues().first()
         if not clue:
+            username = 'ai_' + User.objects.make_random_password(length=8)
             newu = User(username=username)
             newu.save()
-            p = Player(user=newu, ptype='ia')
+            p = Player(user=newu, ptype='ai')
             p.save()
 
             clue = Clue(player=p, event=event, challenge=c, main=True)
@@ -293,7 +295,7 @@ class EventChallenges(TemplateView):
 
         clue.player.set_position(lon, lat)
 
-    def update_actor(self, c, options):
+    def update_actor(self, c, event, options):
         username = options['challenge_player']
 
         clue = c.mainclues().first()
@@ -303,11 +305,11 @@ class EventChallenges(TemplateView):
         if username != clue.player:
             newu, created = User.objects.get_or_create(username=username)
             if created:
-                # TODO: set random password and store it somewhere in
-                # plain text to be able to show to the admin
-                newu.set_password('123')
+                pw = User.objects.make_random_password(length=8)
+                newu.set_password(pw)
                 newu.save()
                 p = Player(user=newu, ptype='actor')
+                p.extra = pw
                 p.save()
 
             clue.player = newu.player
@@ -324,9 +326,9 @@ class EventChallenges(TemplateView):
         for cid, options in data.items():
             c = Challenge.objects.get(pk=cid)
             if options['challenge_type'] == 'ai':
-                self.update_ai(c, options)
+                self.update_ai(c, event, options)
             elif options['challenge_type'] == 'actor':
-                self.update_actor(c, options)
+                self.update_actor(c, event, options)
 
         return redirect('event_challenges', evid=evid)
 event_challenges = is_editor(EventChallenges.as_view())
