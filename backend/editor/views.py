@@ -93,6 +93,15 @@ class EditGame(TemplateView):
                 messages.error(request, _("Unauthorized user"))
                 return render(request, self.template_name, {}, status=401)
 
+        if 'rmchallenge' in request.POST:
+            chid = request.POST.get('rmchallenge', '')
+            ch = game.challenges.get(pk=chid)
+            ch.games.remove(game)
+            if not ch.games.count():
+                ch.delete()
+            messages.info(request, _("Challenge removed correctly"))
+            return redirect('edit_game', gameid=game.id)
+
         data = self.parse_input(request)
 
         title = data.get('name')

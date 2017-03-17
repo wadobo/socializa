@@ -36,8 +36,7 @@
         <fieldset>
             <legend>
                 {{ challenge.name }}
-                <input type="hidden" name="challenge" value="{{ challenge.pk }}" />
-                <button name="rmchallenge" class="btn btn-danger">
+                <button name="rmchallenge" class="btn btn-danger pull-right" value={{ challenge.pk }}>
                     <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                 </button>
             </legend>
@@ -88,6 +87,8 @@
             {% trans "Save" %}
         </button>
     </form>
+
+    <hr/>
 {% endblock %}
 
 {% block extrabody %}
