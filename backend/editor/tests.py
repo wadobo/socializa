@@ -59,7 +59,7 @@ class GameTestCase(APITestCase):
         ini_challenges = Challenge.objects.count()
         self.c.login(username='admin', password='qweqweqwe')
         response = self.c.post('/editor/game/', self.game_data, follow=True)
-        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.status_code, 200)
         end_games = Game.objects.count()
         end_challenges = Challenge.objects.count()
         self.assertEqual(ini_games + 1, end_games)
