@@ -84,6 +84,23 @@ class EditGame(TemplateView):
                 game.save()
             num_challenge += 1
 
+    def remove_challenge(self, game, chid):
+        ch = game.challenges.get(pk=chid)
+        ch.games.remove(game)
+        if not ch.games.count():
+            ch.delete()
+
+    def update_game(self, game, data):
+        if not game:
+            game = Game()
+
+        game.name = data['name']
+        game.desc = data['desc']
+        game.solution = data['solution']
+        game.save()
+
+        return game
+
     def post(self, request, gameid=None):
         game = None
 
@@ -95,38 +112,20 @@ class EditGame(TemplateView):
 
         if 'rmchallenge' in request.POST:
             chid = request.POST.get('rmchallenge', '')
-            ch = game.challenges.get(pk=chid)
-            ch.games.remove(game)
-            if not ch.games.count():
-                ch.delete()
+            self.remove_challenge(game, chid)
             messages.info(request, _("Challenge removed correctly"))
             return redirect('edit_game', gameid=game.id)
 
         data = self.parse_input(request)
-
-        title = data.get('name')
-        desc = data.get('desc')
-        solution = data.get('solution')
-        challenges = data.get('challenges')
-
-        if not game:
-            game = Game()
-
-        game.name = title
-        game.desc = desc
-        game.solution = solution
-        game.save()
-
-        self.update_challenges(game, challenges)
+        game = self.update_game(game, data)
+        self.update_challenges(game, data['challenges'])
 
         if gameid:
             messages.info(request, _("Updated game"))
-            status = 200
         else:
             messages.info(request, _("Created game with {0} challenges".format(game.challenges.count())))
-            status = 201
 
-        return render(request, self.template_name, {}, status=status)
+        return redirect('edit_game', gameid=game.id)
 
     def delete(self, request, gameid):
         game = get_object_or_404(Game, pk=gameid)
