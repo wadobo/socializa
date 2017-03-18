@@ -63,6 +63,19 @@ class ClueTestCase(APITestCase):
         end_clues = Clue.objects.count()
         self.assertEqual(start_clues + 1, end_clues)
 
+    def test_join_event_create_clue_without_assign_auto(self):
+        player = 2
+        game = Event.objects.get(pk=self.EVENT_PK).game
+        game.auto_assign_clue = False
+        game.save()
+        start_clues = Clue.objects.count()
+        self.authenticate(self.get_username_by_player(player))
+        response = self.c.post('/api/event/join/{0}/'.format(self.EVENT_PK), {})
+        self.assertEqual(response.status_code, 201)
+        end_clues = Clue.objects.count()
+        self.assertEqual(start_clues, end_clues)
+        game.auto_assign_clue = True
+        game.save()
 
     def test_join_event_create_clue_two_players(self):
         player1 = 1
@@ -80,7 +93,6 @@ class ClueTestCase(APITestCase):
         clue1 = Clue.objects.filter(player=player1, main=True, event=event).first()
         clue2 = Clue.objects.filter(player=player2, main=True, event=event).first()
         self.assertNotEqual(clue1.challenge, clue2.challenge)
-
 
     def test_unjoin_event_delete_clue(self):
         player = 1

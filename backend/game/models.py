@@ -26,6 +26,7 @@ class Game(models.Model):
     solution = models.TextField(max_length=1024, blank=True, null=True)
     challenges = models.ManyToManyField(Challenge, related_name="games")
     author = models.ForeignKey(User, related_name="games", blank=True, null=True)
+    auto_assign_clue = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name
