@@ -20,11 +20,12 @@ from clue.models import Clue
 
 
 def is_editor(user):
-    # TODO: change this in the future, when other users can use the editor,
-    # currently only staff users can, but in the future we can open this to
-    # users with the group "editor" for example.
-    return (not user.is_anonymous()) and user.is_staff
+    return not user.is_anonymous() and (belong_editor_group(user) or user.is_superuser)
 is_editor = user_passes_test(is_editor, login_url='/admin/login/')
+
+
+def belong_editor_group(user):
+    return user.groups.filter(name='editor').exists()
 
 
 class EditGame(TemplateView):
