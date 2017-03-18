@@ -46,7 +46,8 @@ class JoinEvent(APIView):
         except ObjectDoesNotExist:
             return Response("Event not exist", status=rf_status.HTTP_400_BAD_REQUEST)
         member, msg, status = create_member(player, event)
-        attach_clue(player, event)
+        if event.game.auto_assign_clue:
+            attach_clue(player, event)
         return Response(msg, status=status)
 
 
