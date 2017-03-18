@@ -25,6 +25,10 @@
 
     $ ./manage.py migrate
 
+# Added fixtures
+
+    $ ./manage.py loaddata editor/fixtures/group.json
+
 # Install rabbitmq-server and run celery
 
     $ sudo apt-get install rabbitmq-server

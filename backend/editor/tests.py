@@ -42,10 +42,9 @@ class GameTestCase(APITestCase):
         }
 
     def tearDown(self):
-        pass
+        self.c = None
 
     def test_authentication(self):
-        # TODO: change in the future when group editor exist
         self.c.login(username='test1', password='qweqweqwe')
         response = self.c.get('/editor/game/', {}, follow=True)
         self.assertEqual(response.request.get('PATH_INFO'), '/admin/login/')
@@ -153,7 +152,6 @@ class EventTestCase(APITestCase):
         self.c = None
 
     def test_authentication(self):
-        # TODO: change in the future when group editor exist
         self.c.login(username='test1', password='qweqweqwe')
         response = self.c.get('/editor/event/', {}, follow=True)
         self.assertEqual(response.request.get('PATH_INFO'), '/admin/login/')

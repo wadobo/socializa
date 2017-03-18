@@ -22,6 +22,14 @@
   }
 },
 {
+  "model": "auth.group",
+  "pk": 1,
+  "fields": {
+    "name": "editor",
+    "permissions": []
+  }
+},
+{
   "model": "auth.user",
   "pk": 10,
   "fields": {
@@ -35,7 +43,7 @@
     "is_staff": true,
     "is_active": true,
     "date_joined": "2016-09-20T14:36:23.947Z",
-    "groups": [],
+    "groups": [1],
     "user_permissions": []
   }
 },
