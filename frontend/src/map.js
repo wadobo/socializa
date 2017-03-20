@@ -72,7 +72,7 @@ export default class Map extends React.Component {
 
     updateEvents() {
         var self = this;
-        API.myEvents()
+        API.allEvents({filter: 'mine'})
             .then(function(events) {
                 self.setState({ events: events });
             });
