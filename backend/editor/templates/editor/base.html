@@ -57,6 +57,20 @@
     <script src="{% static "vendors/jquery.min.js" %}"></script>
     <script src="{% static "vendors/bootstrap/js/bootstrap.min.js" %}"></script>
 
+    <!-- Bootstrap Date-Picker Plugin -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.0/moment-with-locales.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css"/>
+
+<script>
+    $(document).ready(function(){
+        $(".datetimepicker").datetimepicker({
+            format: 'YYYY-MM-DD HH:mm',
+            sideBySide: true
+        });
+    })
+</script>
+
     {% block extrabody %}{% endblock %}
   </body>
 </html>
