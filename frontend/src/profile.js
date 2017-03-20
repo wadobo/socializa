@@ -80,7 +80,7 @@ export default class Profile extends React.Component {
         }
 
         return (
-            <div id="profile" className="container">
+            <div id="profile" className="container mbottom">
                 <h3>About you</h3>
                 <textarea className="form-control" placeholder="about you" onChange={ this.aboutChange } value={ this.state.player.about }/>
 

@@ -23,10 +23,7 @@ export class EventRow extends React.Component {
         }
     }
 
-    join = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-
+    join = (ev) => {
         var self = this;
         API.joinEvent(this.props.ev.pk)
             .then(function() {
@@ -36,10 +33,7 @@ export class EventRow extends React.Component {
             });
     }
 
-    leave = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-
+    leave = (ev) => {
         var self = this;
         API.leaveEvent(this.props.ev.pk)
             .then(function() {
@@ -50,8 +44,11 @@ export class EventRow extends React.Component {
     }
 
     play = (ev) => {
-        var self = this;
         hashHistory.push('/map/' + ev.pk);
+    }
+
+    admin = (ev) => {
+        hashHistory.push('/admin/' + ev.pk);
     }
 
     price = (ev) => {
@@ -96,13 +93,19 @@ export class EventRow extends React.Component {
                     <a onClick={ this.play.bind(this, ev) } className="btn btn-success">
                         <i className="fa fa-gamepad"></i> Play
                     </a>,
-                    <a onClick={ this.leave } className="btn btn-danger">
+                    <a onClick={ this.leave.bind(this, ev) } className="btn btn-danger">
                         <i className="fa fa-sign-out"></i> Leave
                     </a>
                     ]
                  :
-                    <a onClick={ this.join } className="btn btn-success">
+                    <a onClick={ this.join.bind(this, ev) } className="btn btn-success">
                         <i className="fa fa-sign-in"></i> Join
+                    </a>
+                }
+
+                { ev.admin &&
+                    <a onClick={ this.admin.bind(this, ev) } className="btn btn-primary">
+                        <i className="fa fa-sign-cog"></i> Admin
                     </a>
                 }
             </div>
@@ -219,7 +222,7 @@ export default class Events extends React.Component {
     filterEvents = (v) => {
         var q = this.state.q || {};
         q.filter = v;
-        this.setState({q: q});
+        this.state.q = q;
         this.updateEvents();
     }
 

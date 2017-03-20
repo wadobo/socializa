@@ -190,4 +190,14 @@ export default class API {
         var data = JSONPost({});
         return customFetch('/api/event/' + evid + '/', data);
     }
+
+    static getEventChallenges(evid) {
+        var data = JSONGet({});
+        return customFetch('/api/event/admin/challenges/' + evid + '/', data);
+    }
+
+    static setEventProperties(evid, options) {
+        var data = JSONPost(options);
+        return customFetch('/api/event/admin/'+evid+'/', data);
+    }
 }

@@ -13,6 +13,7 @@ from .models import Event
 from .models import Membership
 from .models import PlayingEvent
 from .serializers import EventSerializer
+from .serializers import AdminChallengeSerializer
 
 
 def create_member(player, event):
@@ -190,9 +191,56 @@ class SolveEvent(APIView):
         return Response(response, status)
 
 
+class AdminEventChallenges(APIView):
+
+    @classmethod
+    def get(cls, request, event_id):
+        """ Get the event challenges by id. """
+        if request.user.is_anonymous():
+            return Response("Anonymous user", status=rf_status.HTTP_401_UNAUTHORIZED)
+        try:
+            event = Event.objects.get(pk=event_id)
+        except:
+            return Response("Event not exist", status=rf_status.HTTP_400_BAD_REQUEST)
+        if not event.owners.filter(pk=request.user.pk).exists():
+            return Response("Non admin user", status=rf_status.HTTP_401_UNAUTHORIZED)
+
+        serializer = AdminChallengeSerializer(event.game.challenges.all(), many=True)
+
+        data = serializer.data
+        return Response(data)
+
+
+class AdminEventUpdate(APIView):
+
+    @classmethod
+    def post(cls, request, event_id):
+        if request.user.is_anonymous():
+            return Response("Anonymous user", status=rf_status.HTTP_401_UNAUTHORIZED)
+        try:
+            event = Event.objects.get(pk=event_id)
+        except:
+            return Response("Event not exist", status=rf_status.HTTP_400_BAD_REQUEST)
+        if not event.owners.filter(pk=request.user.pk).exists():
+            return Response("Non admin user", status=rf_status.HTTP_401_UNAUTHORIZED)
+
+        vd = request.data.get('vision_distance', None)
+        md = request.data.get('meeting_distance', None)
+
+        if vd:
+            event.vision_distance = vd
+        if md:
+            event.meeting_distance = md
+        event.save()
+
+        return Response("Updated correctly.", status=rf_status.HTTP_200_OK)
+
+
 join_event = JoinEvent.as_view()
 unjoin_event = UnjoinEvent.as_view()
 my_events = MyEvents.as_view()
 all_events = AllEvents.as_view()
 event_detail = EventDetail.as_view()
 solve_event = SolveEvent.as_view()
+admin_event_challenges = AdminEventChallenges.as_view()
+admin_event_update = AdminEventUpdate.as_view()
