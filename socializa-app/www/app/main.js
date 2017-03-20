@@ -6239,6 +6239,9 @@ var EventRow = exports.EventRow = function (_React$Component) {
             }).catch(function (error) {
                 alert(error);
             });
+        }, _this.play = function (ev) {
+            var self = _this;
+            _reactRouter.hashHistory.push('/map/' + ev.pk);
         }, _this.price = function (ev) {
             if (_this.props.hiddenbuttons) {
                 return _react2.default.createElement('span', null);
@@ -6269,25 +6272,30 @@ var EventRow = exports.EventRow = function (_React$Component) {
                 );
             }
             return '';
-        }, _this.joinButton = function (ev) {
+        }, _this.buttons = function (ev) {
             if (_this.props.hiddenbuttons) {
-                return _react2.default.createElement('span', null);
-            }
-
-            if (_this.state.joined) {
-                return _react2.default.createElement(
-                    'button',
-                    { onClick: _this.leave, className: 'btn btn-danger btn-block' },
-                    _react2.default.createElement('i', { className: 'fa fa-sign-out' }),
-                    ' Leave'
-                );
+                return null;
             }
 
             return _react2.default.createElement(
-                'button',
-                { onClick: _this.join, className: 'btn btn-success btn-block' },
-                _react2.default.createElement('i', { className: 'fa fa-sign-in' }),
-                ' Join'
+                'div',
+                { className: 'btn-group btn-group-justified', role: 'group', 'aria-label': '...' },
+                _this.state.joined ? [_react2.default.createElement(
+                    'a',
+                    { onClick: _this.play.bind(_this, ev), className: 'btn btn-success' },
+                    _react2.default.createElement('i', { className: 'fa fa-gamepad' }),
+                    ' Play'
+                ), _react2.default.createElement(
+                    'a',
+                    { onClick: _this.leave, className: 'btn btn-danger' },
+                    _react2.default.createElement('i', { className: 'fa fa-sign-out' }),
+                    ' Leave'
+                )] : _react2.default.createElement(
+                    'a',
+                    { onClick: _this.join, className: 'btn btn-success' },
+                    _react2.default.createElement('i', { className: 'fa fa-sign-in' }),
+                    ' Join'
+                )
             );
         }, _temp), _possibleConstructorReturn(_this, _ret);
     }
@@ -6349,7 +6357,7 @@ var EventRow = exports.EventRow = function (_React$Component) {
                     )
                 ),
                 _react2.default.createElement('div', { className: 'clearfix' }),
-                this.joinButton(this.props.ev)
+                this.buttons(this.props.ev)
             );
         }
     }, {
@@ -7012,6 +7020,7 @@ _reactDom2.default.render(_react2.default.createElement(
       _reactRouter.Route,
       { path: '/', component: _app2.default, onEnter: _auth.requireAuth },
       _react2.default.createElement(_reactRouter.Route, { path: 'map', component: _map2.default }),
+      _react2.default.createElement(_reactRouter.Route, { path: 'map/:ev', component: _map2.default }),
       _react2.default.createElement(_reactRouter.Route, { path: 'profile', component: _profile2.default }),
       _react2.default.createElement(_reactRouter.Route, { path: 'events', component: _events2.default }),
       _react2.default.createElement(_reactRouter.Route, { path: 'event/:pk', component: _event2.default }),
@@ -7176,8 +7185,10 @@ var Map = function (_React$Component) {
             }
             _this.props.setAppState({ title: title, active: 'map' });
         }, _this.play = function (e, ev) {
-            e.preventDefault();
-            e.stopPropagation();
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
 
             var self = _this;
             _api2.default.setPlayingEvent(ev.pk).then(function () {
@@ -7267,6 +7278,14 @@ var Map = function (_React$Component) {
             this.props.setAppState({ 'title': title, 'active': 'map' });
 
             window.addEventListener("resize", this.updateDimensions.bind(this));
+
+            if (this.props.params.ev) {
+                var self = this;
+                self.toggleEventMenu();
+                _api2.default.EventDetail(self.props.params.ev).then(function (ev) {
+                    self.play(null, ev);
+                });
+            }
 
             if (_geo2.default.status == 'started') {
                 this.start();
