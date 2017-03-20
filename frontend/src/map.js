@@ -28,6 +28,15 @@ export default class Map extends React.Component {
 
       window.addEventListener("resize", this.updateDimensions.bind(this));
 
+      if (this.props.params.ev) {
+        var self = this;
+        self.toggleEventMenu();
+        API.EventDetail(self.props.params.ev)
+            .then(function(ev) {
+                self.play(null, ev);
+            });
+      }
+
       if (GEO.status == 'started') {
         this.start();
       }
@@ -309,8 +318,10 @@ export default class Map extends React.Component {
     }
 
     play = (e, ev) => {
-        e.preventDefault();
-        e.stopPropagation();
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
 
         var self = this;
         API.setPlayingEvent(ev.pk)

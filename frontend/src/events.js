@@ -49,6 +49,11 @@ export class EventRow extends React.Component {
             });
     }
 
+    play = (ev) => {
+        var self = this;
+        hashHistory.push('/map/' + ev.pk);
+    }
+
     price = (ev) => {
         if (this.props.hiddenbuttons) {
             return (<span></span>)
@@ -79,24 +84,29 @@ export class EventRow extends React.Component {
         return ''
     }
 
-    joinButton = (ev) => {
+    buttons = (ev) => {
         if (this.props.hiddenbuttons) {
-            return (<span></span>)
-        }
-
-        if (this.state.joined) {
-            return (
-                <button onClick={ this.leave } className="btn btn-danger btn-block">
-                    <i className="fa fa-sign-out"></i> Leave
-                </button>
-            )
+            return null;
         }
 
         return (
-            <button onClick={ this.join } className="btn btn-success btn-block">
-                <i className="fa fa-sign-in"></i> Join
-            </button>
-        )
+            <div className="btn-group btn-group-justified" role="group" aria-label="...">
+                { this.state.joined ?
+                    [
+                    <a onClick={ this.play.bind(this, ev) } className="btn btn-success">
+                        <i className="fa fa-gamepad"></i> Play
+                    </a>,
+                    <a onClick={ this.leave } className="btn btn-danger">
+                        <i className="fa fa-sign-out"></i> Leave
+                    </a>
+                    ]
+                 :
+                    <a onClick={ this.join } className="btn btn-success">
+                        <i className="fa fa-sign-in"></i> Join
+                    </a>
+                }
+            </div>
+        );
     }
 
     shortDesc() {
@@ -126,7 +136,7 @@ export class EventRow extends React.Component {
                 </div>
                 <div className="clearfix"></div>
 
-                { this.joinButton(this.props.ev) }
+                { this.buttons(this.props.ev) }
             </div>
         );
     }
