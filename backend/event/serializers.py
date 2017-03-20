@@ -38,4 +38,6 @@ class EventSerializer(serializers.Serializer):
 
     def is_admin(self, event):
         player = self.context.get("player")
+        if not player:
+            return False
         return bool(event.owners.filter(pk=player.user.pk).exists())
