@@ -7314,7 +7314,7 @@ var Map = function (_React$Component) {
         key: 'updateEvents',
         value: function updateEvents() {
             var self = this;
-            _api2.default.myEvents().then(function (events) {
+            _api2.default.allEvents({ filter: 'mine' }).then(function (events) {
                 self.setState({ events: events });
             });
         }
