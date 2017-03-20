@@ -48,23 +48,23 @@
         <!-- TODO: use a datetime widget here -->
         <div class="form-group">
             <div class="input-group">
-                <input type="text" class="form-control" name="ev_start_date"
-                       placeholder="{% trans 'Start date' %}" value="{{ data.start_date|date:"o/m/d H:i" }}"/>
+                <input type="text" class="form-control datetimepicker" name="ev_start_date"
+                       placeholder="{% trans 'Start date' %}" value="{{ data.start_date|date:"o-m-d H:i" }}"/>
                 <span class="input-group-addon">
                     <span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>
                 </span>
             </div>
-            <p class="help-block">{% trans "Use the form: yyyy/mm/dd HH:MM" %}</p>
+            <p class="help-block">{% trans "Use the form: yyyy-mm-dd HH:MM" %}</p>
         </div>
         <div class="form-group">
             <div class="input-group">
-                <input type="text" class="form-control" name="ev_end_date"
-                       placeholder="{% trans 'End date' %}" value="{{ data.end_date|date:"o/m/d H:i" }}"/>
+                <input type="text" class="form-control datetimepicker" name="ev_end_date"
+                       placeholder="{% trans 'End date' %}" value="{{ data.end_date|date:"o-m-d H:i" }}"/>
                 <span class="input-group-addon">
                     <span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>
                 </span>
             </div>
-            <p class="help-block">{% trans "Use the form: yyyy/mm/dd HH:MM" %}</p>
+            <p class="help-block">{% trans "Use the form: yyyy-mm-dd HH:MM" %}</p>
         </div>
     </div>
 
