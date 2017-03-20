@@ -10,4 +10,9 @@ urlpatterns = [
     url(r'^all/$', views.all_events, name="all_events"),
     url(r'^(?P<event_id>\d+)?/$', views.event_detail, name="event_detail"),
     url(r'^solve/(?P<event_id>\d+)/$', views.solve_event, name='solve_event'),
+
+    url(r'^admin/challenges/(?P<event_id>\d+)/$',
+        views.admin_event_challenges, name='admin_event_challenges'),
+    url(r'^admin/(?P<event_id>\d+)/$',
+        views.admin_event_update, name='admin_event_update'),
 ]

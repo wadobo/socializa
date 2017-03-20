@@ -1,6 +1,8 @@
 from rest_framework import serializers
 
 from game.serializers import GameSerializer
+from game.serializers import ChallengeSerializer
+from player.serializers import PlayerSerializer
 
 
 class EventSerializer(serializers.Serializer):
@@ -41,3 +43,14 @@ class EventSerializer(serializers.Serializer):
         if not player:
             return False
         return bool(event.owners.filter(pk=player.user.pk).exists())
+
+
+class AdminChallengeSerializer(ChallengeSerializer):
+    player = serializers.SerializerMethodField('challenge_player')
+
+    def challenge_player(self, challenge):
+        p = None
+        clue = challenge.mainclues().first()
+        if clue and clue.player:
+            p = PlayerSerializer(clue.player).data
+        return p
