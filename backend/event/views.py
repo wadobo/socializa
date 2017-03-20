@@ -98,8 +98,8 @@ class AllEvents(APIView):
             p = request.user.player
             query &= Q(membership__player=p)
         elif f == 'admin':
-            # TODO: implement this
-            pass
+            p = request.user.player
+            query &= Q(owners__player=p)
 
         q = request.GET.get('q', '')
         if q:

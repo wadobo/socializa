@@ -13,6 +13,7 @@ class EventSerializer(serializers.Serializer):
     price = serializers.DecimalField(max_digits=5, decimal_places=2)
     joined = serializers.SerializerMethodField('is_player_joined')
     solved = serializers.SerializerMethodField('solution')
+    admin = serializers.SerializerMethodField('is_admin')
 
     vision_distance = serializers.IntegerField()
     meeting_distance = serializers.IntegerField()
@@ -26,12 +27,17 @@ class EventSerializer(serializers.Serializer):
 
     def solution(self, event):
         player = self.context.get("player")
-        if player in event.players.all():
-            try:
-                membership = event.membership_set.get(player=player)
-                if membership.status == 'solved':
-                    return event.game.solution
-            except:
-                return None
-        else:
+        try:
+            membership = event.membership_set.get(player=player)
+            if membership.status == 'solved':
+                return event.game.solution
+        except:
             return None
+
+        return None
+
+    def is_admin(self, event):
+        player = self.context.get("player")
+        if not player:
+            return False
+        return bool(event.owners.filter(pk=player.user.pk).exists())
