@@ -16,6 +16,8 @@ import QRView from './qrview';
 import QRCapt from './qrcapt';
 import Clue from './clue';
 
+import Admin from './admin';
+
 import { requireAuth } from './auth';
 
 import i18n from './i18n';
@@ -32,6 +34,7 @@ ReactDOM.render((
         <Route path="profile" component={Profile}/>
         <Route path="events" component={Events}/>
         <Route path="event/:pk" component={Event}/>
+        <Route path="admin/:pk" component={Admin}/>
 
         <Route path="connect/:pk" component={Connect}/>
         <Route path="qrcode/:user/:ev/:secret" component={QRView}/>
