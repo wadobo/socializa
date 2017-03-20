@@ -28,6 +28,7 @@ ReactDOM.render((
     <Route path="/register" component={Register}/>
     <Route path="/" component={App} onEnter={requireAuth}>
         <Route path="map" component={Map}/>
+        <Route path="map/:ev" component={Map}/>
         <Route path="profile" component={Profile}/>
         <Route path="events" component={Events}/>
         <Route path="event/:pk" component={Event}/>
