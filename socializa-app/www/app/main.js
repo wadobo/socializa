@@ -1555,16 +1555,38 @@ Object.defineProperty(exports, "__esModule", {
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
+function addQueryString(url, params) {
+  if (params && (typeof params === 'undefined' ? 'undefined' : _typeof(params)) === 'object') {
+    var queryString = '',
+        e = encodeURIComponent;
+
+    // Must encode data
+    for (var paramName in params) {
+      queryString += '&' + e(paramName) + '=' + e(params[paramName]);
+    }
+
+    if (!queryString) {
+      return url;
+    }
+
+    url = url + (url.includes('?') ? '&' : '?') + queryString.slice(1);
+  }
+
+  return url;
+}
+
 // https://gist.github.com/Xeoncross/7663273
 function ajax(url, options, callback, data, cache) {
-  // Must encode data
   if (data && (typeof data === 'undefined' ? 'undefined' : _typeof(data)) === 'object') {
-    var y = '',
-        e = encodeURIComponent;
-    for (var m in data) {
-      y += '&' + e(m) + '=' + e(data[m]);
+    if (!cache) {
+      data['_t'] = new Date();
     }
-    data = y.slice(1) + (!cache ? '&_t=' + new Date() : '');
+
+    data = addQueryString(data, data);
+  }
+
+  if (options.queryStringParams) {
+    url = addQueryString(url, options.queryStringParams);
   }
 
   try {
@@ -5208,6 +5230,8 @@ var _loading = require('./loading');
 
 var _loading2 = _interopRequireDefault(_loading);
 
+var _reactI18next = require('react-i18next');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -5298,11 +5322,14 @@ var Admin = function (_React$Component2) {
             }
             _this2.props.setAppState({ title: title, active: 'event' });
         }, _this2.save = function () {
+            var t = _this2.props.t;
+
+
             _api2.default.setEventProperties(_this2.state.ev.pk, {
                 vision_distance: _this2.state.vd,
                 meeting_distance: _this2.state.md
             }).then(function () {
-                alert("Saved!");
+                alert(t('common::Saved!'));
             });
         }, _this2.mdChange = function (e) {
             _this2.setState({ md: e.target.value });
@@ -5319,8 +5346,9 @@ var Admin = function (_React$Component2) {
     }, {
         key: 'render',
         value: function render() {
+            var t = this.props.t;
+
             var self = this;
-            console.log("RENDER");
 
             return _react2.default.createElement(
                 'div',
@@ -5345,7 +5373,7 @@ var Admin = function (_React$Component2) {
                                 _react2.default.createElement(
                                     'th',
                                     null,
-                                    'Game'
+                                    t('admin::Game')
                                 ),
                                 _react2.default.createElement(
                                     'td',
@@ -5359,12 +5387,12 @@ var Admin = function (_React$Component2) {
                                 _react2.default.createElement(
                                     'th',
                                     null,
-                                    'Vision distance (m)'
+                                    t('admin::Vision distance (m)')
                                 ),
                                 _react2.default.createElement(
                                     'td',
                                     null,
-                                    _react2.default.createElement('input', { type: 'number', className: 'form-control', placeholder: 'vision distance',
+                                    _react2.default.createElement('input', { type: 'number', className: 'form-control', placeholder: t('admin::vision distance'),
                                         onChange: this.vdChange,
                                         value: this.state.vd })
                                 )
@@ -5375,12 +5403,12 @@ var Admin = function (_React$Component2) {
                                 _react2.default.createElement(
                                     'th',
                                     null,
-                                    'Interact distance (m)'
+                                    t('admin::Interact distance (m)')
                                 ),
                                 _react2.default.createElement(
                                     'td',
                                     null,
-                                    _react2.default.createElement('input', { type: 'number', className: 'form-control', placeholder: 'interact distance',
+                                    _react2.default.createElement('input', { type: 'number', className: 'form-control', placeholder: t('admin::interact distance'),
                                         onChange: this.mdChange,
                                         value: this.state.md })
                                 )
@@ -5390,7 +5418,7 @@ var Admin = function (_React$Component2) {
                     _react2.default.createElement(
                         'h3',
                         null,
-                        'Challenges'
+                        t('admin::Challenges')
                     ),
                     this.state.cs ? _react2.default.createElement(
                         'div',
@@ -5402,7 +5430,7 @@ var Admin = function (_React$Component2) {
                     _react2.default.createElement(
                         'button',
                         { className: 'btn btn-fixed-bottom btn-success', onClick: this.save },
-                        'Save'
+                        t('common::Save')
                     )
                 ) : _react2.default.createElement(_loading2.default, null)
             );
@@ -5412,9 +5440,9 @@ var Admin = function (_React$Component2) {
     return Admin;
 }(_react2.default.Component);
 
-exports.default = Admin;
+exports.default = Admin = (0, _reactI18next.translate)(['admin', 'common'], { wait: true })(Admin);
 
-},{"./api":40,"./auth":42,"./loading":50,"react":"react"}],40:[function(require,module,exports){
+},{"./api":40,"./auth":42,"./loading":50,"react":"react","react-i18next":34}],40:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6008,6 +6036,12 @@ var _loading = require('./loading');
 
 var _loading2 = _interopRequireDefault(_loading);
 
+var _reactI18next = require('react-i18next');
+
+var _i18n = require('./i18n');
+
+var _i18n2 = _interopRequireDefault(_i18n);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -6022,7 +6056,7 @@ function connected(resp) {
         _reactRouter.hashHistory.push('/clue');
     } else {
         _bucket2.default.clue = null;
-        alert("Connected!");
+        alert(_i18n2.default.t("connect::Connected!"));
         _reactRouter.hashHistory.push('/map');
     }
 }
@@ -6045,10 +6079,13 @@ var Connect = function (_React$Component) {
             user: _auth.user,
             other: null
         }, _this.getProfile = function () {
+            var t = _this.props.t;
+
+
             var self = _this;
             _api2.default.getProfile(self.props.params.pk).then(function (profile) {
                 if (!profile.username) {
-                    alert("Too far!");
+                    alert(t('connect::Too far!'));
                     _reactRouter.hashHistory.push('/map');
                 }
                 self.setState({ other: profile });
@@ -6059,6 +6096,7 @@ var Connect = function (_React$Component) {
             _this.connectPlayer(_this.state.other.pk, _auth.user.activeEvent);
         }, _this.connectPlayer = function (id) {
             var ev = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+            var t = _this.props.t;
 
             var self = _this;
             ev = ev ? ev.pk : ev;
@@ -6074,7 +6112,7 @@ var Connect = function (_React$Component) {
                         _reactRouter.hashHistory.push('/qrcode/' + id + '/' + ev + '/' + resp.secret);
                         break;
                     default:
-                        alert("too far, get near");
+                        alert(t('connect::too far, get near'));
                         break;
                 }
             });
@@ -6089,15 +6127,18 @@ var Connect = function (_React$Component) {
     }, {
         key: 'render',
         value: function render() {
+            var t = this.props.t;
+
             var self = this;
             function createMarkup() {
                 var purifier = new _htmlPurify2.default();
-                var input = self.state.other.about;
+                var input = self.state.other.about || "";
                 var result = purifier.purify(input);
                 return { __html: result };
             }
 
             var icon = this.state.other ? (0, _auth.getIcon)(this.state.other) : '';
+            console.log("connect", this.state.other);
 
             return _react2.default.createElement(
                 'div',
@@ -6124,7 +6165,7 @@ var Connect = function (_React$Component) {
                     _react2.default.createElement(
                         'button',
                         { className: 'btn btn-fixed-bottom btn-primary', onClick: this.connect },
-                        'Interact'
+                        t('connect::Interact')
                     )
                 ) : _react2.default.createElement(_loading2.default, null)
             );
@@ -6134,9 +6175,9 @@ var Connect = function (_React$Component) {
     return Connect;
 }(_react2.default.Component);
 
-exports.default = Connect;
+exports.default = (0, _reactI18next.translate)(['connect'], { wait: true })(Connect);
 
-},{"./api":40,"./auth":42,"./bucket":43,"./loading":50,"html-purify":"html-purify","react":"react","react-router":"react-router"}],46:[function(require,module,exports){
+},{"./api":40,"./auth":42,"./bucket":43,"./i18n":49,"./loading":50,"html-purify":"html-purify","react":"react","react-i18next":34,"react-router":"react-router"}],46:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6171,6 +6212,8 @@ var _events = require('./events');
 var _loading = require('./loading');
 
 var _loading2 = _interopRequireDefault(_loading);
+
+var _reactI18next = require('react-i18next');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -6257,7 +6300,7 @@ var Event = function (_React$Component2) {
                 self.updateClues();
             });
         }, _this2.retitle = function () {
-            var title = 'Event';
+            var title = _this2.props.t('events::Event');
             if (_this2.state.ev) {
                 title = title + ' - ' + _this2.state.name;
             }
@@ -6265,26 +6308,30 @@ var Event = function (_React$Component2) {
         }, _this2.tryToSolve = function () {
             _this2.setState({ state: 'solving' });
         }, _this2.sendSolution = function () {
+            var t = _this2.props.t;
+
             var self = _this2;
             var solution = document.querySelector(".solve-input").value;
             _this2.setState({ state: 'solving-loading' });
             _api2.default.solve(_this2.state.ev.pk, solution).then(function (resp) {
                 if (resp.status == 'correct') {
                     self.setState({ state: 'solved', solution: solution });
-                    alert('Conglatulations!');
+                    alert(t('events::Conglatulations!'));
                 } else {
                     self.setState({ state: 'solving' });
-                    alert('Wrong answer. Try again');
+                    alert(t('events::Wrong answer. Try again'));
                 }
             }).catch(function (err) {
                 self.setState({ state: 'solving' });
-                alert('Unknown error!');
+                alert(t('common::Unknown error'));
             });
         }, _this2.renderSolveButton = function () {
+            var t = _this2.props.t;
+
             var button = _react2.default.createElement(
                 'button',
                 { onClick: _this2.tryToSolve, className: 'btn btn-primary btn-fixed-bottom' },
-                'Solve'
+                t('events::Solve')
             );
 
             if (_this2.state.state == 'solved') {
@@ -6296,11 +6343,13 @@ var Event = function (_React$Component2) {
             }
             return button;
         }, _this2.renderSolving = function () {
+            var t = _this2.props.t;
+
             var solving = _this2.state.state == 'solving-loading';
             var button = _react2.default.createElement(
                 'button',
                 { onClick: _this2.sendSolution, className: 'btn btn-primary', type: 'button' },
-                'Go!'
+                t('events::Go!')
             );
             if (_this2.state.state == 'solving-loading') {
                 button = _react2.default.createElement(
@@ -6310,7 +6359,7 @@ var Event = function (_React$Component2) {
                     _react2.default.createElement(
                         'span',
                         { className: 'sr-only' },
-                        'Loading...'
+                        t('events::Loading...')
                     )
                 );
             }
@@ -6330,7 +6379,7 @@ var Event = function (_React$Component2) {
                 _react2.default.createElement(
                     'div',
                     { className: 'input-group' },
-                    _react2.default.createElement('input', { type: 'text', className: 'solve-input form-control', placeholder: 'The solution!' }),
+                    _react2.default.createElement('input', { type: 'text', className: 'solve-input form-control', placeholder: t('events::The solution!') }),
                     _react2.default.createElement(
                         'span',
                         { className: 'input-group-btn' },
@@ -6339,6 +6388,8 @@ var Event = function (_React$Component2) {
                 )
             );
         }, _this2.renderEvent = function () {
+            var t = _this2.props.t;
+
             switch (_this2.state.state) {
                 case 'loading':
                     return _react2.default.createElement(_loading2.default, null);
@@ -6367,7 +6418,7 @@ var Event = function (_React$Component2) {
                                     { to: '/map' },
                                     ' ',
                                     _react2.default.createElement('i', { className: 'fa fa-fw fa-map-marker' }),
-                                    'go to find someone'
+                                    t('events::go to find someone')
                                 )
                             ),
                             _this2.state.clues && _this2.state.clues.map(function (clue, i) {
@@ -6400,15 +6451,14 @@ var Event = function (_React$Component2) {
     return Event;
 }(_react2.default.Component);
 
-exports.default = Event;
+exports.default = Event = (0, _reactI18next.translate)(['events', 'common'], { wait: true })(Event);
 
-},{"./api":40,"./auth":42,"./events":47,"./loading":50,"html-purify":"html-purify","moment":"moment","react":"react","react-router":"react-router"}],47:[function(require,module,exports){
+},{"./api":40,"./auth":42,"./events":47,"./loading":50,"html-purify":"html-purify","moment":"moment","react":"react","react-i18next":34,"react-router":"react-router"}],47:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.EventRow = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -6432,6 +6482,8 @@ var _moment = require('moment');
 
 var _moment2 = _interopRequireDefault(_moment);
 
+var _reactI18next = require('react-i18next');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -6440,7 +6492,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var EventRow = exports.EventRow = function (_React$Component) {
+var EventRow = function (_React$Component) {
     _inherits(EventRow, _React$Component);
 
     function EventRow() {
@@ -6509,6 +6561,8 @@ var EventRow = exports.EventRow = function (_React$Component) {
             }
             return '';
         }, _this.buttons = function (ev) {
+            var t = _this.props.t;
+
             if (_this.props.hiddenbuttons) {
                 return null;
             }
@@ -6520,23 +6574,27 @@ var EventRow = exports.EventRow = function (_React$Component) {
                     'a',
                     { onClick: _this.play.bind(_this, ev), className: 'btn btn-success' },
                     _react2.default.createElement('i', { className: 'fa fa-gamepad' }),
-                    ' Play'
+                    ' ',
+                    t('events::Play')
                 ), _react2.default.createElement(
                     'a',
                     { onClick: _this.leave.bind(_this, ev), className: 'btn btn-danger' },
                     _react2.default.createElement('i', { className: 'fa fa-sign-out' }),
-                    ' Leave'
+                    ' ',
+                    t('events::Leave')
                 )] : _react2.default.createElement(
                     'a',
                     { onClick: _this.join.bind(_this, ev), className: 'btn btn-success' },
                     _react2.default.createElement('i', { className: 'fa fa-sign-in' }),
-                    ' Join'
+                    ' ',
+                    t('events::Join')
                 ),
                 ev.admin && _react2.default.createElement(
                     'a',
                     { onClick: _this.admin.bind(_this, ev), className: 'btn btn-primary' },
                     _react2.default.createElement('i', { className: 'fa fa-sign-cog' }),
-                    ' Admin'
+                    ' ',
+                    t('events::Admin')
                 )
             );
         }, _temp), _possibleConstructorReturn(_this, _ret);
@@ -6634,6 +6692,8 @@ var EventRow = exports.EventRow = function (_React$Component) {
     return EventRow;
 }(_react2.default.Component);
 
+EventRow = (0, _reactI18next.translate)(['events'], { wait: true })(EventRow);
+
 var Events = function (_React$Component2) {
     _inherits(Events, _React$Component2);
 
@@ -6676,7 +6736,7 @@ var Events = function (_React$Component2) {
                 self.setState({ loadingMore: false });
             });
         }, _this2.retitle = function () {
-            var title = 'Events';
+            var title = _this2.props.t('events::Events');
             if (_auth.user.activeEvent) {
                 title = title + ' - ' + _auth.user.activeEvent.name;
             }
@@ -6703,6 +6763,8 @@ var Events = function (_React$Component2) {
         key: 'renderEvents',
         value: function renderEvents() {
             var self = this;
+            var t = this.props.t;
+
             return _react2.default.createElement(
                 'div',
                 null,
@@ -6712,7 +6774,7 @@ var Events = function (_React$Component2) {
                 this.state.events.length ? _react2.default.createElement('span', null) : _react2.default.createElement(
                     'div',
                     { className: 'jumbotron' },
-                    'There\'s no events :('
+                    t("events::There's no events :(")
                 ),
                 this.state.loadingMore ? _react2.default.createElement(
                     'button',
@@ -6723,20 +6785,22 @@ var Events = function (_React$Component2) {
                 ) : _react2.default.createElement(
                     'button',
                     { className: 'btn btn-block btn-primary', onClick: this.loadMore },
-                    'Load More'
+                    t('events::Load More')
                 )
             );
         }
     }, {
         key: 'render',
         value: function render() {
+            var t = this.props.t;
+
             return _react2.default.createElement(
                 'div',
                 { id: 'events', className: 'container-fluid container-fw' },
                 _react2.default.createElement(
                     'div',
                     { className: 'search input-group' },
-                    _react2.default.createElement('input', { className: 'form-control search', id: 'search', placeholder: 'search', onChange: this.searchChange }),
+                    _react2.default.createElement('input', { className: 'form-control search', id: 'search', placeholder: t('events::search'), onChange: this.searchChange }),
                     _react2.default.createElement(
                         'div',
                         { className: 'input-group-btn' },
@@ -6757,19 +6821,22 @@ var Events = function (_React$Component2) {
                             'label',
                             { className: 'btn btn-default active', onClick: this.filterEvents.bind(this, 'all') },
                             _react2.default.createElement('input', { type: 'radio', name: 'options', autocomplete: 'off', checked: true }),
-                            ' All'
+                            ' ',
+                            t('events::All')
                         ),
                         _react2.default.createElement(
                             'label',
                             { className: 'btn btn-default', onClick: this.filterEvents.bind(this, 'mine') },
                             _react2.default.createElement('input', { type: 'radio', name: 'options', autocomplete: 'off' }),
-                            ' Mine'
+                            ' ',
+                            t('events::Mine')
                         ),
                         _react2.default.createElement(
                             'label',
                             { className: 'btn btn-default', onClick: this.filterEvents.bind(this, 'admin') },
                             _react2.default.createElement('input', { type: 'radio', name: 'options', autocomplete: 'off' }),
-                            ' Admin'
+                            ' ',
+                            t('events::Admin')
                         )
                     )
                 ),
@@ -6781,9 +6848,9 @@ var Events = function (_React$Component2) {
     return Events;
 }(_react2.default.Component);
 
-exports.default = Events;
+exports.default = Events = (0, _reactI18next.translate)(['events'], { wait: true })(Events);
 
-},{"./api":40,"./auth":42,"./loading":50,"moment":"moment","react":"react","react-router":"react-router"}],48:[function(require,module,exports){
+},{"./api":40,"./auth":42,"./loading":50,"moment":"moment","react":"react","react-i18next":34,"react-router":"react-router"}],48:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6880,6 +6947,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 _i18next2.default.use(_i18nextXhrBackend2.default).use(_i18nextBrowserLanguagedetector2.default).init({
   fallbackLng: 'en',
+  nsSeparator: '::',
+  keySeparator: ':::',
 
   backend: {
     loadPath: 'app/locales/{{lng}}/{{ns}}.json'
@@ -6899,7 +6968,7 @@ _i18next2.default.use(_i18nextXhrBackend2.default).use(_i18nextBrowserLanguagede
 exports.default = _i18next2.default;
 
 },{"i18next":30,"i18next-browser-languagedetector":10,"i18next-xhr-backend":14}],50:[function(require,module,exports){
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -6907,9 +6976,11 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _react = require("react");
+var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
+
+var _reactI18next = require('react-i18next');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -6929,16 +7000,18 @@ var Loading = function (_React$Component) {
     }
 
     _createClass(Loading, [{
-        key: "render",
+        key: 'render',
         value: function render() {
+            var t = this.props.t;
+
             return _react2.default.createElement(
-                "div",
-                { className: "loadingIcon" },
-                _react2.default.createElement("i", { className: "fa fa-cog fa-spin fa-3x fa-fw" }),
+                'div',
+                { className: 'loadingIcon' },
+                _react2.default.createElement('i', { className: 'fa fa-cog fa-spin fa-3x fa-fw' }),
                 _react2.default.createElement(
-                    "span",
-                    { className: "sr-only" },
-                    "Loading..."
+                    'span',
+                    { className: 'sr-only' },
+                    t('common::Loading...')
                 )
             );
         }
@@ -6947,9 +7020,9 @@ var Loading = function (_React$Component) {
     return Loading;
 }(_react2.default.Component);
 
-exports.default = Loading;
+exports.default = Loading = (0, _reactI18next.translate)(['common'], { wait: true })(Loading);
 
-},{"react":"react"}],51:[function(require,module,exports){
+},{"react":"react","react-i18next":34}],51:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6975,10 +7048,6 @@ var _api2 = _interopRequireDefault(_api);
 var _auth = require('./auth');
 
 var _reactI18next = require('react-i18next');
-
-var _i18n = require('./i18n');
-
-var _i18n2 = _interopRequireDefault(_i18n);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -7128,13 +7197,13 @@ var Login = function (_React$Component) {
                 _react2.default.createElement(
                     'form',
                     { className: 'form' },
-                    _react2.default.createElement('input', { className: 'form-control', type: 'email', id: 'email', name: 'email', placeholder: t('login:email'), value: this.state.email, onChange: this.emailChange }),
-                    _react2.default.createElement('input', { className: 'form-control', type: 'password', id: 'password', name: 'password', placeholder: t('login:password'), value: this.state.password, onChange: this.passChange })
+                    _react2.default.createElement('input', { className: 'form-control', type: 'email', id: 'email', name: 'email', placeholder: t('login::email'), value: this.state.email, onChange: this.emailChange }),
+                    _react2.default.createElement('input', { className: 'form-control', type: 'password', id: 'password', name: 'password', placeholder: t('login::password'), value: this.state.password, onChange: this.passChange })
                 ),
                 _react2.default.createElement(
                     _reactRouter.Link,
                     { to: '/register' },
-                    t('login:New account')
+                    t('login::New account')
                 ),
                 _react2.default.createElement('hr', null),
                 _react2.default.createElement(
@@ -7172,7 +7241,7 @@ var Login = function (_React$Component) {
                 _react2.default.createElement(
                     'button',
                     { className: 'btn btn-fixed-bottom btn-success', onClick: this.login },
-                    t('login:Login')
+                    t('login::Login')
                 )
             );
         }
@@ -7183,7 +7252,7 @@ var Login = function (_React$Component) {
 
 exports.default = (0, _reactI18next.translate)(['login'], { wait: true })(Login);
 
-},{"./api":40,"./auth":42,"./i18n":49,"jquery":"jquery","react":"react","react-i18next":34,"react-router":"react-router"}],52:[function(require,module,exports){
+},{"./api":40,"./auth":42,"jquery":"jquery","react":"react","react-i18next":34,"react-router":"react-router"}],52:[function(require,module,exports){
 'use strict';
 
 var _react = require('react');
@@ -7313,6 +7382,8 @@ var _bucket = require('./bucket');
 
 var _bucket2 = _interopRequireDefault(_bucket);
 
+var _reactI18next = require('react-i18next');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -7427,12 +7498,14 @@ var Map = function (_React$Component) {
                 _this.setState({ eventMenu: true });
             }
         }, _this.retitle = function () {
-            var title = 'Map';
+            var title = _this.props.t('map::Map');
             if (_auth.user.activeEvent) {
                 title = title + ' - ' + _auth.user.activeEvent.name;
             }
             _this.props.setAppState({ title: title, active: 'map' });
         }, _this.play = function (e, ev) {
+            var t = _this.props.t;
+
             if (e) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -7447,9 +7520,11 @@ var Map = function (_React$Component) {
                 self.start();
                 self.toggleEventMenu();
             }).catch(function () {
-                alert("Error joining the game");
+                alert(t("map::Error joining the game"));
             });
         }, _this.unplay = function (e) {
+            var t = _this.props.t;
+
             if (e) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -7462,9 +7537,11 @@ var Map = function (_React$Component) {
                 self.setState({ active: _auth.user.activeEvent });
                 self.retitle();
             }).catch(function () {
-                alert("Error leaving the game");
+                alert(t("map::Error leaving the game"));
             });
         }, _this.playGlobal = function (e) {
+            var t = _this.props.t;
+
             if (e) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -7479,9 +7556,11 @@ var Map = function (_React$Component) {
                 self.start();
                 self.toggleEventMenu();
             }).catch(function () {
-                alert("Error starting the game");
+                alert(t("map::Error starting the game"));
             });
         }, _this.renderEventMenu = function () {
+            var t = _this.props.t;
+
             var self = _this;
             if (_this.state.eventMenu) {
                 return _react2.default.createElement(
@@ -7492,7 +7571,7 @@ var Map = function (_React$Component) {
                         { className: 'ev', onClick: function onClick(e) {
                                 return self.playGlobal(e);
                             } },
-                        ' Global event '
+                        t('map::Global event')
                     ),
                     _this.state.events.map(function (ev, i) {
                         return _react2.default.createElement(
@@ -7510,7 +7589,7 @@ var Map = function (_React$Component) {
                 return _react2.default.createElement(
                     'button',
                     { className: 'btn btn-fixed-bottom btn-success', onClick: _this.toggleEventMenu },
-                    'Start'
+                    t('map::Start')
                 );
             }
         }, _temp), _possibleConstructorReturn(_this, _ret);
@@ -7519,12 +7598,7 @@ var Map = function (_React$Component) {
     _createClass(Map, [{
         key: 'componentDidMount',
         value: function componentDidMount() {
-            var title = 'Map';
-            if (_auth.user.activeEvent) {
-                title = title + ' - ' + _auth.user.activeEvent.name;
-            }
-            this.props.setAppState({ 'title': title, 'active': 'map' });
-
+            this.retitle();
             window.addEventListener("resize", this.updateDimensions.bind(this));
 
             if (this.props.params.ev) {
@@ -7712,6 +7786,8 @@ var Map = function (_React$Component) {
         value: function render() {
             var _this2 = this;
 
+            var t = this.props.t;
+
             return _react2.default.createElement(
                 'div',
                 null,
@@ -7727,7 +7803,7 @@ var Map = function (_React$Component) {
                             return _react2.default.createElement(
                                 'button',
                                 { className: 'btn btn-fixed-bottom btn-danger', onClick: _this2.stop },
-                                'Stop'
+                                t('map::Stop')
                             );
                         default:
                             return _this2.renderEventMenu();
@@ -7740,9 +7816,9 @@ var Map = function (_React$Component) {
     return Map;
 }(_react2.default.Component);
 
-exports.default = Map;
+exports.default = Map = (0, _reactI18next.translate)(['map'], { wait: true })(Map);
 
-},{"./api":40,"./auth":42,"./bucket":43,"./geo":48,"openlayers":"openlayers","react":"react","react-router":"react-router"}],54:[function(require,module,exports){
+},{"./api":40,"./auth":42,"./bucket":43,"./geo":48,"openlayers":"openlayers","react":"react","react-i18next":34,"react-router":"react-router"}],54:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7758,6 +7834,8 @@ var _react2 = _interopRequireDefault(_react);
 var _reactRouter = require('react-router');
 
 var _auth = require('./auth');
+
+var _reactI18next = require('react-i18next');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -7810,6 +7888,8 @@ var NavBar = function (_React$Component) {
     _createClass(NavBar, [{
         key: 'render',
         value: function render() {
+            var t = this.props.t;
+
             var act = this.props.active;
             return _react2.default.createElement(
                 'div',
@@ -7843,7 +7923,8 @@ var NavBar = function (_React$Component) {
                                 { to: '/map' },
                                 ' ',
                                 _react2.default.createElement('i', { className: 'fa fa-fw fa-map-marker' }),
-                                ' map'
+                                ' ',
+                                t('navbar::map')
                             )
                         ),
                         _react2.default.createElement(
@@ -7854,7 +7935,8 @@ var NavBar = function (_React$Component) {
                                 { to: '/events' },
                                 ' ',
                                 _react2.default.createElement('i', { className: 'fa fa-fw fa-gamepad' }),
-                                ' events'
+                                ' ',
+                                t('navbar::events')
                             )
                         ),
                         _react2.default.createElement(
@@ -7865,7 +7947,8 @@ var NavBar = function (_React$Component) {
                                 { to: '/profile' },
                                 ' ',
                                 _react2.default.createElement('i', { className: 'fa fa-fw fa-user' }),
-                                ' profile'
+                                ' ',
+                                t('navbar::profile')
                             )
                         ),
                         _react2.default.createElement(
@@ -7876,7 +7959,8 @@ var NavBar = function (_React$Component) {
                                 { onClick: this.logout },
                                 ' ',
                                 _react2.default.createElement('i', { className: 'fa fa-fw fa-close' }),
-                                ' Logout'
+                                ' ',
+                                t('navbar::Logout')
                             )
                         )
                     )
@@ -7888,9 +7972,9 @@ var NavBar = function (_React$Component) {
     return NavBar;
 }(_react2.default.Component);
 
-exports.default = NavBar;
+exports.default = NavBar = (0, _reactI18next.translate)(['navbar'], { wait: true })(NavBar);
 
-},{"./auth":42,"react":"react","react-router":"react-router"}],55:[function(require,module,exports){
+},{"./auth":42,"react":"react","react-i18next":34,"react-router":"react-router"}],55:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7914,6 +7998,8 @@ var _loading2 = _interopRequireDefault(_loading);
 var _api = require('./api');
 
 var _api2 = _interopRequireDefault(_api);
+
+var _reactI18next = require('react-i18next');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -7971,30 +8057,34 @@ var Profile = function (_React$Component) {
             p.interests.splice(i, 1);
             _this.setState({ player: p });
         }, _this.changePassword = function (e) {
+            var t = _this.props.t;
+
             var current = document.querySelector('#current').value;
             var newp = document.querySelector('#new').value;
             var repeat = document.querySelector('#repeat').value;
 
             // TODO, change the password
             if (newp != repeat) {
-                alert("Password doesn't match, try again");
+                alert(t("profile::Password doesn't match, try again"));
                 return;
             }
 
-            alert("Done!");
+            alert(t("profile::Done!"));
         }, _temp), _possibleConstructorReturn(_this, _ret);
     }
 
     _createClass(Profile, [{
         key: 'componentDidMount',
         value: function componentDidMount() {
-            this.props.setAppState({ title: 'Profile', active: 'profile' });
+            this.props.setAppState({ title: this.props.t('profile::Profile'), active: 'profile' });
             this.updateProfile();
         }
     }, {
         key: 'render',
         value: function render() {
             var _this2 = this;
+
+            var t = this.props.t;
 
             if (!this.state.player) {
                 return _react2.default.createElement(_loading2.default, null);
@@ -8006,18 +8096,18 @@ var Profile = function (_React$Component) {
                 _react2.default.createElement(
                     'h3',
                     null,
-                    'About you'
+                    t('profile::About you')
                 ),
-                _react2.default.createElement('textarea', { className: 'form-control', placeholder: 'about you', onChange: this.aboutChange, value: this.state.player.about }),
+                _react2.default.createElement('textarea', { className: 'form-control', placeholder: t('profile::about you'), onChange: this.aboutChange, value: this.state.player.about }),
                 _react2.default.createElement(
                     'h3',
                     null,
-                    'Interests'
+                    t('profile::Interests')
                 ),
                 _react2.default.createElement(
                     'div',
                     { className: 'input-group' },
-                    _react2.default.createElement('input', { type: 'text', id: 'interest', className: 'form-control', placeholder: 'interests' }),
+                    _react2.default.createElement('input', { type: 'text', id: 'interest', className: 'form-control', placeholder: t('profile::interests') }),
                     _react2.default.createElement(
                         'span',
                         { className: 'input-group-btn' },
@@ -8047,7 +8137,8 @@ var Profile = function (_React$Component) {
                     { className: 'btn btn-primary btn-block', role: 'button', 'data-toggle': 'collapse', href: '#passwordChange',
                         'aria-expanded': 'false', 'aria-controls': 'passwordChange' },
                     _react2.default.createElement('i', { className: 'fa fa-lock' }),
-                    ' Change password'
+                    ' ',
+                    t('profile::Change password')
                 ),
                 _react2.default.createElement(
                     'div',
@@ -8055,21 +8146,21 @@ var Profile = function (_React$Component) {
                     _react2.default.createElement(
                         'div',
                         { className: 'well' },
-                        _react2.default.createElement('input', { type: 'password', id: 'current', className: 'form-control', placeholder: 'current' }),
-                        _react2.default.createElement('input', { type: 'password', id: 'new', className: 'form-control', placeholder: 'new' }),
-                        _react2.default.createElement('input', { type: 'password', id: 'repeat', className: 'form-control', placeholder: 'repeat' })
+                        _react2.default.createElement('input', { type: 'password', id: 'current', className: 'form-control', placeholder: t('profile::current') }),
+                        _react2.default.createElement('input', { type: 'password', id: 'new', className: 'form-control', placeholder: t('profile::new') }),
+                        _react2.default.createElement('input', { type: 'password', id: 'repeat', className: 'form-control', placeholder: t('profile::repeat') })
                     ),
                     _react2.default.createElement(
                         'button',
                         { className: 'btn btn-danger btn-block', onClick: this.changePassword },
-                        'Change'
+                        t('profile::Change')
                     )
                 ),
                 _react2.default.createElement('hr', null),
                 _react2.default.createElement(
                     'button',
                     { className: 'btn btn-fixed-bottom btn-success', onClick: this.save },
-                    'Save'
+                    t('profile::Save')
                 )
             );
         }
@@ -8078,9 +8169,9 @@ var Profile = function (_React$Component) {
     return Profile;
 }(_react2.default.Component);
 
-exports.default = Profile;
+exports.default = Profile = (0, _reactI18next.translate)(['profile'], { wait: true })(Profile);
 
-},{"./api":40,"./auth":42,"./loading":50,"react":"react","react-router":"react-router"}],56:[function(require,module,exports){
+},{"./api":40,"./auth":42,"./loading":50,"react":"react","react-i18next":34,"react-router":"react-router"}],56:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -8102,6 +8193,8 @@ var _api2 = _interopRequireDefault(_api);
 var _auth = require('./auth');
 
 var _connect = require('./connect');
+
+var _reactI18next = require('react-i18next');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -8126,11 +8219,13 @@ var QRCapt = function (_React$Component) {
         }
 
         return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = QRCapt.__proto__ || Object.getPrototypeOf(QRCapt)).call.apply(_ref, [this].concat(args))), _this), _this.capturedQR = function (id, ev, resp) {
+            var t = _this.props.t;
+
             var self = _this;
             _api2.default.captured(id, ev, resp.text).then(function (resp) {
                 (0, _connect.connected)(resp.clue);
             }).catch(function (error) {
-                alert("Invalid code!");
+                alert(t("qr::Invalid code!"));
             });
         }, _temp), _possibleConstructorReturn(_this, _ret);
     }
@@ -8160,9 +8255,9 @@ var QRCapt = function (_React$Component) {
     return QRCapt;
 }(_react2.default.Component);
 
-exports.default = QRCapt;
+exports.default = QRCapt = (0, _reactI18next.translate)(['qr'], { wait: true })(QRCapt);
 
-},{"./api":40,"./auth":42,"./connect":45,"react":"react","react-router":"react-router"}],57:[function(require,module,exports){
+},{"./api":40,"./auth":42,"./connect":45,"react":"react","react-i18next":34,"react-router":"react-router"}],57:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -8189,6 +8284,8 @@ var _auth = require('./auth');
 
 var _connect = require('./connect');
 
+var _reactI18next = require('react-i18next');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -8212,6 +8309,8 @@ var QRView = function (_React$Component) {
         }
 
         return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = QRView.__proto__ || Object.getPrototypeOf(QRView)).call.apply(_ref, [this].concat(args))), _this), _this.qrcodeTimer = null, _this.qrcodePolling = function (id, ev) {
+            var t = _this.props.t;
+
             var self = _this;
 
             _api2.default.qrclue(id, ev).then(function (resp) {
@@ -8224,7 +8323,7 @@ var QRView = function (_React$Component) {
                     (0, _connect.connected)(resp.clue);
                 }
             }).catch(function (err) {
-                alert("error polling!");
+                alert(t("qr::error polling!"));
             });
         }, _this.goBack = function () {
             _reactRouter.hashHistory.push('/map');
@@ -8266,9 +8365,9 @@ var QRView = function (_React$Component) {
     return QRView;
 }(_react2.default.Component);
 
-exports.default = QRView;
+exports.default = QRView = (0, _reactI18next.translate)(['qr'], { wait: true })(QRView);
 
-},{"./api":40,"./auth":42,"./connect":45,"qrcode.react":"qrcode.react","react":"react","react-router":"react-router"}],58:[function(require,module,exports){
+},{"./api":40,"./auth":42,"./connect":45,"qrcode.react":"qrcode.react","react":"react","react-i18next":34,"react-router":"react-router"}],58:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -8288,6 +8387,8 @@ var _jquery = require('jquery');
 var _jquery2 = _interopRequireDefault(_jquery);
 
 var _auth = require('./auth');
+
+var _reactI18next = require('react-i18next');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -8339,21 +8440,21 @@ var Register = function (_React$Component) {
                     _react2.default.createElement(
                         'h1',
                         null,
-                        'Register'
+                        t('login::Register')
                     )
                 ),
                 _react2.default.createElement(
                     'form',
                     { className: 'form' },
-                    _react2.default.createElement('input', { className: 'form-control', type: 'email', id: 'email', name: 'email', placeholder: 'email', value: this.state.email, onChange: this.emailChange }),
-                    _react2.default.createElement('input', { className: 'form-control', type: 'password', id: 'password', name: 'password', placeholder: 'password', value: this.state.password, onChange: this.passChange }),
-                    _react2.default.createElement('input', { className: 'form-control', type: 'password', id: 'password2', name: 'password2', placeholder: 'repeat the password', value: this.state.password2, onChange: this.passChange2 })
+                    _react2.default.createElement('input', { className: 'form-control', type: 'email', id: 'email', name: 'email', placeholder: t('login::email'), value: this.state.email, onChange: this.emailChange }),
+                    _react2.default.createElement('input', { className: 'form-control', type: 'password', id: 'password', name: 'password', placeholder: t('login::password'), value: this.state.password, onChange: this.passChange }),
+                    _react2.default.createElement('input', { className: 'form-control', type: 'password', id: 'password2', name: 'password2', placeholder: t('login::repeat the password'), value: this.state.password2, onChange: this.passChange2 })
                 ),
                 _react2.default.createElement('hr', null),
                 _react2.default.createElement(
                     'button',
                     { className: 'btn btn-fixed-bottom btn-success', onClick: this.register },
-                    'Register'
+                    t('login::Register')
                 )
             );
         }
@@ -8362,6 +8463,6 @@ var Register = function (_React$Component) {
     return Register;
 }(_react2.default.Component);
 
-exports.default = Register;
+exports.default = Register = (0, _reactI18next.translate)(['login'], { wait: true })(Register);
 
-},{"./auth":42,"jquery":"jquery","react":"react","react-router":"react-router"}]},{},[52]);
+},{"./auth":42,"jquery":"jquery","react":"react","react-i18next":34,"react-router":"react-router"}]},{},[52]);

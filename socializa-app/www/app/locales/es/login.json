@@ -2,5 +2,7 @@
   "New account": "Nueva cuenta",
   "email": "correo electrónico",
   "password": "contraseña",
-  "Login": "Iniciar sesión"
+  "Login": "Iniciar sesión",
+  "Register": "Registrarse",
+  "repeat the password": "repite la contraseña"
 }
