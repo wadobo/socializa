@@ -6946,6 +6946,9 @@ var _i18nextBrowserLanguagedetector2 = _interopRequireDefault(_i18nextBrowserLan
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 _i18next2.default.use(_i18nextXhrBackend2.default).use(_i18nextBrowserLanguagedetector2.default).init({
+  detection: {
+    order: ['navigator']
+  },
   fallbackLng: 'en',
   nsSeparator: '::',
   keySeparator: ':::',
@@ -6958,7 +6961,7 @@ _i18next2.default.use(_i18nextXhrBackend2.default).use(_i18nextBrowserLanguagede
   ns: ['common'],
   defaultNS: 'common',
 
-  debug: true,
+  debug: false,
 
   interpolation: {
     escapeValue: false // not needed for react!!
