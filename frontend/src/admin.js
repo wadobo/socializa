@@ -5,6 +5,8 @@ import API from './api';
 
 import Loading from './loading';
 
+import { translate } from 'react-i18next';
+
 class Challenge extends React.Component {
     render() {
         var c = this.props.c;
@@ -25,7 +27,7 @@ class Challenge extends React.Component {
     }
 }
 
-export default class Admin extends React.Component {
+class Admin extends React.Component {
     state = {
         ev: null,
         cs: null,
@@ -64,11 +66,13 @@ export default class Admin extends React.Component {
     }
 
     save = () => {
+        const { t } = this.props;
+
         API.setEventProperties(this.state.ev.pk, {
             vision_distance: this.state.vd,
             meeting_distance: this.state.md
         }).then(function() {
-            alert("Saved!");
+            alert(t('common::Saved!'));
         });
     }
 
@@ -81,8 +85,8 @@ export default class Admin extends React.Component {
     }
 
     render() {
+        const { t } = this.props;
         var self = this;
-        console.log("RENDER");
 
         return (
             <div id="admin" className="container mbottom">
@@ -93,21 +97,21 @@ export default class Admin extends React.Component {
                     <table className="table table-responsive">
                         <tbody>
                         <tr>
-                            <th>Game</th><td>{ this.state.ev.game.name }</td>
+                            <th>{t('admin::Game')}</th><td>{ this.state.ev.game.name }</td>
                         </tr>
 
                         <tr>
-                            <th>Vision distance (m)</th>
+                            <th>{t('admin::Vision distance (m)')}</th>
                             <td>
-                                <input type="number" className="form-control" placeholder="vision distance"
+                                <input type="number" className="form-control" placeholder={t('admin::vision distance')}
                                        onChange={ this.vdChange }
                                        value={ this.state.vd }/>
                             </td>
                         </tr>
                         <tr>
-                            <th>Interact distance (m)</th>
+                            <th>{t('admin::Interact distance (m)')}</th>
                             <td>
-                                <input type="number" className="form-control" placeholder="interact distance"
+                                <input type="number" className="form-control" placeholder={t('admin::interact distance')}
                                        onChange={ this.mdChange }
                                        value={ this.state.md }/>
                             </td>
@@ -115,7 +119,7 @@ export default class Admin extends React.Component {
                         </tbody>
                     </table>
 
-                    <h3>Challenges</h3>
+                    <h3>{t('admin::Challenges')}</h3>
                     { this.state.cs ?
                         <div>
                         {self.state.cs.map(function(c, i) {
@@ -126,7 +130,7 @@ export default class Admin extends React.Component {
                         <Loading />
                     }
 
-                    <button className="btn btn-fixed-bottom btn-success" onClick={ this.save }>Save</button>
+                    <button className="btn btn-fixed-bottom btn-success" onClick={ this.save }>{t('common::Save')}</button>
                 </div>
 
              :
@@ -136,3 +140,5 @@ export default class Admin extends React.Component {
         );
     }
 }
+
+export default Admin = translate(['admin', 'common'], { wait: true })(Admin);

@@ -5,7 +5,9 @@ import API from './api';
 import { user } from './auth';
 import { connected } from './connect';
 
-export default class QRCapt extends React.Component {
+import { translate } from 'react-i18next';
+
+class QRCapt extends React.Component {
     componentDidMount() {
         var self = this;
         var id = this.props.params.user;
@@ -21,13 +23,14 @@ export default class QRCapt extends React.Component {
     }
 
     capturedQR = (id, ev, resp) => {
+        const { t } = this.props;
         var self = this;
         API.captured(id, ev, resp.text)
             .then(function(resp) {
                 connected(resp.clue);
             })
             .catch(function(error) {
-                alert("Invalid code!");
+                alert(t("qr::Invalid code!"));
             });
     }
 
@@ -38,3 +41,4 @@ export default class QRCapt extends React.Component {
         );
     }
 }
+export default QRCapt = translate(['qr'], { wait: true })(QRCapt);

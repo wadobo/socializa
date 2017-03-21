@@ -8,8 +8,10 @@ import API from './api';
 import GEO from './geo';
 import Bucket from './bucket';
 
+import { translate } from 'react-i18next';
 
-export default class Map extends React.Component {
+
+class Map extends React.Component {
     state = {
         user: user,
         state: 'stopped',
@@ -20,12 +22,7 @@ export default class Map extends React.Component {
     firstCentre = false;
 
     componentDidMount() {
-      let title = 'Map';
-      if (user.activeEvent) {
-        title = title + ' - ' + user.activeEvent.name;
-      }
-      this.props.setAppState({ 'title': title, 'active': 'map' });
-
+      this.retitle();
       window.addEventListener("resize", this.updateDimensions.bind(this));
 
       if (this.props.params.ev) {
@@ -310,7 +307,7 @@ export default class Map extends React.Component {
     }
 
     retitle = () => {
-        var title = 'Map';
+        var title = this.props.t('map::Map');
         if (user.activeEvent) {
           title = title + ' - ' + user.activeEvent.name;
         }
@@ -318,6 +315,7 @@ export default class Map extends React.Component {
     }
 
     play = (e, ev) => {
+        const { t } = this.props;
         if (e) {
             e.preventDefault();
             e.stopPropagation();
@@ -333,11 +331,12 @@ export default class Map extends React.Component {
                 self.start();
                 self.toggleEventMenu();
             }).catch(function() {
-                alert("Error joining the game");
+                alert(t("map::Error joining the game"));
             });
     }
 
     unplay = (e) => {
+        const { t } = this.props;
         if (e) {
             e.preventDefault();
             e.stopPropagation();
@@ -351,11 +350,12 @@ export default class Map extends React.Component {
                 self.setState({ active: user.activeEvent });
                 self.retitle();
             }).catch(function() {
-                alert("Error leaving the game");
+                alert(t("map::Error leaving the game"));
             });
     }
 
     playGlobal = (e) => {
+        const { t } = this.props;
         if (e) {
             e.preventDefault();
             e.stopPropagation();
@@ -371,27 +371,29 @@ export default class Map extends React.Component {
                 self.start();
                 self.toggleEventMenu();
             }).catch(function() {
-                alert("Error starting the game");
+                alert(t("map::Error starting the game"));
             });
     }
 
     renderEventMenu = () => {
+        const { t } = this.props;
         var self = this;
         if (this.state.eventMenu) {
             return (
                 <div className="eventMenu">
-                    <div className="ev" onClick={ (e) => self.playGlobal(e) }> Global event </div>
+                    <div className="ev" onClick={ (e) => self.playGlobal(e) }>{t('map::Global event')}</div>
                     { this.state.events.map(function(ev, i) {
                         return <div className="ev" onClick={ (e) => self.play(e, ev) }> { ev.name } </div>
                       })}
                 </div>
             )
         } else {
-            return <button className="btn btn-fixed-bottom btn-success" onClick={ this.toggleEventMenu }>Start</button>
+            return <button className="btn btn-fixed-bottom btn-success" onClick={ this.toggleEventMenu }>{t('map::Start')}</button>
         }
     }
 
     render() {
+        const { t } = this.props;
         return (
             <div>
                 <div id="socializa-map">
@@ -405,7 +407,7 @@ export default class Map extends React.Component {
                     () => {
                         switch (this.state.state) {
                             case 'started':
-                                return <button className="btn btn-fixed-bottom btn-danger" onClick={ this.stop }>Stop</button>
+                                return <button className="btn btn-fixed-bottom btn-danger" onClick={ this.stop }>{t('map::Stop')}</button>
                             default:
                                 return this.renderEventMenu();
                         }
@@ -415,3 +417,5 @@ export default class Map extends React.Component {
         );
     }
 }
+
+export default Map = translate(['map'], { wait: true })(Map);

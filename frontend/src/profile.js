@@ -6,12 +6,14 @@ import { setUser, user, logout } from './auth';
 import Loading from './loading';
 import API from './api';
 
+import { translate } from 'react-i18next';
 
-export default class Profile extends React.Component {
+
+class Profile extends React.Component {
     state = { user: user, player: null }
 
     componentDidMount() {
-        this.props.setAppState({ title: 'Profile', active: 'profile' });
+        this.props.setAppState({ title: this.props.t('profile::Profile'), active: 'profile' });
         this.updateProfile();
     }
 
@@ -61,34 +63,36 @@ export default class Profile extends React.Component {
     }
 
     changePassword = (e) => {
+        const { t } = this.props;
         var current = document.querySelector('#current').value;
         var newp = document.querySelector('#new').value;
         var repeat = document.querySelector('#repeat').value;
 
         // TODO, change the password
         if (newp != repeat) {
-            alert("Password doesn't match, try again");
+            alert(t("profile::Password doesn't match, try again"));
             return;
         }
 
-        alert("Done!");
+        alert(t("profile::Done!"));
     }
 
     render() {
+        const { t } = this.props;
         if (!this.state.player) {
             return <Loading />;
         }
 
         return (
             <div id="profile" className="container mbottom">
-                <h3>About you</h3>
-                <textarea className="form-control" placeholder="about you" onChange={ this.aboutChange } value={ this.state.player.about }/>
+                <h3>{t('profile::About you')}</h3>
+                <textarea className="form-control" placeholder={t('profile::about you')} onChange={ this.aboutChange } value={ this.state.player.about }/>
 
                 {/* interest */}
-                <h3>Interests</h3>
+                <h3>{t('profile::Interests')}</h3>
 
                 <div className="input-group">
-                    <input type="text" id="interest" className="form-control" placeholder="interests"/>
+                    <input type="text" id="interest" className="form-control" placeholder={t('profile::interests')}/>
                     <span className="input-group-btn">
                         <button className="btn btn-success" type="button" onClick={ this.addInterest }>
                             <i className="fa fa-plus" aria-hidden="true"></i>
@@ -111,21 +115,23 @@ export default class Profile extends React.Component {
                 <hr/>
                 <a className="btn btn-primary btn-block" role="button" data-toggle="collapse" href="#passwordChange"
                    aria-expanded="false" aria-controls="passwordChange">
-                    <i className="fa fa-lock"></i> Change password
+                    <i className="fa fa-lock"></i> {t('profile::Change password')}
                 </a>
                 <div className="collapse" id="passwordChange">
                     <div className="well">
-                        <input type="password" id="current" className="form-control" placeholder="current"/>
-                        <input type="password" id="new" className="form-control" placeholder="new"/>
-                        <input type="password" id="repeat" className="form-control" placeholder="repeat"/>
+                        <input type="password" id="current" className="form-control" placeholder={t('profile::current')}/>
+                        <input type="password" id="new" className="form-control" placeholder={t('profile::new')}/>
+                        <input type="password" id="repeat" className="form-control" placeholder={t('profile::repeat')}/>
                     </div>
-                    <button className="btn btn-danger btn-block" onClick={ this.changePassword }>Change</button>
+                    <button className="btn btn-danger btn-block" onClick={ this.changePassword }>{t('profile::Change')}</button>
                 </div>
 
                 <hr/>
 
-                <button className="btn btn-fixed-bottom btn-success" onClick={ this.save }>Save</button>
+                <button className="btn btn-fixed-bottom btn-success" onClick={ this.save }>{t('profile::Save')}</button>
             </div>
         );
     }
 }
+
+export default Profile = translate(['profile'], { wait: true })(Profile);

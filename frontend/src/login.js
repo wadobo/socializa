@@ -6,7 +6,6 @@ import API from './api';
 import { login } from './auth';
 
 import { translate, Interpolate } from 'react-i18next';
-import i18n from './i18n';
 
 
 class Login extends React.Component {
@@ -131,11 +130,11 @@ class Login extends React.Component {
                 </div>
 
                 <form className="form">
-                        <input className="form-control" type="email" id="email" name="email" placeholder={t('login:email')} value={ this.state.email } onChange={ this.emailChange }/>
-                        <input className="form-control" type="password" id="password" name="password" placeholder={t('login:password')} value={ this.state.password } onChange={ this.passChange }/>
+                        <input className="form-control" type="email" id="email" name="email" placeholder={t('login::email')} value={ this.state.email } onChange={ this.emailChange }/>
+                        <input className="form-control" type="password" id="password" name="password" placeholder={t('login::password')} value={ this.state.password } onChange={ this.passChange }/>
                 </form>
 
-                <Link to="/register">{t('login:New account')}</Link>
+                <Link to="/register">{t('login::New account')}</Link>
 
                 <hr/>
 
@@ -162,7 +161,7 @@ class Login extends React.Component {
 
                 <hr/>
 
-                <button className="btn btn-fixed-bottom btn-success" onClick={ this.login }>{t('login:Login')}</button>
+                <button className="btn btn-fixed-bottom btn-success" onClick={ this.login }>{t('login::Login')}</button>
             </div>
         );
     }
