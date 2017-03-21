@@ -7,7 +7,9 @@ import API from './api';
 import { user } from './auth';
 import { connected } from './connect';
 
-export default class QRView extends React.Component {
+import { translate } from 'react-i18next';
+
+class QRView extends React.Component {
     qrcodeTimer = null;
 
     componentDidMount() {
@@ -23,6 +25,7 @@ export default class QRView extends React.Component {
     }
 
     qrcodePolling = (id, ev) => {
+        const { t } = this.props;
         var self = this;
 
         API.qrclue(id, ev)
@@ -37,7 +40,7 @@ export default class QRView extends React.Component {
                 }
             })
             .catch(function(err) {
-                alert("error polling!");
+                alert(t("qr::error polling!"));
             });
     }
 
@@ -57,3 +60,4 @@ export default class QRView extends React.Component {
     }
 }
 
+export default QRView = translate(['qr'], { wait: true })(QRView);

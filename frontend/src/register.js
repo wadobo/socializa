@@ -4,8 +4,10 @@ import $ from 'jquery';
 
 import { register } from './auth';
 
+import { translate } from 'react-i18next';
 
-export default class Register extends React.Component {
+
+class Register extends React.Component {
     state = {
         email: '', password: '', password2: ''
     }
@@ -32,19 +34,21 @@ export default class Register extends React.Component {
             <div id="register" className="container">
                 <div className="header text-center">
                     <img src="app/images/icon.png" className="logo" alt="logo" height="50px"/><br/>
-                    <h1>Register</h1>
+                    <h1>{t('login::Register')}</h1>
                 </div>
 
                 <form className="form">
-                        <input className="form-control" type="email" id="email" name="email" placeholder="email" value={ this.state.email } onChange={ this.emailChange }/>
-                        <input className="form-control" type="password" id="password" name="password" placeholder="password" value={ this.state.password } onChange={ this.passChange }/>
-                        <input className="form-control" type="password" id="password2" name="password2" placeholder="repeat the password" value={ this.state.password2 } onChange={ this.passChange2 }/>
+                        <input className="form-control" type="email" id="email" name="email" placeholder={t('login::email')} value={ this.state.email } onChange={ this.emailChange }/>
+                        <input className="form-control" type="password" id="password" name="password" placeholder={t('login::password')} value={ this.state.password } onChange={ this.passChange }/>
+                        <input className="form-control" type="password" id="password2" name="password2" placeholder={t('login::repeat the password')} value={ this.state.password2 } onChange={ this.passChange2 }/>
                 </form>
 
                 <hr/>
 
-                <button className="btn btn-fixed-bottom btn-success" onClick={ this.register }>Register</button>
+                <button className="btn btn-fixed-bottom btn-success" onClick={ this.register }>{t('login::Register')}</button>
             </div>
         );
     }
 }
+
+export default Register = translate(['login'], { wait: true })(Register);

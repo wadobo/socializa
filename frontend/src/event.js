@@ -11,6 +11,8 @@ import { EventRow } from './events';
 
 import Loading from './loading';
 
+import { translate } from 'react-i18next';
+
 // TODO, solve a clue. Clues can also be solved, but for now we don't
 // support this.
 
@@ -32,7 +34,7 @@ export class ClueRow extends React.Component {
     }
 }
 
-export default class Event extends React.Component {
+class Event extends React.Component {
     state = {
         user: user,
         ev: null,
@@ -69,7 +71,7 @@ export default class Event extends React.Component {
     }
 
     retitle = () => {
-        var title = 'Event';
+        var title = this.props.t('events::Event');
         if (this.state.ev) {
           title = title + ' - ' + this.state.name;
         }
@@ -81,6 +83,7 @@ export default class Event extends React.Component {
     }
 
     sendSolution = () => {
+        const { t } = this.props;
         var self = this;
         var solution = document.querySelector(".solve-input").value;
         this.setState({ state: 'solving-loading' });
@@ -88,21 +91,22 @@ export default class Event extends React.Component {
             .then(function(resp) {
                 if (resp.status == 'correct') {
                     self.setState({ state: 'solved', solution: solution });
-                    alert('Conglatulations!');
+                    alert(t('events::Conglatulations!'));
                 } else {
                     self.setState({ state: 'solving' });
-                    alert('Wrong answer. Try again');
+                    alert(t('events::Wrong answer. Try again'));
                 }
             }).catch(function(err) {
                 self.setState({ state: 'solving' });
-                alert('Unknown error!');
+                alert(t('common::Unknown error'));
             });
     }
 
     renderSolveButton = () => {
+        const { t } = this.props;
         var button = (
             <button onClick={ this.tryToSolve } className="btn btn-primary btn-fixed-bottom">
-                Solve
+                {t('events::Solve')}
             </button>
         );
 
@@ -117,15 +121,16 @@ export default class Event extends React.Component {
     }
 
     renderSolving = () => {
+        const { t } = this.props;
         var solving = this.state.state == 'solving-loading';
         var button = (
-            <button onClick={ this.sendSolution } className="btn btn-primary" type="button">Go!</button>
+            <button onClick={ this.sendSolution } className="btn btn-primary" type="button">{t('events::Go!')}</button>
         );
         if (this.state.state == 'solving-loading') {
             button = (
                 <button className="btn btn-primary disabled" type="button">
                     <i className="fa fa-cog fa-spin fa-fw"></i>
-                    <span className="sr-only">Loading...</span>
+                    <span className="sr-only">{t('events::Loading...')}</span>
                 </button>
             );
         }
@@ -134,7 +139,7 @@ export default class Event extends React.Component {
                 <h2>{this.state.ev.game.name}</h2>
                 <p>{this.state.ev.game.desc}</p>
                 <div className="input-group">
-                  <input type="text" className="solve-input form-control" placeholder="The solution!"/>
+                  <input type="text" className="solve-input form-control" placeholder={t('events::The solution!')}/>
                   <span className="input-group-btn">
                     { button }
                   </span>
@@ -144,6 +149,7 @@ export default class Event extends React.Component {
     }
 
     renderEvent = () => {
+        const { t } = this.props;
         switch (this.state.state) {
             case 'loading': return <Loading />;
             case 'solving-loading':
@@ -160,7 +166,7 @@ export default class Event extends React.Component {
                             <h2>Clues</h2>
                          : (<p className="text-center">No Clues yet,
                                 <Link to="/map"> <i className="fa fa-fw fa-map-marker"></i>
-                                    go to find someone
+                                    {t('events::go to find someone')}
                                 </Link>
                             </p>)
                         }
@@ -184,3 +190,5 @@ export default class Event extends React.Component {
         );
     }
 }
+
+export default Event = translate(['events', 'common'], { wait: true })(Event);

@@ -207,11 +207,13 @@ gulp.task('i18next', function() {
     return gulp.src(['src/*.js'])
         .pipe(sort()) // Sort files in stream by path
         .pipe(scanner({
+            nsSeparator: '::',
+            keySeparator: ':::',
             lngs: ['es'], // supported languages
             func: {
                 list: ['i18next.t', 'i18n.t', 't'],
             },
-            ns: ['login', 'common'],
+            ns: ['login', 'admin', 'connect', 'events', 'loading', 'map', 'navbar', 'profile', 'qr', 'common'],
             resource: {
                 // the source path is relative to current working directory
                 loadPath: 'locales/{{lng}}/{{ns}}.json',

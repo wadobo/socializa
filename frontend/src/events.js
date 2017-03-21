@@ -7,8 +7,10 @@ import API from './api';
 import Loading from './loading';
 import moment from 'moment';
 
+import { translate } from 'react-i18next';
 
-export class EventRow extends React.Component {
+
+class EventRow extends React.Component {
     state = { joined: false, expand: false }
 
     componentWillMount() {
@@ -82,6 +84,7 @@ export class EventRow extends React.Component {
     }
 
     buttons = (ev) => {
+        const { t } = this.props;
         if (this.props.hiddenbuttons) {
             return null;
         }
@@ -91,21 +94,21 @@ export class EventRow extends React.Component {
                 { this.state.joined ?
                     [
                     <a onClick={ this.play.bind(this, ev) } className="btn btn-success">
-                        <i className="fa fa-gamepad"></i> Play
+                        <i className="fa fa-gamepad"></i> {t('events::Play')}
                     </a>,
                     <a onClick={ this.leave.bind(this, ev) } className="btn btn-danger">
-                        <i className="fa fa-sign-out"></i> Leave
+                        <i className="fa fa-sign-out"></i> {t('events::Leave')}
                     </a>
                     ]
                  :
                     <a onClick={ this.join.bind(this, ev) } className="btn btn-success">
-                        <i className="fa fa-sign-in"></i> Join
+                        <i className="fa fa-sign-in"></i> {t('events::Join')}
                     </a>
                 }
 
                 { ev.admin &&
                     <a onClick={ this.admin.bind(this, ev) } className="btn btn-primary">
-                        <i className="fa fa-sign-cog"></i> Admin
+                        <i className="fa fa-sign-cog"></i> {t('events::Admin')}
                     </a>
                 }
             </div>
@@ -162,9 +165,10 @@ export class EventRow extends React.Component {
         )
     }
 }
+EventRow = translate(['events'], { wait: true })(EventRow);
 
 
-export default class Events extends React.Component {
+class Events extends React.Component {
     state = {
         user: user,
         events: null,
@@ -206,7 +210,7 @@ export default class Events extends React.Component {
     }
 
     retitle = () => {
-        var title = 'Events';
+        var title = this.props.t('events::Events');
         if (user.activeEvent) {
           title = title + ' - ' + user.activeEvent.name;
         }
@@ -228,28 +232,30 @@ export default class Events extends React.Component {
 
     renderEvents() {
         var self = this;
+        const { t } = this.props;
         return (
             <div>
             { this.state.events.map(function(ev, i) {
                 return <EventRow ev={ev} key={i} active={self.state.active} />
             }) }
 
-            { this.state.events.length ? <span></span> : <div className="jumbotron">There's no events :(</div> }
+            { this.state.events.length ? <span></span> : <div className="jumbotron">{t("events::There's no events :(")}</div> }
 
             { this.state.loadingMore ?
                 <button className="btn btn-block btn-primary btn-disabled"> <i className="fa fa-cog fa-spin fa-fw"></i> </button>
               :
-                <button className="btn btn-block btn-primary" onClick={ this.loadMore }>Load More</button>
+                <button className="btn btn-block btn-primary" onClick={ this.loadMore }>{t('events::Load More')}</button>
             }
             </div>
         )
     }
 
     render() {
+        const { t } = this.props;
         return (
             <div id="events" className="container-fluid container-fw">
                 <div className="search input-group">
-                    <input className="form-control search" id="search" placeholder="search" onChange={ this.searchChange }/>
+                    <input className="form-control search" id="search" placeholder={t('events::search')} onChange={ this.searchChange }/>
 
                     <div className="input-group-btn">
                         <button type="button" onClick={ this.updateEvents } className="btn btn-success">
@@ -260,13 +266,13 @@ export default class Events extends React.Component {
                 <div className="filters">
                     <div className="btn-group btn-group-justified" data-toggle="buttons">
                       <label className="btn btn-default active" onClick={ this.filterEvents.bind(this, 'all') }>
-                        <input type="radio" name="options" autocomplete="off" checked/> All
+                        <input type="radio" name="options" autocomplete="off" checked/> {t('events::All')}
                       </label>
                       <label className="btn btn-default" onClick={ this.filterEvents.bind(this, 'mine') }>
-                        <input type="radio" name="options" autocomplete="off"/> Mine
+                        <input type="radio" name="options" autocomplete="off"/> {t('events::Mine')}
                       </label>
                       <label className="btn btn-default" onClick={ this.filterEvents.bind(this, 'admin') }>
-                        <input type="radio" name="options" autocomplete="off"/> Admin
+                        <input type="radio" name="options" autocomplete="off"/> {t('events::Admin')}
                       </label>
                     </div>
                 </div>
@@ -276,3 +282,4 @@ export default class Events extends React.Component {
         );
     }
 }
+export default Events = translate(['events'], { wait: true })(Events);

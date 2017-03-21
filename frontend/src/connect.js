@@ -8,6 +8,8 @@ import Bucket from './bucket';
 
 import Loading from './loading';
 
+import { translate } from 'react-i18next';
+import i18n from './i18n';
 
 export function connected(resp) {
     if (resp.pk) {
@@ -15,13 +17,13 @@ export function connected(resp) {
         hashHistory.push('/clue');
     } else {
         Bucket.clue = null;
-        alert("Connected!");
+        alert(i18n.t("connect::Connected!"));
         hashHistory.push('/map');
     }
 }
 
 
-export default class Connect extends React.Component {
+class Connect extends React.Component {
     state = {
         user: user,
         other: null
@@ -32,11 +34,13 @@ export default class Connect extends React.Component {
     }
 
     getProfile = () => {
+        const { t } = this.props;
+
         var self = this;
         API.getProfile(self.props.params.pk)
             .then(function(profile) {
                 if (!profile.username) {
-                    alert("Too far!");
+                    alert(t('connect::Too far!'));
                     hashHistory.push('/map');
                 }
                 self.setState({ other: profile });
@@ -52,6 +56,7 @@ export default class Connect extends React.Component {
     }
 
     connectPlayer = (id, ev=null) => {
+        const { t } = this.props;
         var self = this;
         ev = ev ? ev.pk : ev;
         API.connectPlayer(id, ev)
@@ -67,22 +72,24 @@ export default class Connect extends React.Component {
                         hashHistory.push('/qrcode/' + id + '/' + ev + '/' + resp.secret);
                         break;
                     default:
-                        alert("too far, get near");
+                        alert(t('connect::too far, get near'));
                         break;
                 }
             });
     }
 
     render() {
+        const { t } = this.props;
         var self = this;
         function createMarkup() {
             var purifier = new Purifier();
-            var input = self.state.other.about;
+            var input = self.state.other.about || "";
             var result = purifier.purify(input);
             return {__html: result };
         }
 
         var icon = this.state.other ? getIcon(this.state.other) : '';
+        console.log("connect", this.state.other);
 
         return (
             <div id="connect" className="container mbottom">
@@ -95,7 +102,7 @@ export default class Connect extends React.Component {
                         <img src={ icon } />
                     </div>
                     <div className="text-center" dangerouslySetInnerHTML={ createMarkup() } />
-                    <button className="btn btn-fixed-bottom btn-primary" onClick={ this.connect }>Interact</button>
+                    <button className="btn btn-fixed-bottom btn-primary" onClick={ this.connect }>{t('connect::Interact')}</button>
                 </div>
              :
                 <Loading />
@@ -104,3 +111,5 @@ export default class Connect extends React.Component {
         );
     }
 }
+
+export default translate(['connect'], { wait: true })(Connect);
