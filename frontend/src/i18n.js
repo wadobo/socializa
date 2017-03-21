@@ -7,6 +7,9 @@ i18n
   .use(XHR)
   .use(LanguageDetector)
   .init({
+    detection: {
+        order: ['navigator'],
+    },
     fallbackLng: 'en',
     nsSeparator: '::',
     keySeparator: ':::',
@@ -19,7 +22,7 @@ i18n
     ns: ['common'],
     defaultNS: 'common',
 
-    debug: true,
+    debug: false,
 
     interpolation: {
       escapeValue: false // not needed for react!!
