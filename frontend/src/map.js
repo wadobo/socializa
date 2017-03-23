@@ -186,8 +186,21 @@ class Map extends React.Component {
         this.setUpdateTimer(500);
       }
 
-      var select = new ol.interaction.Select();
       var self = this;
+      var select = new ol.interaction.Select({
+        filter: function (f, l) {
+            if (f == self.visionFeature) {
+                return false;
+            }
+            if (f == self.meetingFeature) {
+                return false;
+            }
+            if (f == self.positionFeature) {
+                return false;
+            }
+            return true;
+        }
+      });
       map.addInteraction(select);
       select.on('select', function(e) {
           var f = e.target.getFeatures();
@@ -195,11 +208,6 @@ class Map extends React.Component {
           if (f.getLength()) {
               var i = 0;
               var feature = f.getArray()[i];
-              while (feature.customData.name == 'me') {
-                i += 1;
-                feature = f.getArray()[i];
-              }
-
               hashHistory.push('/connect/' + feature.customData.id);
           }
       });
