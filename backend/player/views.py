@@ -66,6 +66,8 @@ class PlayersNear(APIView):
             _vision = event.vision_distance
             q &= Q(pk__in=event.players.values_list('pk', flat=True))
             q &= Q(playing_event__event=event.pk)
+            if not event.game.visible_players:
+                q &= ~Q(ptype='player')
         else:
             _vision = settings.DEFAULT_VISION_DISTANCE
             q &= ~Q(ptype='ai')  # ~ not equal not equal
