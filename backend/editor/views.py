@@ -38,6 +38,7 @@ class EditGame(TemplateView):
             "name": data.get("game_name", ""),
             "desc": data.get("game_desc", ""),
             "solution": data.get("game_solution", ""),
+            "visible_players": bool(data.get("game_visible_players", False)),
             "challenges": []
         }
 
@@ -98,6 +99,7 @@ class EditGame(TemplateView):
         game.name = data['name']
         game.desc = data['desc']
         game.solution = data['solution']
+        game.visible_players = data['visible_players']
         game.save()
 
         return game
