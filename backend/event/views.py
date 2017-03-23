@@ -6,6 +6,8 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status as rf_status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.permissions import BasePermission
+from rest_framework.permissions import IsAuthenticated
 
 from clue.views import attach_clue
 from clue.views import detach_clue
@@ -14,6 +16,41 @@ from .models import Membership
 from .models import PlayingEvent
 from .serializers import EventSerializer
 from .serializers import AdminChallengeSerializer
+
+
+class HasEventPermission(BasePermission):
+    def __init__(self):
+        self.message = "Event doesn't exists"
+
+    def has_permission(self, request, view):
+        evid = view.kwargs.get('event_id', '')
+        if not Event.objects.filter(pk=evid).exists():
+            return False
+        return True
+
+
+class IsEventMemberPermission(HasEventPermission):
+    def has_permission(self, request, view):
+        super().has_permission(request, view)
+        evid = view.kwargs.get('event_id', '')
+        p = request.user.player
+        m = Membership.objects.filter(event=evid, player=p).exists()
+        if not m:
+            self.message = "Unauthorized event"
+            return False
+        return True
+
+
+class IsEventAdminPermission(HasEventPermission):
+    def has_permission(self, request, view):
+        super().has_permission(request, view)
+        evid = view.kwargs.get('event_id', '')
+        p = request.user.player
+        event = Event.objects.get(pk=evid)
+        if not event.owners.filter(pk=request.user.pk).exists():
+            self.message = "Non admin user"
+            return False
+        return True
 
 
 def create_member(player, event):
@@ -37,15 +74,12 @@ def create_member(player, event):
 
 class JoinEvent(APIView):
 
+    permission_classes = [IsAuthenticated, HasEventPermission]
+
     @classmethod
     def post(cls, request, event_id):
-        if request.user.is_anonymous():
-            return Response("Anonymous user", status=rf_status.HTTP_401_UNAUTHORIZED)
         player = request.user.player
-        try:
-            event = Event.objects.get(pk=event_id)
-        except ObjectDoesNotExist:
-            return Response("Event not exist", status=rf_status.HTTP_400_BAD_REQUEST)
+        event = Event.objects.get(pk=event_id)
         member, msg, status = create_member(player, event)
         if event.game.auto_assign_clue:
             attach_clue(player, event)
@@ -54,29 +88,26 @@ class JoinEvent(APIView):
 
 class UnjoinEvent(APIView):
 
+    permission_classes = [IsAuthenticated, HasEventPermission]
+
     @classmethod
     def delete(cls, request, event_id):
-        if request.user.is_anonymous():
-            return Response("Anonymous user", status=rf_status.HTTP_401_UNAUTHORIZED)
         player = request.user.player
-        try:
-            event = Event.objects.get(pk=event_id)
-        except ObjectDoesNotExist:
-            return Response("Event not exist", status=rf_status.HTTP_400_BAD_REQUEST)
+        event = Event.objects.get(pk=event_id)
         try:
             Membership.objects.get(player=player, event=event).delete()
         except ObjectDoesNotExist:
-            return Response("You not join in this event.", status=rf_status.HTTP_400_BAD_REQUEST)
+            return Response("You aren't joined to this event.", status=rf_status.HTTP_400_BAD_REQUEST)
         detach_clue(player, event)
         return Response("Unjoined correctly.", status=rf_status.HTTP_200_OK)
 
 
 class MyEvents(APIView):
 
+    permission_classes = [IsAuthenticated]
+
     @classmethod
     def get(cls, request):
-        if request.user.is_anonymous():
-            return Response("Anonymous user", status=rf_status.HTTP_401_UNAUTHORIZED)
         events = request.user.player.event_set.all()
         serializer = EventSerializer(events, many=True)
         data = serializer.data
@@ -85,11 +116,11 @@ class MyEvents(APIView):
 
 class AllEvents(APIView):
 
-    def get(self, request):
-        """ Get all new event from now to infinite. """
-        if request.user.is_anonymous():
-            return Response("Anonymous user", status=rf_status.HTTP_401_UNAUTHORIZED)
+    permission_classes = [IsAuthenticated]
 
+    @classmethod
+    def get(cls, request):
+        """ Get all new event from now to infinite. """
         events = Event.objects.filter(end_date__gt=timezone.now())
 
         query = Q()
@@ -126,34 +157,35 @@ class AllEvents(APIView):
 
 class EventDetail(APIView):
 
+    permission_classes = [IsAuthenticated, HasEventPermission]
+
     @classmethod
     def get(cls, request, event_id):
         """ Get the event by id. """
-        if request.user.is_anonymous():
-            return Response("Anonymous user", status=rf_status.HTTP_401_UNAUTHORIZED)
-        try:
-            event = Event.objects.get(pk=event_id)
-        except:
-            return Response("Event not exist", status=rf_status.HTTP_400_BAD_REQUEST)
+        event = Event.objects.get(pk=event_id)
         serializer = EventSerializer(event, many=False, context={'player': request.user.player})
         data = serializer.data
         return Response(data)
 
-    def post(self, request, event_id=None):
+
+class CurrentEvent(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    @classmethod
+    def post(cls, request, event_id=None):
         """ Set current event for player. """
-        if request.user.is_anonymous():
-            return Response("Anonymous user", status=rf_status.HTTP_401_UNAUTHORIZED)
         player = request.user.player
         event = get_object_or_404(Event, pk=event_id) if event_id else None
-        if hasattr(player, "playing_event"):
-            player.playing_event.player = player
-            player.playing_event.event = event
-            player.playing_event.save()
-            status = rf_status.HTTP_200_OK
-        else:
-            playing_event = PlayingEvent(player=player, event=event)
-            playing_event.save()
+
+        pe, created = PlayingEvent.objects.get_or_create(player=player)
+        pe.event = event
+        pe.save()
+
+        if created:
             status = rf_status.HTTP_201_CREATED
+        else:
+            status = rf_status.HTTP_200_OK
 
         serializer = EventSerializer(event, many=False, context={'player': request.user.player})
         data = serializer.data
@@ -162,68 +194,49 @@ class EventDetail(APIView):
 
 class SolveEvent(APIView):
 
-    def post(self, request, event_id):
-        """ Try solve event_id with solution. """
-        if request.user.is_anonymous():
-            return Response("Anonymous user", status=rf_status.HTTP_401_UNAUTHORIZED)
-        try:
-            event = Event.objects.get(pk=event_id)
-        except:
-            return Response("Event not exist", status=rf_status.HTTP_400_BAD_REQUEST)
+    permission_classes = [IsAuthenticated, IsEventMemberPermission]
 
+    @classmethod
+    def post(cls, request, event_id):
+        """ Try solve event_id with solution. """
+        event = Event.objects.get(pk=event_id)
         player = request.user.player
-        membership = Membership.objects.filter(event=event, player=player).first()
-        if not membership:
-            return Response("Unauthorized event", status=rf_status.HTTP_401_UNAUTHORIZED)
 
         solution = request.data.get('solution', None)
         correct_solution = event.game.solution
+
         if not solution or not correct_solution:
             return Response("Bad request", status=rf_status.HTTP_400_BAD_REQUEST)
 
-        status = rf_status.HTTP_200_OK
-        if correct_solution != solution:
-            response = {'status': 'incorrect'}
-        else:
+        response = {'status': 'incorrect'}
+        if correct_solution == solution:
             response = {'status': 'correct'}
+            membership = Membership.objects.filter(event=event, player=player).first()
             membership.status = 'solved'
             membership.save()
-        return Response(response, status)
+        return Response(response, rf_status.HTTP_200_OK)
 
 
 class AdminEventChallenges(APIView):
 
+    permission_classes = [IsAuthenticated, IsEventAdminPermission]
+
     @classmethod
     def get(cls, request, event_id):
         """ Get the event challenges by id. """
-        if request.user.is_anonymous():
-            return Response("Anonymous user", status=rf_status.HTTP_401_UNAUTHORIZED)
-        try:
-            event = Event.objects.get(pk=event_id)
-        except:
-            return Response("Event not exist", status=rf_status.HTTP_400_BAD_REQUEST)
-        if not event.owners.filter(pk=request.user.pk).exists():
-            return Response("Non admin user", status=rf_status.HTTP_401_UNAUTHORIZED)
-
+        event = Event.objects.get(pk=event_id)
         serializer = AdminChallengeSerializer(event.game.challenges.all(), many=True)
-
         data = serializer.data
         return Response(data)
 
 
 class AdminEventUpdate(APIView):
 
+    permission_classes = [IsAuthenticated, IsEventAdminPermission]
+
     @classmethod
     def post(cls, request, event_id):
-        if request.user.is_anonymous():
-            return Response("Anonymous user", status=rf_status.HTTP_401_UNAUTHORIZED)
-        try:
-            event = Event.objects.get(pk=event_id)
-        except:
-            return Response("Event not exist", status=rf_status.HTTP_400_BAD_REQUEST)
-        if not event.owners.filter(pk=request.user.pk).exists():
-            return Response("Non admin user", status=rf_status.HTTP_401_UNAUTHORIZED)
-
+        event = Event.objects.get(pk=event_id)
         vd = request.data.get('vision_distance', None)
         md = request.data.get('meeting_distance', None)
 
@@ -241,6 +254,7 @@ unjoin_event = UnjoinEvent.as_view()
 my_events = MyEvents.as_view()
 all_events = AllEvents.as_view()
 event_detail = EventDetail.as_view()
+current_event = CurrentEvent.as_view()
 solve_event = SolveEvent.as_view()
 admin_event_challenges = AdminEventChallenges.as_view()
 admin_event_update = AdminEventUpdate.as_view()
