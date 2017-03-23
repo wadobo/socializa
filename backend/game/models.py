@@ -13,6 +13,8 @@ class Challenge(models.Model):
     ctype = models.CharField(max_length=8, choices=CHALLENGES_TYPE, default='p')
     extra = models.TextField(max_length=1024, blank=True, null=True)
 
+    depends = models.ManyToManyField('Challenge', related_name="requiedby")
+
     def mainclues(self):
         return self.clues.filter(main=True)
 
