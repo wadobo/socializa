@@ -27,14 +27,6 @@
 },
 {
   "model": "event.playingevent",
-  "pk": 2,
-  "fields": {
-    "player": 2,
-    "event": null
-  }
-},
-{
-  "model": "event.playingevent",
   "pk": 3,
   "fields": {
     "player": 3,
