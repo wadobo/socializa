@@ -64,7 +64,25 @@ class EditGame(TemplateView):
             ctx['n'] = 0
         return ctx
 
+    def set_depends(self, depends, game):
+        '''
+        Assign dependencies between challenges.
+        depends is a list of pairs, challenge, other challenges names.
+
+        Dependencies of challenges are in the same game
+        '''
+
+        for ch, deps in depends:
+            ch.depends.clear()
+            for d in deps.split(","):
+                d = d.strip()
+                if not d:
+                    continue
+                c = game.challenges.get(name__iexact=d)
+                ch.depends.add(c)
+
     def update_challenges(self, game, challenges):
+        depends = []
         num_challenge = 0
         for cha in challenges:
             cha_title = cha.get('challenge_name')
@@ -72,19 +90,31 @@ class EditGame(TemplateView):
             cha_solution = cha.get('challenge_solution')
             cha_type = cha.get('challenge_type')
             cha_extra = cha.get('challenge_extra')
+            cha_depends = cha.get('challenge_depends_on')
 
+            created = False
             if game.challenges.count() > num_challenge:
-                challenge = game.challenges.order_by('pk')[num_challenge]
-                challenge.name = cha_title
-                challenge.desc = cha_desc
-                challenge.solution = cha_solution
-                challenge.ctype = cha_type
-                challenge.extra = cha_extra
-                challenge.save()
+                ch = game.challenges.order_by('pk')[num_challenge]
             else:
-                game.challenges.create(name=cha_title, desc=cha_desc, solution=cha_solution)
+                ch = Challenge()
+                created = True
+
+            ch.name = cha_title
+            ch.desc = cha_desc
+            ch.solution = cha_solution
+            ch.ctype = cha_type
+            ch.extra = cha_extra
+            ch.save()
+
+            depends.append((ch, cha_depends))
+
+            if created:
+                game.challenges.add(ch)
                 game.save()
+
             num_challenge += 1
+
+        self.set_depends(depends, game)
 
     def remove_challenge(self, game, chid):
         ch = game.challenges.get(pk=chid)
