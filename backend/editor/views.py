@@ -73,6 +73,9 @@ class EditGame(TemplateView):
         '''
 
         for ch, deps in depends:
+            if not deps:
+                continue
+
             ch.depends.clear()
             for d in deps.split(","):
                 d = d.strip()

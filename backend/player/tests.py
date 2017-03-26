@@ -261,3 +261,35 @@ class MeetingTestCase(APITestCase):
         # step 4
         response = self.c.get('/api/player/meeting/{0}/qrclue/'.format(player_1.pk), {})
         self.assertEqual(response.status_code, 200)
+
+    def test_meeting_with_challenge_dependencies(self):
+        """ player1 near player6 (AI) """
+        player1 = 1
+        player2 = 6
+        event = 1
+
+        # without the depends clues
+        self.authenticate(self.get_username(player1), self.pwd)
+        response = self.c.post('/api/player/meeting/{0}/{1}/'.format(player2, event), {})
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.json(), {'clue': {}, 'status': 'connected'})
+
+        # with one of the depends, but without the other
+        player1 = 5
+        self.authenticate(self.get_username(player1), self.pwd)
+        response = self.c.post('/api/player/meeting/{0}/{1}/'.format(player2, event), {})
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.json(), {'clue': {}, 'status': 'connected'})
+
+        # getting the second depends
+        player2 = 2
+        response = self.c.post('/api/player/meeting/{0}/{1}/'.format(player2, event), {})
+        self.assertEqual(response.status_code, 201)
+
+        # with all dependencies
+        player2 = 6
+        self.authenticate(self.get_username(player1), self.pwd)
+        response = self.c.post('/api/player/meeting/{0}/{1}/'.format(player2, event), {})
+        self.assertEqual(response.status_code, 201)
+        res = {'status': 'connected', 'clue': self.get_challenge_from_player(player2)}
+        self.assertEqual(response.json(), res)
