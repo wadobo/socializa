@@ -1,6 +1,6 @@
 -r requirements.txt
 django-extensions==1.7.7
-django-silk==0.7.3
+django-silk==1.0.0
 locustio==0.8a2
 pydot==1.2.3
 pyparsing==2.2.0
