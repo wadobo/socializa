@@ -108,6 +108,24 @@
   }
 },
 {
+  "model": "auth.user",
+  "pk": 7,
+  "fields": {
+    "password": "pbkdf2_sha256$30000$mQYHRclkzme4$7VK0hKz2iUr1dC/2S9cN4vYl0Gjj4COp9GkDMy+qhSk=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "test6",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2016-09-20T14:36:23.947Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
   "model": "player.player",
   "pk": 1,
   "fields": {
@@ -150,6 +168,15 @@
     "user": 6,
     "pos": "SRID=4326;POINT (-6.9258512609004494 37.254250379049694)",
     "ptype": "player"
+  }
+},
+{
+  "model": "player.player",
+  "pk": 6,
+  "fields": {
+    "user": 7,
+    "pos": "SRID=4326;POINT (-6.928866063832878 37.257269099074534)",
+    "ptype": "ai"
   }
 },
 {

@@ -91,11 +91,6 @@ class MeetingCreate(APIView):
         clue.save()
         return clue
 
-    @classmethod
-    def get_challenge(cls, player, event):
-        clue = Clue.objects.filter(event=event, player=player, main=True).first()
-        return clue.challenge if clue else None
-
     def validate_players(self, request, player_id):
         response = {}
         status = None
@@ -147,17 +142,28 @@ class MeetingCreate(APIView):
         return {}, None
 
     def give_clue(self, player, event):
-        challenge = self.get_challenge(player, event)
-        if not challenge:
-            return None
+        '''
+        Gives all clues to the player and return the last one
+        '''
+        clues = Clue.objects.filter(event=event, player=player, main=True)
 
-        # challenge dependencies
-        pclues = self.player1.clues
-        for dep in challenge.depends.all():
-            if not pclues.filter(challenge=dep, event=self.event).exists():
-                return None
+        rclue = None
 
-        return self.create_clue(challenge)
+        # multiple challenges
+        for clue in clues:
+            # challenge dependencies
+            pclues = self.player1.clues
+            should_give_the_clue = True
+            for dep in clue.challenge.depends.all():
+                if not pclues.filter(challenge=dep, event=self.event).exists():
+                    should_give_the_clue = False
+                    break
+            # if doesn't have the dependencies clues, we shouldn't give the
+            # clue
+            if should_give_the_clue:
+                rclue = self.create_clue(clue.challenge)
+
+        return rclue
 
     def check_secret(self, event_id, secret):
         query = Q(event_id__isnull=True) if event_id is None else Q(event_id=event_id)

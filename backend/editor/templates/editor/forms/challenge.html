@@ -26,4 +26,11 @@
 </div>
 
 <div class="row">
+    <div class="col-sm-12">
+        <div class="form-group">
+            <input type="text" class="form-control name" name="challenge_depends_on_{{ n }}"
+                   placeholder="{% trans 'Challenge depends' %}" value="{{ challenge.depends_on }}"/>
+            <p class="help-block">{% trans "Names separated by ','. To get this challenge the player should have all the challenges named here before" %}</p>
+        </div>
+    </div>
 </div>

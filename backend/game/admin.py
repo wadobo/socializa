@@ -6,6 +6,7 @@ from .models import Game
 
 class ChallengeAdmin(admin.ModelAdmin):
     list_display = ('name', 'desc')
+    filter_horizontal = ('depends', )
 
 
 class GameAdmin(admin.ModelAdmin):

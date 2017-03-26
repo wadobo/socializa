@@ -18,6 +18,9 @@ class Challenge(models.Model):
     def mainclues(self):
         return self.clues.filter(main=True)
 
+    def depends_on(self):
+        return ", ".join(i.name for i in self.depends.all())
+
     def __str__(self):
         return self.name
 

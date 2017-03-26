@@ -17,7 +17,7 @@ export function connected(resp) {
         hashHistory.push('/clue');
     } else {
         Bucket.clue = null;
-        alert(i18n.t("connect::Connected!"));
+        alert(i18n.t("connect::I've nothing to say"));
         hashHistory.push('/map');
     }
 }
