@@ -263,7 +263,6 @@ class MeetingTestCase(APITestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_meeting_with_challenge_dependencies(self):
-        """ player1 near player6 (AI) """
         player1 = 1
         player2 = 7
         event = 1
