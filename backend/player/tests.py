@@ -265,7 +265,7 @@ class MeetingTestCase(APITestCase):
     def test_meeting_with_challenge_dependencies(self):
         """ player1 near player6 (AI) """
         player1 = 1
-        player2 = 6
+        player2 = 7
         event = 1
 
         # without the depends clues
@@ -287,7 +287,7 @@ class MeetingTestCase(APITestCase):
         self.assertEqual(response.status_code, 201)
 
         # with all dependencies
-        player2 = 6
+        player2 = 7
         self.authenticate(self.get_username(player1), self.pwd)
         response = self.c.post('/api/player/meeting/{0}/{1}/'.format(player2, event), {})
         self.assertEqual(response.status_code, 201)
