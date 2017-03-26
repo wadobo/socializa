@@ -207,6 +207,7 @@ gulp.task('i18next', function() {
     return gulp.src(['src/*.js'])
         .pipe(sort()) // Sort files in stream by path
         .pipe(scanner({
+            removeUnusedKeys: true,
             nsSeparator: '::',
             keySeparator: ':::',
             lngs: ['es'], // supported languages
