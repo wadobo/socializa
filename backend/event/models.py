@@ -45,7 +45,7 @@ class Event(models.Model):
         return max_distance * _transform2meter
 
     def get_meeting_distance(self):
-        return self.meeting_distance if self.meeting_distance else settings.DEFAULT_MEETING_DISTANCE
+        return self.meeting_distance or settings.DEFAULT_MEETING_DISTANCE
 
     def __str__(self):
         return self.name

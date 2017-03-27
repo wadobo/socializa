@@ -22,18 +22,16 @@ class EventSerializer(serializers.Serializer):
 
     def is_player_joined(self, event):
         player = self.context.get("player")
-        if player in event.players.all():
-            return True
-        else:
-            return False
+        return player in event.players.all()
+
+    def is_event_solved(self, event):
+        player = self.context.get("player")
+        return event.membership_set.filter(player=player, status='solved').exists()
 
     def solution(self, event):
-        player = self.context.get("player")
-        try:
-            membership = event.membership_set.get(player=player)
-            if membership.status == 'solved':
-                return event.game.solution
-        except:
+        if self.is_player_joined(event) and self.is_event_solved(event):
+            return event.game.solution
+        else:
             return None
 
         return None

@@ -14,6 +14,7 @@ PLAYER_TYPE = (
     ('player', 'player'),
 )
 
+
 class Player(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="player")
     pos = models.PointField(null=True, blank=True)

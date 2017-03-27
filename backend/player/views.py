@@ -86,10 +86,14 @@ near = PlayersNear.as_view()
 class MeetingCreate(APIView):
 
     def create_clue(self, challenge):
-        # TODO: avoid clue duplication
         clue = Clue(player=self.player1, event=self.event, challenge=challenge)
         clue.save()
         return clue
+
+    @classmethod
+    def get_challenge(cls, player, event):
+        clue = Clue.objects.filter(event=event, player=player, main=True).first()
+        return clue.challenge if clue else None
 
     def validate_players(self, request, player_id):
         response = {}
@@ -106,7 +110,7 @@ class MeetingCreate(APIView):
         return response, status
 
     def validate_event(self, event_id):
-        response = {}
+        response = ""
         status = None
         self.event = self.player1.event_set.filter(pk=event_id).first() if event_id else None
         if event_id and self.event is None:
@@ -118,9 +122,12 @@ class MeetingCreate(APIView):
         return response, status
 
     def validate_distance(self):
-        response = {}
+        response = ""
         status = None
-        max_distance = self.event.get_meeting_distance() if self.event else settings.DEFAULT_MEETING_DISTANCE
+        if self.event:
+            max_distance = self.event.get_meeting_distance()
+        else:
+            max_distance = settings.DEFAULT_MEETING_DISTANCE
         if not distance(self.player1.pos, self.player2.pos, unit='m') <= max_distance:
             response = "User is far for meeting"
             status = rf_status.HTTP_200_OK
@@ -169,7 +176,7 @@ class MeetingCreate(APIView):
         query = Q(event_id__isnull=True) if event_id is None else Q(event_id=event_id)
         query &= Q(player1=self.player1, player2=self.player2, status='step2', secret=secret)
 
-        response = "Invalid secret"
+        response = {"error": "Invalid secret"}
         status = rf_status.HTTP_400_BAD_REQUEST
         clue = None
 
@@ -198,34 +205,34 @@ class MeetingCreate(APIView):
         meeting1 = Meeting.objects.filter(query1).first()
         meeting2 = Meeting.objects.filter(query2).first()
 
-        m = None
+        new_meeting = None
 
         # STEP1: exception player2 is ai
         if self.player2.ptype == 'ai':
-            m = create_meeting(self.player1, self.player2, event_id)
+            new_meeting = create_meeting(self.player1, self.player2, event_id)
             status = rf_status.HTTP_201_CREATED
             clue = self.give_clue(self.player2, self.event)
             response['clue'] = ChallengeSerializer(clue.challenge).data if clue else {}
 
         # STEP1: player1 not connected with player2 or vice versa
         elif not meeting1 and not meeting2:
-            m = create_meeting(self.player1, self.player2, event_id)
+            new_meeting = create_meeting(self.player1, self.player2, event_id)
             status = rf_status.HTTP_201_CREATED
 
         elif meeting1:
-            m = meeting1
-            m.status = 'step1'
-            m.save()
+            new_meeting = meeting1
+            new_meeting.status = 'step1'
+            new_meeting.save()
 
         # STEP2: player1 has created meeting with status step1
         elif meeting2:
-            m = meeting2
-            m.status = 'step2'
-            m.generate_secret()
-            m.save()
-            response['secret'] = m.secret
+            new_meeting = meeting2
+            new_meeting.status = 'step2'
+            new_meeting.generate_secret()
+            new_meeting.save()
+            response['secret'] = new_meeting.secret
 
-        response['status'] = m.status if m else ""
+        response['status'] = new_meeting.status if new_meeting else ""
 
         return Response(response, status)
 
@@ -233,14 +240,10 @@ class MeetingCreate(APIView):
         """ For create a meeting there are 4 steps:
             1: player1 try to connect with player2 (create meeting with status step1)
                - Exception (if player2 is ai, return clue)
-            2: player2 try to connect with player1 (change meeting to status step2 and generate secret)
+            2: player2 try to connect with player1 (meeting to status step2 and generate secret)
             3: player1 check the secret of meeting (if correct, status connected and return clue)
             4: player2 make polling for check status (if correct, return clue)
         """
-        self.player1 = None
-        self.player2 = None
-        self.event = None
-
         # Validate players, event and distance
         response, status = self.all_validates(request, player_id, event_id)
         if response:
@@ -248,17 +251,13 @@ class MeetingCreate(APIView):
 
         if not secret:
             return self.check_steps(event_id)
-        else: # STEP 3
+        else:  # STEP 3
             return self.check_secret(event_id, secret)
 
         return Response(response, status=status)
 
     def get(self, request, player_id, event_id=None):
         # STEP 4
-        self.player1 = None
-        self.player2 = None
-        self.event = None
-
         # Validate players, event and distance
         response, status = self.all_validates(request, player_id, event_id)
         if response:
@@ -279,8 +278,8 @@ class MeetingCreate(APIView):
 
         elif meeting.status == 'step2':
             response['status'] = 'waiting'
-
         return Response(response, status=status)
+
 
 meeting_create = MeetingCreate.as_view()
 
@@ -318,34 +317,34 @@ class Profile(APIView):
             return Response("Anonymous user", status=rf_status.HTTP_401_UNAUTHORIZED)
 
         if not player_id:
-            p = request.user.player
+            player = request.user.player
         else:
-            p = Player.objects.get(pk=player_id)
-            if not p.visible(request.user.player):
+            player = Player.objects.get(pk=player_id)
+            if not player.visible(request.user.player):
                 return Response({})
 
-        serializer = PlayerSerializer(p, many=False)
+        serializer = PlayerSerializer(player, many=False)
         return Response(serializer.data)
 
     def post(self, request):
         if request.user.is_anonymous():
             return Response("Anonymous user", status=rf_status.HTTP_401_UNAUTHORIZED)
         data = request.data
-        p = request.user.player
+        player = request.user.player
 
         if 'about' in data:
-            p.about = data['about']
+            player.about = data['about']
         if 'interests' in data:
-            PlayerInterests.objects.filter(user=p).delete()
+            PlayerInterests.objects.filter(user=player).delete()
             newints = []
             if hasattr(data, 'getlist'):
                 newints = data.getlist('interests')
             else:
                 newints = data.get('interests')
             for i in newints:
-                p.interests.create(text=i)
+                player.interests.create(text=i)
 
-        p.save()
+        player.save()
 
         return Response({'status': 'ok'})
 

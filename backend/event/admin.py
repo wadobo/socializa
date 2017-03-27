@@ -11,7 +11,7 @@ class EventAdmin(admin.OSMGeoAdmin):
     # Center in Spain
     default_zoom = 6
     pnt = Point(-4, 40, srid=4326)
-    pnt.transform(3857) # tranform to google SRID
+    pnt.transform(3857)  # tranform to google SRID
     default_lon, default_lat = pnt.coords
     # Map size
     map_width = 800

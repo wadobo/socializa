@@ -24,15 +24,15 @@ class ClueTestCase(APITestCase):
 
     def setUp(self):
         self.pwd = 'qweqweqwe'  # USER_1
-        self.c = JClient()
+        self.client = JClient()
         self.event = Event.objects.get(pk=self.EVENT_PK)
 
     def tearDown(self):
-        self.c = None
+        self.client = None
         self.event.players.clear()
 
     def authenticate(self, username, pwd='qweqweqwe'):
-        response = self.c.authenticate(username, pwd)
+        response = self.client.authenticate(username, pwd)
         self.assertEqual(response.status_code, 200)
 
     @classmethod
@@ -42,7 +42,7 @@ class ClueTestCase(APITestCase):
     def get_my_clues(self):
         player = 1
         self.authenticate(self.get_username_by_player(player))
-        response = self.c.get('/api/clue/my-clues/{0}/'.format(self.GAME_PK), {})
+        response = self.client.get('/api/clue/my-clues/{0}/'.format(self.GAME_PK), {})
         self.assertEqual(response.status_code, 200)
         return response
 
@@ -58,7 +58,7 @@ class ClueTestCase(APITestCase):
         player = 2
         start_clues = Clue.objects.count()
         self.authenticate(self.get_username_by_player(player))
-        response = self.c.post('/api/event/join/{0}/'.format(self.EVENT_PK), {})
+        response = self.client.post('/api/event/join/{0}/'.format(self.EVENT_PK), {})
         self.assertEqual(response.status_code, 201)
         end_clues = Clue.objects.count()
         self.assertEqual(start_clues + 1, end_clues)
@@ -70,7 +70,7 @@ class ClueTestCase(APITestCase):
         game.save()
         start_clues = Clue.objects.count()
         self.authenticate(self.get_username_by_player(player))
-        response = self.c.post('/api/event/join/{0}/'.format(self.EVENT_PK), {})
+        response = self.client.post('/api/event/join/{0}/'.format(self.EVENT_PK), {})
         self.assertEqual(response.status_code, 201)
         end_clues = Clue.objects.count()
         self.assertEqual(start_clues, end_clues)
@@ -82,11 +82,11 @@ class ClueTestCase(APITestCase):
         player2 = 2
 
         self.authenticate(self.get_username_by_player(player1))
-        response = self.c.post('/api/event/join/{0}/'.format(self.EVENT3_PK), {})
+        response = self.client.post('/api/event/join/{0}/'.format(self.EVENT3_PK), {})
         self.assertEqual(response.status_code, 201)
 
         self.authenticate(self.get_username_by_player(player2))
-        response = self.c.post('/api/event/join/{0}/'.format(self.EVENT3_PK), {})
+        response = self.client.post('/api/event/join/{0}/'.format(self.EVENT3_PK), {})
         self.assertEqual(response.status_code, 201)
 
         event = Event.objects.get(pk=self.EVENT3_PK)
@@ -98,7 +98,7 @@ class ClueTestCase(APITestCase):
         player = 1
         start_clues = Clue.objects.count()
         self.authenticate(self.get_username_by_player(player))
-        response = self.c.delete('/api/event/unjoin/{0}/'.format(self.EVENT_PK), {})
+        response = self.client.delete('/api/event/unjoin/{0}/'.format(self.EVENT_PK), {})
         self.assertEqual(response.status_code, 200)
         end_clues = Clue.objects.count()
         self.assertEqual(start_clues - 1, end_clues)
@@ -109,7 +109,7 @@ class ClueTestCase(APITestCase):
         clue_id = 5
         data = {'solution': 'solution'}
         self.authenticate(self.get_username_by_player(player))
-        response = self.c.post('/api/clue/solve/{0}/'.format(clue_id), data)
+        response = self.client.post('/api/clue/solve/{0}/'.format(clue_id), data)
         self.assertEqual(response.status_code, 401)
 
     def test_solve_clue_unauthorized2(self):
@@ -118,7 +118,7 @@ class ClueTestCase(APITestCase):
         clue_id = 3
         data = {'solution': 'solution'}
         self.authenticate(self.get_username_by_player(player))
-        response = self.c.post('/api/clue/solve/{0}/'.format(clue_id), data)
+        response = self.client.post('/api/clue/solve/{0}/'.format(clue_id), data)
         self.assertEqual(response.status_code, 401)
 
     def test_solve_clue_invalid(self):
@@ -127,7 +127,7 @@ class ClueTestCase(APITestCase):
         clue_id = 1
         data = {'solution': 'solution'}
         self.authenticate(self.get_username_by_player(player))
-        response = self.c.post('/api/clue/solve/{0}/'.format(clue_id), data)
+        response = self.client.post('/api/clue/solve/{0}/'.format(clue_id), data)
         self.assertEqual(response.status_code, 400)
 
     def test_solve_clue_no_data(self):
@@ -136,7 +136,7 @@ class ClueTestCase(APITestCase):
         clue_id = 3
         data = {}
         self.authenticate(self.get_username_by_player(player))
-        response = self.c.post('/api/clue/solve/{0}/'.format(clue_id), data)
+        response = self.client.post('/api/clue/solve/{0}/'.format(clue_id), data)
         self.assertEqual(response.status_code, 400)
 
     def test_solve_clue_empty(self):
@@ -145,7 +145,7 @@ class ClueTestCase(APITestCase):
         clue_id = 3
         data = {'solution': ''}
         self.authenticate(self.get_username_by_player(player))
-        response = self.c.post('/api/clue/solve/{0}/'.format(clue_id), data)
+        response = self.client.post('/api/clue/solve/{0}/'.format(clue_id), data)
         self.assertEqual(response.status_code, 400)
 
     def test_solve_clue_incorrect(self):
@@ -154,7 +154,7 @@ class ClueTestCase(APITestCase):
         clue_id = 3
         data = {'solution': 'no solution'}
         self.authenticate(self.get_username_by_player(player))
-        response = self.c.post('/api/clue/solve/{0}/'.format(clue_id), data)
+        response = self.client.post('/api/clue/solve/{0}/'.format(clue_id), data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), {'status': "incorrect"})
 
@@ -164,7 +164,7 @@ class ClueTestCase(APITestCase):
         clue_id = 3
         data = {'solution': 'solution'}
         self.authenticate(self.get_username_by_player(player))
-        response = self.c.post('/api/clue/solve/{0}/'.format(clue_id), data)
+        response = self.client.post('/api/clue/solve/{0}/'.format(clue_id), data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), {'status': "correct"})
         clue_status = Clue.objects.get(pk=clue_id).status

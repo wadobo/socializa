@@ -33,8 +33,7 @@ def oauth2callback(request):
             msg = 'Bad credentials.'
             raise exceptions.AuthenticationFailed(msg)
 
-        token, created = Token.objects.get_or_create(user=user)
-
+        token, _ = Token.objects.get_or_create(user=user)
 
         # don't redirect if phonegap
         if 'file://' in state:

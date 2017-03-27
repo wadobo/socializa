@@ -33,9 +33,8 @@ class IsEventMemberPermission(HasEventPermission):
     def has_permission(self, request, view):
         super().has_permission(request, view)
         evid = view.kwargs.get('event_id', '')
-        p = request.user.player
-        m = Membership.objects.filter(event=evid, player=p).exists()
-        if not m:
+        player = request.user.player
+        if not Membership.objects.filter(event=evid, player=player).exists():
             self.message = "Unauthorized event"
             return False
         return True
@@ -45,7 +44,6 @@ class IsEventAdminPermission(HasEventPermission):
     def has_permission(self, request, view):
         super().has_permission(request, view)
         evid = view.kwargs.get('event_id', '')
-        p = request.user.player
         event = Event.objects.get(pk=evid)
         if not event.owners.filter(pk=request.user.pk).exists():
             self.message = "Non admin user"
@@ -80,7 +78,7 @@ class JoinEvent(APIView):
     def post(cls, request, event_id):
         player = request.user.player
         event = Event.objects.get(pk=event_id)
-        member, msg, status = create_member(player, event)
+        _, msg, status = create_member(player, event)
         if event.game.auto_assign_clue:
             attach_clue(player, event)
         return Response(msg, status=status)
@@ -125,18 +123,17 @@ class AllEvents(APIView):
 
         query = Q()
 
-        f = request.GET.get('filter', 'all')
-        if f == 'mine':
-            p = request.user.player
-            query &= Q(membership__player=p)
-        elif f == 'admin':
-            p = request.user.player
-            query &= Q(owners__player=p)
+        player = request.user.player
+        filtrate = request.GET.get('filter', 'all')
+        if filtrate == 'mine':
+            query &= Q(membership__player=player)
+        elif filtrate == 'admin':
+            query &= Q(owners__player=player)
 
-        q = request.GET.get('q', '')
-        if q:
-            query &= (Q(name__icontains=q) | Q(place__icontains=q) |
-                      Q(game__name__icontains=q) | Q(game__desc__icontains=q))
+        search = request.GET.get('q', '')
+        if search:
+            query &= (Q(name__icontains=search) | Q(place__icontains=search) |
+                      Q(game__name__icontains=search) | Q(game__desc__icontains=search))
 
         events = events.filter(query)
 
@@ -150,7 +147,7 @@ class AllEvents(APIView):
         offset = pagination * page
         events = events[offset:offset + pagination]
 
-        serializer = EventSerializer(events, many=True, context={'player': request.user.player})
+        serializer = EventSerializer(events, many=True, context={'player': player})
         data = serializer.data
         return Response(data)
 
@@ -237,13 +234,13 @@ class AdminEventUpdate(APIView):
     @classmethod
     def post(cls, request, event_id):
         event = Event.objects.get(pk=event_id)
-        vd = request.data.get('vision_distance', None)
-        md = request.data.get('meeting_distance', None)
+        vision_distance = request.data.get('vision_distance', None)
+        meeting_distance = request.data.get('meeting_distance', None)
 
-        if vd:
-            event.vision_distance = vd
-        if md:
-            event.meeting_distance = md
+        if vision_distance:
+            event.vision_distance = vision_distance
+        if meeting_distance:
+            event.meeting_distance = meeting_distance
         event.save()
 
         return Response("Updated correctly.", status=rf_status.HTTP_200_OK)

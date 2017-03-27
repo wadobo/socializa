@@ -1,10 +1,12 @@
 from django.contrib.auth.models import User
 from django.db import models
 
+
 CHALLENGES_TYPE = (
     ('p', 'playable player'),
     ('np', 'not playable player'),
 )
+
 
 class Challenge(models.Model):
     name = models.CharField(max_length=200, blank=True, null=True)
