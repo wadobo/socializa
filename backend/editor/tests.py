@@ -12,7 +12,7 @@ class GameTestCase(APITestCase):
     fixtures = ['player-test.json', 'event.json', 'editor.json']
 
     def setUp(self):
-        self.c = Client()
+        self.client = Client()
         self.game_data = {
             # Game
             'game_name': 'title game',
@@ -42,22 +42,22 @@ class GameTestCase(APITestCase):
         }
 
     def tearDown(self):
-        self.c = None
+        self.client = None
 
     def test_authentication(self):
-        self.c.login(username='test1', password='qweqweqwe')
-        response = self.c.get('/editor/game/', {}, follow=True)
+        self.client.login(username='test1', password='qweqweqwe')
+        response = self.client.get('/editor/game/', {}, follow=True)
         self.assertEqual(response.request.get('PATH_INFO'), '/admin/login/')
 
-        self.c.login(username='admin', password='qweqweqwe')
-        response = self.c.get('/editor/game/', {})
+        self.client.login(username='admin', password='qweqweqwe')
+        response = self.client.get('/editor/game/', {})
         self.assertNotEqual(response.request.get('PATH_INFO'), '/admin/login/')
 
     def test_game_create(self):
         ini_games = Game.objects.count()
         ini_challenges = Challenge.objects.count()
-        self.c.login(username='admin', password='qweqweqwe')
-        response = self.c.post('/editor/game/', self.game_data, follow=True)
+        self.client.login(username='admin', password='qweqweqwe')
+        response = self.client.post('/editor/game/', self.game_data, follow=True)
         self.assertEqual(response.status_code, 200)
         end_games = Game.objects.count()
         end_challenges = Challenge.objects.count()
@@ -67,8 +67,8 @@ class GameTestCase(APITestCase):
     def test_game_update_unauthorized(self):
         """ test update game without authorization. editor try to edit an admin's game """
         gameid = 4
-        self.c.login(username='editor', password='qweqweqwe')
-        response = self.c.post('/editor/game/{0}/'.format(gameid), self.game_data)
+        self.client.login(username='editor', password='qweqweqwe')
+        response = self.client.post('/editor/game/{0}/'.format(gameid), self.game_data)
         self.assertEqual(response.status_code, 401)
 
     def test_game_update(self):
@@ -76,8 +76,8 @@ class GameTestCase(APITestCase):
         gameid = 4
         ini_games = Game.objects.count()
         ini_challenges = Challenge.objects.count()
-        self.c.login(username='admin', password='qweqweqwe')
-        response = self.c.post('/editor/game/{0}/'.format(gameid), self.game_data, follow=True)
+        self.client.login(username='admin', password='qweqweqwe')
+        response = self.client.post('/editor/game/{0}/'.format(gameid), self.game_data, follow=True)
         self.assertEqual(response.status_code, 200)
         end_games = Game.objects.count()
         end_challenges = Challenge.objects.count()
@@ -91,11 +91,11 @@ class GameTestCase(APITestCase):
         ini_challenges = Challenge.objects.count()
         game = Game.objects.get(pk=gameid)
         game_challenges = game.challenges.count()
-        self.c.login(username='admin', password='qweqweqwe')
+        self.client.login(username='admin', password='qweqweqwe')
 
         data = { 'rmchallenge': game.challenges.all().first().pk }
 
-        response = self.c.post('/editor/game/{0}/'.format(gameid), data)
+        response = self.client.post('/editor/game/{0}/'.format(gameid), data)
         self.assertEqual(response.status_code, 302)
         end_games = Game.objects.count()
         end_challenges = Challenge.objects.count()
@@ -106,22 +106,22 @@ class GameTestCase(APITestCase):
 
     def test_game_delete_not_exists(self):
         gameid = 20
-        self.c.login(username='editor', password='qweqweqwe')
-        response = self.c.delete('/editor/game/{0}/'.format(gameid), {}, follow=True)
+        self.client.login(username='editor', password='qweqweqwe')
+        response = self.client.delete('/editor/game/{0}/'.format(gameid), {}, follow=True)
         self.assertEqual(response.status_code, 404)
 
     def test_game_delete_unauthorized(self):
         gameid = 4
-        self.c.login(username='editor', password='qweqweqwe')
-        response = self.c.delete('/editor/game/{0}/'.format(gameid), {}, follow=True)
+        self.client.login(username='editor', password='qweqweqwe')
+        response = self.client.delete('/editor/game/{0}/'.format(gameid), {}, follow=True)
         self.assertEqual(response.status_code, 401)
         self.assertEqual(Game.objects.filter(pk=gameid).count(), 1)
 
     def test_game_delete(self):
         gameid = 4
         ini_challenges = Challenge.objects.count()
-        self.c.login(username='admin', password='qweqweqwe')
-        response = self.c.delete('/editor/game/{0}/'.format(gameid), {})
+        self.client.login(username='admin', password='qweqweqwe')
+        response = self.client.delete('/editor/game/{0}/'.format(gameid), {})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(Game.objects.filter(pk=gameid).count(), 0)
         end_challenges = Challenge.objects.count()
@@ -133,7 +133,7 @@ class EventTestCase(APITestCase):
     fixtures = ['player-test.json', 'event.json', 'editor.json']
 
     def setUp(self):
-        self.c = Client()
+        self.client = Client()
         self.event_data = {
             # Event
             'ev_name': 'name event',
@@ -149,23 +149,23 @@ class EventTestCase(APITestCase):
         }
 
     def tearDown(self):
-        self.c = None
+        self.client = None
 
     def test_authentication(self):
-        self.c.login(username='test1', password='qweqweqwe')
-        response = self.c.get('/editor/event/', {}, follow=True)
+        self.client.login(username='test1', password='qweqweqwe')
+        response = self.client.get('/editor/event/', {}, follow=True)
         self.assertEqual(response.request.get('PATH_INFO'), '/admin/login/')
 
-        self.c.login(username='admin', password='qweqweqwe')
-        response = self.c.get('/editor/event/', {})
+        self.client.login(username='admin', password='qweqweqwe')
+        response = self.client.get('/editor/event/', {})
         self.assertNotEqual(response.request.get('PATH_INFO'), '/admin/login/')
 
     def test_event_create(self):
         username = 'editor'
         ini_events = Event.objects.count()
         ini_event_owners = User.objects.get(username=username).events.count()
-        self.c.login(username=username, password='qweqweqwe')
-        response = self.c.post('/editor/event/', self.event_data)
+        self.client.login(username=username, password='qweqweqwe')
+        response = self.client.post('/editor/event/', self.event_data)
         self.assertEqual(response.status_code, 302)
 
         end_events = Event.objects.count()
@@ -176,29 +176,29 @@ class EventTestCase(APITestCase):
     def test_event_modify_without_perms(self):
         event_pk = 5
         ini_event = Event.objects.get(pk=event_pk)
-        self.c.login(username='admin', password='qweqweqwe')
-        response = self.c.post('/editor/event/{0}/'.format(event_pk), self.event_data, follow=True)
+        self.client.login(username='admin', password='qweqweqwe')
+        response = self.client.post('/editor/event/{0}/'.format(event_pk), self.event_data, follow=True)
         self.assertEqual(response.status_code, 401)
 
     def test_event_modify(self):
         event_pk = 5
         ini_event = Event.objects.get(pk=event_pk)
-        self.c.login(username='editor', password='qweqweqwe')
-        response = self.c.post('/editor/event/{0}/'.format(event_pk), self.event_data, follow=True)
+        self.client.login(username='editor', password='qweqweqwe')
+        response = self.client.post('/editor/event/{0}/'.format(event_pk), self.event_data, follow=True)
         self.assertEqual(response.status_code, 200)
         end_event = Event.objects.get(pk=event_pk)
         self.assertNotEqual(ini_event.name, end_event.name)
 
     def test_event_delete_not_exists(self):
         event_pk = 20
-        self.c.login(username='editor', password='qweqweqwe')
-        response = self.c.delete('/editor/event/{0}/'.format(event_pk), {}, follow=True)
+        self.client.login(username='editor', password='qweqweqwe')
+        response = self.client.delete('/editor/event/{0}/'.format(event_pk), {}, follow=True)
         self.assertEqual(response.status_code, 404)
 
     def test_event_delete_unauthorized(self):
         event_pk = 5
-        self.c.login(username='admin', password='qweqweqwe')
-        response = self.c.delete('/editor/event/{0}/'.format(event_pk), {}, follow=True)
+        self.client.login(username='admin', password='qweqweqwe')
+        response = self.client.delete('/editor/event/{0}/'.format(event_pk), {}, follow=True)
         self.assertEqual(response.status_code, 401)
         self.assertEqual(Event.objects.filter(pk=event_pk).count(), 1)
 
@@ -206,8 +206,8 @@ class EventTestCase(APITestCase):
         event_pk = 5
         username = 'editor'
         ini_event_owners = User.objects.get(username=username).events.count()
-        self.c.login(username=username, password='qweqweqwe')
-        response = self.c.delete('/editor/event/{0}/'.format(event_pk), {})
+        self.client.login(username=username, password='qweqweqwe')
+        response = self.client.delete('/editor/event/{0}/'.format(event_pk), {})
         end_event_owners = User.objects.get(username=username).events.count()
         self.assertEqual(response.status_code, 200)
         self.assertEqual(Event.objects.filter(pk=event_pk).count(), 0)

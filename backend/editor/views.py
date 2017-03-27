@@ -21,11 +21,26 @@ from clue.models import Clue
 
 def is_editor(user):
     return not user.is_anonymous() and (belong_editor_group(user) or user.is_superuser)
+
+
 is_editor = user_passes_test(is_editor, login_url='/admin/login/')
 
 
 def belong_editor_group(user):
     return user.groups.filter(name='editor').exists()
+
+
+def parse_request_challenges(request):
+    data = request.POST
+    challenges = [(k, v) for k, v in data.items() if k.startswith("challenge_")]
+
+    datas = {}
+    for key, value in challenges:
+        attr, num = key.rsplit("_", 1)
+        if num not in datas:
+            datas[num] = {}
+        datas[num].update({attr: value})
+    return datas
 
 
 class EditGame(TemplateView):
@@ -42,19 +57,13 @@ class EditGame(TemplateView):
             "challenges": []
         }
 
-        cs = [(k, v) for k, v in data.items() if k.startswith("challenge_")]
+        datas = parse_request_challenges(request)
 
-        d = {}
-        for k, v in cs:
-            attr, n = k.rsplit("_", 1)
-            if not n in d:
-                d[n] = {}
-            d[n].update({attr: v})
-
-        game["challenges"] = [d.get(k) for k in sorted(list(d.keys())) if d[k].get('challenge_name')]
+        sort_keys_datas = sorted(list(datas.keys()))
+        game["challenges"] = [datas[k] for k in sort_keys_datas if datas[k].get('challenge_name')]
         return game
 
-    def get_context_data(self, gameid=None):
+    def get_context_data(self, gameid=None, **kwargs):
         ctx = super().get_context_data(gameid=gameid)
         if gameid:
             game = get_object_or_404(Game, pk=gameid)
@@ -120,10 +129,10 @@ class EditGame(TemplateView):
         self.set_depends(depends, game)
 
     def remove_challenge(self, game, chid):
-        ch = game.challenges.get(pk=chid)
-        ch.games.remove(game)
-        if not ch.games.count():
-            ch.delete()
+        challenge = game.challenges.get(pk=chid)
+        challenge.games.remove(game)
+        if not challenge.games.count():
+            challenge.delete()
 
     def update_game(self, game, data):
         if not game:
@@ -159,9 +168,10 @@ class EditGame(TemplateView):
         if gameid:
             messages.info(request, _("Updated game"))
         else:
-            messages.info(request, _("Created game with {0} challenges".format(game.challenges.count())))
+            _num_challenges = game.challenges.count()
+            messages.info(request, _("Created game with {0} challenges".format(_num_challenges)))
 
-        return redirect('edit_game', gameid=game.id)
+        return redirect('edit_game', gameid=game.pk)
 
     def delete(self, request, gameid):
         game = get_object_or_404(Game, pk=gameid)
@@ -176,6 +186,7 @@ class EditGame(TemplateView):
             status = 401
         return render(request, self.template_name, {}, status=status)
 
+
 edit_game = is_editor(EditGame.as_view())
 
 
@@ -185,8 +196,8 @@ class EditEvent(TemplateView):
     def get_context_data(self, evid=None):
         ctx = super().get_context_data(evid=evid)
         if evid:
-            ev = get_object_or_404(Event, pk=evid)
-            ctx['ev'] = ev
+            event = get_object_or_404(Event, pk=evid)
+            ctx['ev'] = event
 
         # TODO, paginate this or show by ajax, in the future we can't show
         # all games in one page if there's a lot.
@@ -196,7 +207,7 @@ class EditEvent(TemplateView):
     def post(self, request, evid=None):
         if evid:
             event = get_object_or_404(Event, pk=evid)
-            if not request.user.pk in event.owners.values_list('pk', flat=True):
+            if request.user.pk not in event.owners.values_list('pk', flat=True):
                 messages.error(request, _("Unauthorized user"))
                 return render(request, self.template_name, {}, status=401)
 
@@ -247,12 +258,10 @@ class EditEvent(TemplateView):
 
         if evid:
             messages.info(request, _("Updated event"))
-            status = 200
         else:
             messages.info(request, _("Created event."))
-            status = 201
 
-        return redirect('event_challenges', event.id)
+        return redirect('event_challenges', event.pk)
 
     def delete(self, request, evid):
         event = get_object_or_404(Event, pk=evid)
@@ -268,6 +277,8 @@ class EditEvent(TemplateView):
             messages.error(request, _("Unauthorized user"))
             status = 401
         return render(request, self.template_name, {}, status=status)
+
+
 edit_event = is_editor(EditEvent.as_view())
 
 
@@ -280,11 +291,11 @@ class EventChallenges(TemplateView):
 
     def get_context_data(self, evid):
         ctx = super().get_context_data()
-        ev = get_object_or_404(Event, pk=evid)
-        cs = ev.game.challenges.all()
-        ctx['ev'] = ev
-        ctx['players'] = cs.filter(ctype='p')
-        actors = cs.filter(ctype='np')
+        event = get_object_or_404(Event, pk=evid)
+        challenges = event.game.challenges.all()
+        ctx['ev'] = event
+        ctx['players'] = challenges.filter(ctype='p')
+        actors = challenges.filter(ctype='np')
 
         # getting assigned information
         for c in actors:
@@ -299,20 +310,6 @@ class EventChallenges(TemplateView):
 
         ctx['actors'] = actors
         return ctx
-
-    @classmethod
-    def parse_input(cls, request):
-        data = request.POST
-        cs = [(k, v) for k, v in data.items() if k.startswith("challenge_")]
-
-        d = {}
-        for k, v in cs:
-            attr, n = k.rsplit("_", 1)
-            if not n in d:
-                d[n] = {}
-            d[n].update({attr: v})
-
-        return d
 
     def update_ai(self, c, event, options):
         pos = options['challenge_pos']
@@ -353,33 +350,37 @@ class EventChallenges(TemplateView):
 
     def post(self, request, evid):
         event = get_object_or_404(Event, pk=evid)
-        if not request.user.pk in event.owners.values_list('pk', flat=True):
+        if request.user.pk not in event.owners.values_list('pk', flat=True):
             messages.error(request, _("Unauthorized user"))
             return render(request, self.template_name, {}, status=401)
 
-        data = self.parse_input(request)
+        data = parse_request_challenges(request)
 
         for cid, options in data.items():
-            c = Challenge.objects.get(pk=cid)
+            challenge = Challenge.objects.get(pk=cid)
             if options['challenge_type'] == 'ai':
-                self.update_ai(c, event, options)
+                self.update_ai(challenge, event, options)
             elif options['challenge_type'] == 'actor':
-                self.update_actor(c, event, options)
+                self.update_actor(challenge, event, options)
 
         return redirect('event_challenges', evid=evid)
+
+
 event_challenges = is_editor(EventChallenges.as_view())
 
 
 class AjaxPlayerSearch(View):
     def post(self, request):
-        q = request.POST.get('q', '')
-        if not q or len(q) < 3:
+        query = request.POST.get('q', '')
+        if not query or len(query) < 3:
             return JsonResponse([], safe=False)
 
-        players = Player.objects.filter(user__username__startswith=q)
+        players = Player.objects.filter(user__username__startswith=query)
         serializer = PlayerSerializer(players, many=True)
         data = serializer.data
         return JsonResponse(data, safe=False)
+
+
 ajax_player_search = csrf_exempt(is_editor(AjaxPlayerSearch.as_view()))
 
 
@@ -391,4 +392,6 @@ class Editor(TemplateView):
         ctx['games'] = self.request.user.games.all()
         ctx['events'] = self.request.user.events.all()
         return ctx
+
+
 editor = is_editor(Editor.as_view())

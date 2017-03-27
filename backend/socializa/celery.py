@@ -24,8 +24,7 @@ class ManageIA(PeriodicTask):
 
     @classmethod
     def run(cls, **kwargs):
-        from event.tasks import manage_ia
-        manage_ia()
+        pass
 
 
 @app.task(bind=True)

@@ -6,9 +6,9 @@ from player.models import Player
 
 
 CLUE_STATUS = (
-        ('acquired', 'acquired'),
-        ('solved', 'solved'),
-        ('lost', 'lost'),
+    ('acquired', 'acquired'),
+    ('solved', 'solved'),
+    ('lost', 'lost'),
 )
 
 

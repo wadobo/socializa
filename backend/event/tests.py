@@ -1,12 +1,15 @@
 from django.utils import timezone
 from rest_framework.test import APITestCase
 
+from event.utils import manage_ais
+from player.models import Player
+from player.test_client import JClient
 from .models import Event
 from .models import Membership
 from .models import PlayingEvent
-from player.models import Player
-from player.test_client import JClient
-from event.utils import manage_ais
+
+
+anonymous_user = {'detail': 'Authentication credentials were not provided.'}
 
 
 class EventTestCase(APITestCase):
@@ -25,16 +28,16 @@ class EventTestCase(APITestCase):
     fixtures = ['player-test.json', 'event.json']
 
     def setUp(self):
-        self.c = JClient()
+        self.client = JClient()
         event_pk = 2
         self.event = Event.objects.get(pk=event_pk)
 
     def tearDown(self):
-        self.c = None
+        self.client = None
         self.event.players.clear()
 
     def authenticate(self, username, pwd='qweqweqwe'):
-        response = self.c.authenticate(username, pwd)
+        response = self.client.authenticate(username, pwd)
         self.assertEqual(response.status_code, 200)
 
     @classmethod
@@ -43,29 +46,29 @@ class EventTestCase(APITestCase):
 
     def test_join_an_event_unauthorized(self):
         event_pk = 2
-        response = self.c.post('/api/event/join/{0}/'.format(event_pk), {})
+        response = self.client.post('/api/event/join/{0}/'.format(event_pk), {})
         self.assertEqual(response.status_code, 401)
 
     def test_join_an_event_not_exist(self):
         self.authenticate('test1')
-        response = self.c.post('/api/event/join/{0}/'.format(999), {})
+        response = self.client.post('/api/event/join/{0}/'.format(999), {})
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.json(), {'detail': "Event doesn't exists"})
 
     def test_join_an_event(self):
         event_pk = 2
-        response = self.c.post('/api/event/join/{0}/'.format(event_pk), {})
+        response = self.client.post('/api/event/join/{0}/'.format(event_pk), {})
         self.assertEqual(response.status_code, 401)
         self.authenticate('test1')
-        response = self.c.post('/api/event/join/{0}/'.format(event_pk), {})
+        response = self.client.post('/api/event/join/{0}/'.format(event_pk), {})
         self.assertEqual(response.status_code, 201)
 
     def test_join_an_event_repeat(self):
         event_pk = 2
         self.authenticate('test1')
-        response = self.c.post('/api/event/join/{0}/'.format(event_pk), {})
+        response = self.client.post('/api/event/join/{0}/'.format(event_pk), {})
         self.assertEqual(response.status_code, 201)
-        response = self.c.post('/api/event/join/{0}/'.format(event_pk), {})
+        response = self.client.post('/api/event/join/{0}/'.format(event_pk), {})
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json(), 'This player already is join at this event')
 
@@ -76,72 +79,72 @@ class EventTestCase(APITestCase):
         while repeat <= max_player_ev2:
             username = 'test{0}'.format(repeat)
             self.authenticate(username)
-            response = self.c.post('/api/event/join/{0}/'.format(event_pk), {})
+            response = self.client.post('/api/event/join/{0}/'.format(event_pk), {})
             self.assertEqual(response.status_code, 201)
             repeat += 1
-        response = self.c.post('/api/event/join/{0}/'.format(event_pk), {})
+        response = self.client.post('/api/event/join/{0}/'.format(event_pk), {})
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json(), 'Maximum number of player in this event')
 
     def test_unjoin_event_anonymous(self):
         event_pk = 3
-        response = self.c.delete('/api/event/unjoin/{0}/'.format(event_pk), {})
+        response = self.client.delete('/api/event/unjoin/{0}/'.format(event_pk), {})
         self.assertEqual(response.status_code, 401)
-        self.assertEqual(response.json(), {'detail': 'Authentication credentials were not provided.'})
+        self.assertEqual(response.json(), anonymous_user)
 
     def test_unjoin_event(self):
         event_pk = 3
         self.authenticate('test3')
-        response = self.c.delete('/api/event/unjoin/{0}/'.format(event_pk), {})
+        response = self.client.delete('/api/event/unjoin/{0}/'.format(event_pk), {})
         self.assertEqual(response.status_code, 200)
 
     def test_unjoin_event_no_join(self):
         event_pk = 3
         self.authenticate('test1')
-        response = self.c.delete('/api/event/unjoin/{0}/'.format(event_pk), {})
+        response = self.client.delete('/api/event/unjoin/{0}/'.format(event_pk), {})
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json(), "You aren't joined to this event.")
 
     def test_unjoin_event_no_exist(self):
         event_pk = 5
         self.authenticate('test1')
-        response = self.c.delete('/api/event/unjoin/{0}/'.format(event_pk), {})
+        response = self.client.delete('/api/event/unjoin/{0}/'.format(event_pk), {})
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.json(), {'detail': "Event doesn't exists"})
 
     def test_get_my_events_unauth(self):
-        response = self.c.get('/api/event/my-events/', {})
+        response = self.client.get('/api/event/my-events/', {})
         self.assertEqual(response.status_code, 401)
-        self.assertEqual(response.json(), {'detail': 'Authentication credentials were not provided.'})
+        self.assertEqual(response.json(), anonymous_user)
 
     def test_get_my_events(self):
         player5_joined_event = Player.objects.get(pk=5).membership_set.count()
         self.authenticate('test5')
-        response = self.c.get('/api/event/my-events/', {})
+        response = self.client.get('/api/event/my-events/', {})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), player5_joined_event)
 
     def test_get_all_events_unauth(self):
-        response = self.c.get('/api/event/all/', {})
+        response = self.client.get('/api/event/all/', {})
         self.assertEqual(response.status_code, 401)
-        self.assertEqual(response.json(), {'detail': 'Authentication credentials were not provided.'})
+        self.assertEqual(response.json(), anonymous_user)
 
     def test_get_all_events(self):
         self.authenticate('test5')
-        response = self.c.get('/api/event/all/', {})
+        response = self.client.get('/api/event/all/', {})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), 0)
         # Edit an event for tomorrow
         self.event.start_date = timezone.now() + timezone.timedelta(days=1)
         self.event.end_date = timezone.now() + timezone.timedelta(days=2)
         self.event.save()
-        response = self.c.get('/api/event/all/', {})
+        response = self.client.get('/api/event/all/', {})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), 1)
 
     def test_get_all_events_paginated(self):
         self.authenticate('test5')
-        response = self.c.get('/api/event/all/', {})
+        response = self.client.get('/api/event/all/', {})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), 0)
 
@@ -149,41 +152,41 @@ class EventTestCase(APITestCase):
         evs = []
         for i in range(35):
             ev = Event(name="test-%s" % i, game=self.event.game)
-            ev.start_date = timezone.now() + timezone.timedelta(days=1+i)
-            ev.end_date = timezone.now() + timezone.timedelta(days=2+i)
+            ev.start_date = timezone.now() + timezone.timedelta(days=1 + i)
+            ev.end_date = timezone.now() + timezone.timedelta(days=2 + i)
             ev.save()
             evs.append(ev.pk)
 
-        response = self.c.get('/api/event/all/?page=a', {})
+        response = self.client.get('/api/event/all/?page=a', {})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), 20)
         self.assertEqual(response.json()[0]['name'], 'test-34')
 
-        response = self.c.get('/api/event/all/', {})
+        response = self.client.get('/api/event/all/', {})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), 20)
         self.assertEqual(response.json()[0]['name'], 'test-34')
 
-        response = self.c.get('/api/event/all/?page=1', {})
+        response = self.client.get('/api/event/all/?page=1', {})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), 15)
         self.assertEqual(response.json()[0]['name'], 'test-14')
 
-        response = self.c.get('/api/event/all/?q=test-0', {})
+        response = self.client.get('/api/event/all/?q=test-0', {})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()[0]['name'], 'test-0')
 
-        response = self.c.get('/api/event/all/?q=test-38', {})
+        response = self.client.get('/api/event/all/?q=test-38', {})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), 0)
 
     def test_get_events_filtered(self):
         self.authenticate('test5')
-        response = self.c.get('/api/event/all/', {'filter': 'mine'})
+        response = self.client.get('/api/event/all/', {'filter': 'mine'})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), 0)
 
-        response = self.c.get('/api/event/all/', {'filter': 'admin'})
+        response = self.client.get('/api/event/all/?q=test-38', {})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), 0)
 
@@ -207,11 +210,11 @@ class EventTestCase(APITestCase):
                 m = Membership(event=ev, player=p)
                 m.save()
 
-        response = self.c.get('/api/event/all/', {'filter': 'admin'})
+        response = self.client.get('/api/event/all/', {'filter': 'admin'})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), 5)
 
-        response = self.c.get('/api/event/all/', {'filter': 'mine'})
+        response = self.client.get('/api/event/all/', {'filter': 'mine'})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), 6)
 
@@ -223,12 +226,12 @@ class EventTestCase(APITestCase):
         self.event.save()
 
         pk = self.event.pk
-        response = self.c.get('/api/event/%s/' % pk, {})
+        response = self.client.get('/api/event/%s/' % pk, {})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['pk'], pk)
 
         # event that doesn't exist
-        response = self.c.get('/api/event/523/', {})
+        response = self.client.get('/api/event/523/', {})
         self.assertEqual(response.status_code, 403)
 
     def test_solve_event_unauthorized(self):
@@ -237,7 +240,7 @@ class EventTestCase(APITestCase):
         player = 3
         data = {'solution': 'solution'}
         self.authenticate(self.get_username_by_player(player))
-        response = self.c.post('/api/event/solve/{0}/'.format(event_id), data)
+        response = self.client.post('/api/event/solve/{0}/'.format(event_id), data)
         self.assertEqual(response.status_code, 403)
 
     def test_solve_event_no_data(self):
@@ -246,7 +249,7 @@ class EventTestCase(APITestCase):
         player = 3
         data = {}
         self.authenticate(self.get_username_by_player(player))
-        response = self.c.post('/api/event/solve/{0}/'.format(event_id), data)
+        response = self.client.post('/api/event/solve/{0}/'.format(event_id), data)
         self.assertEqual(response.status_code, 400)
 
     def test_solve_event_empty(self):
@@ -255,7 +258,7 @@ class EventTestCase(APITestCase):
         player = 3
         data = {'solution': ''}
         self.authenticate(self.get_username_by_player(player))
-        response = self.c.post('/api/event/solve/{0}/'.format(event_id), data)
+        response = self.client.post('/api/event/solve/{0}/'.format(event_id), data)
         self.assertEqual(response.status_code, 400)
 
     def test_solve_event_incorrect(self):
@@ -264,7 +267,7 @@ class EventTestCase(APITestCase):
         player = 3
         data = {'solution': 'solution'}
         self.authenticate(self.get_username_by_player(player))
-        response = self.c.post('/api/event/solve/{0}/'.format(event_id), data)
+        response = self.client.post('/api/event/solve/{0}/'.format(event_id), data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), {'status': "incorrect"})
 
@@ -276,7 +279,7 @@ class EventTestCase(APITestCase):
         solution = event.game.solution
         data = {'solution': solution}
         self.authenticate(self.get_username_by_player(player))
-        response = self.c.post('/api/event/solve/{0}/'.format(event_id), data)
+        response = self.client.post('/api/event/solve/{0}/'.format(event_id), data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), {'status': "correct"})
         player = Player.objects.get(pk=player)
@@ -305,20 +308,20 @@ class PlayerEventTestCase(APITestCase):
     fixtures = ['player-test.json', 'event.json']
 
     def setUp(self):
-        self.c = JClient()
+        self.client = JClient()
 
     def tearDown(self):
-        self.c = None
+        self.client = None
 
     def authenticate(self, username, pwd='qweqweqwe'):
-        response = self.c.authenticate(username, pwd)
+        response = self.client.authenticate(username, pwd)
         self.assertEqual(response.status_code, 200)
 
     def test_players_near_in_event2(self):
         event_pk = 4
         near_player4_ev4 = 0
         self.authenticate('test4')
-        response = self.c.get('/api/player/near/{0}/'.format(event_pk), {})
+        response = self.client.get('/api/player/near/{0}/'.format(event_pk), {})
         self.assertEqual(response.status_code, 200)
         players = [d for d in response.json() if not d.get('ptype') is 'ai']
         self.assertEqual(len(players), near_player4_ev4)
@@ -326,21 +329,21 @@ class PlayerEventTestCase(APITestCase):
     def test_players_near_in_event3(self):
         event_pk = 4
         self.authenticate('test5')
-        response = self.c.get('/api/player/near/{0}/'.format(event_pk), {})
+        response = self.client.get('/api/player/near/{0}/'.format(event_pk), {})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), 'Your player is outside of place.')
 
     def test_players_near_in_unauth_event(self):
         event_pk = 2
         self.authenticate('test5')
-        response = self.c.get('/api/player/near/{0}/'.format(event_pk), {})
+        response = self.client.get('/api/player/near/{0}/'.format(event_pk), {})
         self.assertEqual(response.status_code, 401)
 
     def test_players_meeting_in_event(self):
         event_pk = 4
         player_pk = 2
         self.authenticate('test1')
-        response = self.c.post('/api/player/meeting/{0}/{1}/'.format(player_pk, event_pk), {})
+        response = self.client.post('/api/player/meeting/{0}/{1}/'.format(player_pk, event_pk), {})
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json(), {'status': 'step1'})
 
@@ -348,7 +351,7 @@ class PlayerEventTestCase(APITestCase):
         event_pk = 2
         player_pk = 3
         self.authenticate('test5')
-        response = self.c.post('/api/player/meeting/{0}/{1}/'.format(player_pk, event_pk), {})
+        response = self.client.post('/api/player/meeting/{0}/{1}/'.format(player_pk, event_pk), {})
         self.assertEqual(response.status_code, 401)
         self.assertEqual(response.json(), 'Unauthorized event')
 
@@ -356,7 +359,7 @@ class PlayerEventTestCase(APITestCase):
         event_pk = 1
         player_pk = 3
         self.authenticate('test5')
-        response = self.c.post('/api/player/meeting/{0}/{1}/'.format(player_pk, event_pk), {})
+        response = self.client.post('/api/player/meeting/{0}/{1}/'.format(player_pk, event_pk), {})
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json(), 'Other player not join at this event')
 
@@ -364,7 +367,7 @@ class PlayerEventTestCase(APITestCase):
         event_pk = 3
         player_pk = 5
         self.authenticate('test5')
-        response = self.c.post('/api/player/meeting/{0}/{1}/'.format(player_pk, event_pk), {})
+        response = self.client.post('/api/player/meeting/{0}/{1}/'.format(player_pk, event_pk), {})
         self.assertEqual(response.json(), 'narcissistic: you cannot connect with yourself')
         self.assertEqual(response.status_code, 400)
 
@@ -384,13 +387,13 @@ class PlayingEventTestCase(APITestCase):
     def setUp(self):
         self.event1 = 1
         self.event2 = 2
-        self.c = JClient()
+        self.client = JClient()
 
     def tearDown(self):
-        self.c = None
+        self.client = None
 
     def authenticate(self, username, pwd='qweqweqwe'):
-        response = self.c.authenticate(username, pwd)
+        response = self.client.authenticate(username, pwd)
         self.assertEqual(response.status_code, 200)
 
     def test_players_playing_event_with_event_none(self):
@@ -400,7 +403,7 @@ class PlayingEventTestCase(APITestCase):
         """
         username = 'test2'
         self.authenticate('test1')
-        response = self.c.get('/api/player/near/', {})
+        response = self.client.get('/api/player/near/', {})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), 1)
         self.assertEqual(response.json()[0].get('username'), username)
@@ -416,7 +419,7 @@ class PlayingEventTestCase(APITestCase):
         event.save()
 
         self.authenticate('test3')
-        response = self.c.get('/api/player/near/{0}/'.format(self.event1), {})
+        response = self.client.get('/api/player/near/{0}/'.format(self.event1), {})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), 1)
         username = 'test4'
@@ -427,20 +430,20 @@ class PlayingEventTestCase(APITestCase):
 
     def test_playing_event_not_exits(self):
         self.authenticate('test1')
-        response = self.c.post('/api/event/current/1/', {})
+        response = self.client.post('/api/event/current/{0}/'.format(self.event1), {})
         self.assertEqual(response.status_code, 200)
-        response = self.c.post('/api/event/current//', {})
+        response = self.client.post('/api/event/current//', {})
         self.assertEqual(response.status_code, 200)
 
         self.authenticate('test2')
-        response = self.c.post('/api/event/current/1/', {})
+        response = self.client.post('/api/event/current/1/', {})
         self.assertEqual(response.status_code, 201)
 
     def test_playing_event_exits(self):
         self.authenticate('test5')
-        response = self.c.post('/api/event/current/{0}/'.format(self.event1), {})
+        response = self.client.post('/api/event/current/{0}/'.format(self.event1), {})
         self.assertEqual(response.status_code, 200)
-        response = self.c.post('/api/event/current//', {})
+        response = self.client.post('/api/event/current//', {})
         self.assertEqual(response.status_code, 200)
 
 
@@ -519,12 +522,13 @@ class EventTasksTestCase(APITestCase):
         self.assertEqual(ini_member_players + need_players, end_member_players)
         self.assertEqual(ini_playing_players + need_players, end_playing_players)
 
+
 class EventAdminTestCase(APITestCase):
     """ Test event admin views """
     fixtures = ['player-test.json', 'event.json']
 
     def authenticate(self, username, pwd='qweqweqwe'):
-        response = self.c.authenticate(username, pwd)
+        response = self.client.authenticate(username, pwd)
         self.assertEqual(response.status_code, 200)
 
     def setUp(self):
@@ -532,23 +536,23 @@ class EventAdminTestCase(APITestCase):
         self.event2.start_date = timezone.now() - timezone.timedelta(hours=2)
         self.event2.end_date = timezone.now() + timezone.timedelta(hours=2)
         self.ini_players = Player.objects.count()
-        self.c = JClient()
+        self.client = JClient()
 
         p = Player.objects.get(pk=5)
         self.event2.owners.add(p.user)
 
     def test_admin_event_challenges(self):
-        response = self.c.get('/api/event/admin/challenges/1/', {})
+        response = self.client.get('/api/event/admin/challenges/1/', {})
         self.assertEqual(response.status_code, 401)
-        self.assertEqual(response.json(), {'detail': 'Authentication credentials were not provided.'})
+        self.assertEqual(response.json(), anonymous_user)
 
         self.authenticate('test4')
-        response = self.c.get('/api/event/admin/challenges/2/', {})
+        response = self.client.get('/api/event/admin/challenges/2/', {})
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.json(), {'detail': 'Non admin user'})
 
         self.authenticate('test5')
-        response = self.c.get('/api/event/admin/challenges/2/', {})
+        response = self.client.get('/api/event/admin/challenges/2/', {})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), self.event2.game.challenges.count())
 
@@ -558,15 +562,15 @@ class EventAdminTestCase(APITestCase):
             'meeting_distance': 32,
         }
 
-        response = self.c.post('/api/event/admin/1/', options)
+        response = self.client.post('/api/event/admin/1/', options)
         self.assertEqual(response.status_code, 401)
 
         self.authenticate('test4')
-        response = self.c.post('/api/event/admin/2/', options)
+        response = self.client.post('/api/event/admin/2/', options)
         self.assertEqual(response.status_code, 403)
 
         self.authenticate('test5')
-        response = self.c.post('/api/event/admin/2/', options)
+        response = self.client.post('/api/event/admin/2/', options)
         self.assertEqual(response.status_code, 200)
 
         ev = Event.objects.get(pk=2)
