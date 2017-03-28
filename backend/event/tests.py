@@ -432,7 +432,7 @@ class PlayingEventTestCase(APITestCase):
         self.authenticate('test1')
         response = self.client.post('/api/event/current/{0}/'.format(self.event1), {})
         self.assertEqual(response.status_code, 200)
-        response = self.client.post('/api/event/current//', {})
+        response = self.client.post('/api/event/current/', {})
         self.assertEqual(response.status_code, 200)
 
         self.authenticate('test2')
@@ -443,7 +443,7 @@ class PlayingEventTestCase(APITestCase):
         self.authenticate('test5')
         response = self.client.post('/api/event/current/{0}/'.format(self.event1), {})
         self.assertEqual(response.status_code, 200)
-        response = self.client.post('/api/event/current//', {})
+        response = self.client.post('/api/event/current/', {})
         self.assertEqual(response.status_code, 200)
 
 
