@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'game',
     'clue',
     'editor',
+    'landing',
 ]
 
 MIDDLEWARE = [
