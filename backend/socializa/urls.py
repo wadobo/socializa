@@ -36,6 +36,7 @@ urlpatterns = [
     url(r"^api/player/", include("player.urls")),
     url(r"^api/event/", include("event.urls")),
     url(r"^api/clue/", include("clue.urls")),
+    url(r'', include("landing.urls")),
 ]
 
 if 'silk' in settings.INSTALLED_APPS:
