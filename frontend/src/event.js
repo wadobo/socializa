@@ -7,7 +7,8 @@ import API from './api';
 import moment from 'moment';
 import Purifier from 'html-purify';
 
-import { EventRow } from './events';
+import EventRow from './eventrow';
+import ClueRow from './cluerow';
 
 import Loading from './loading';
 
@@ -15,24 +16,6 @@ import { translate } from 'react-i18next';
 
 // TODO, solve a clue. Clues can also be solved, but for now we don't
 // support this.
-
-export class ClueRow extends React.Component {
-    render() {
-        var self = this;
-        function createMarkup() {
-            var purifier = new Purifier();
-            var input = self.props.clue.challenge.desc;
-            var result = purifier.purify(input);
-            return {__html: result };
-        }
-        return (
-            <div className="clue">
-                <strong>{ this.props.clue.challenge.name }</strong>:<br/>
-                <div dangerouslySetInnerHTML={ createMarkup() } />
-            </div>
-        )
-    }
-}
 
 class Event extends React.Component {
     state = {
@@ -52,11 +35,11 @@ class Event extends React.Component {
         var self = this;
         API.clues(self.state.ev.game.pk)
             .then(function(clues) {
-                self.setState({ clues: clues });
-                self.setState({ state: 'event' });
                 var ev = self.state.ev;
                 if (ev.solved) {
-                    self.setState({ 'state': 'solved', 'solution': ev.solved});
+                    self.setState({ clues: clues, state: 'solved', solution: ev.solved});
+                } else {
+                    self.setState({ clues: clues, state: 'event'});
                 }
             });
     }
@@ -163,8 +146,8 @@ class Event extends React.Component {
                         <EventRow ev={ev} expand={true} hiddenbuttons={true}/>
 
                         { this.state.clues && this.state.clues.length ?
-                            <h2>Clues</h2>
-                         : (<p className="text-center">No Clues yet,
+                            <h2>{t('events::Clues')}</h2>
+                         : (<p className="text-center">{t('events::No Clues yet')},
                                 <Link to="/map"> <i className="fa fa-fw fa-map-marker"></i>
                                     {t('events::go to find someone')}
                                 </Link>
