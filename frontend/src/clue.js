@@ -6,7 +6,9 @@ import { user, getIcon } from './auth';
 import Bucket from './bucket';
 import Loading from './loading';
 
-export default class Clue extends React.Component {
+import { translate } from 'react-i18next';
+
+class Clue extends React.Component {
     state = {
         clue: null
     }
@@ -24,6 +26,7 @@ export default class Clue extends React.Component {
     }
 
     render() {
+        const { t } = this.props;
         var self = this;
         function createMarkup() {
             var purifier = new Purifier();
@@ -41,8 +44,8 @@ export default class Clue extends React.Component {
                     <div dangerouslySetInnerHTML={ createMarkup() } />
                 </div>
 
-                <button className="btn btn-primary btn-fixed-bottom-left" onClick={ this.goBack }>Map</button>
-                <button className="btn btn-success btn-fixed-bottom-right" onClick={ this.viewEvent }>Event</button>
+                <button className="btn btn-primary btn-fixed-bottom-left" onClick={ this.goBack }>{t('clue::Map')}</button>
+                <button className="btn btn-success btn-fixed-bottom-right" onClick={ this.viewEvent }>{t('clue::Event')}</button>
                 </div>
               :
                 <Loading />
@@ -51,3 +54,4 @@ export default class Clue extends React.Component {
         );
     }
 }
+export default Clue = translate(['clue'], { wait: true })(Clue);

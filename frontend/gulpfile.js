@@ -214,7 +214,7 @@ gulp.task('i18next', function() {
             func: {
                 list: ['i18next.t', 'i18n.t', 't'],
             },
-            ns: ['login', 'admin', 'connect', 'events', 'loading', 'map', 'navbar', 'profile', 'qr', 'common'],
+            ns: ['login', 'admin', 'connect', 'events', 'loading', 'map', 'navbar', 'profile', 'qr', 'clue', 'common'],
             resource: {
                 // the source path is relative to current working directory
                 loadPath: 'locales/{{lng}}/{{ns}}.json',
