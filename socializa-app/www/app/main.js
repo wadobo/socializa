@@ -4684,7 +4684,7 @@ function translate(namespaces) {
             if (bindStore) {
               var _p = bindStore.split(' ');
               _p.forEach(function (f) {
-                return _this3.i18n.store.off(f, _this3.onI18nChanged);
+                return _this3.i18n.store && _this3.i18n.store.off(f, _this3.onI18nChanged);
               });
             }
           }
@@ -5443,7 +5443,7 @@ var Admin = function (_React$Component2) {
 
 exports.default = Admin = (0, _reactI18next.translate)(['admin', 'common'], { wait: true })(Admin);
 
-},{"./api":40,"./auth":42,"./loading":50,"react":"react","react-i18next":34}],40:[function(require,module,exports){
+},{"./api":40,"./auth":42,"./loading":52,"react":"react","react-i18next":34}],40:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5773,7 +5773,7 @@ var App = function (_React$Component) {
 
 exports.default = App;
 
-},{"./navbar":54,"bootstrap":"bootstrap","jquery":"jquery","react":"react","react-router":"react-router"}],42:[function(require,module,exports){
+},{"./navbar":56,"bootstrap":"bootstrap","jquery":"jquery","react":"react","react-router":"react-router"}],42:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5919,6 +5919,8 @@ var _loading = require('./loading');
 
 var _loading2 = _interopRequireDefault(_loading);
 
+var _reactI18next = require('react-i18next');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -5958,6 +5960,8 @@ var Clue = function (_React$Component) {
     }, {
         key: 'render',
         value: function render() {
+            var t = this.props.t;
+
             var self = this;
             function createMarkup() {
                 var purifier = new _htmlPurify2.default();
@@ -5985,12 +5989,12 @@ var Clue = function (_React$Component) {
                     _react2.default.createElement(
                         'button',
                         { className: 'btn btn-primary btn-fixed-bottom-left', onClick: this.goBack },
-                        'Map'
+                        t('clue::Map')
                     ),
                     _react2.default.createElement(
                         'button',
                         { className: 'btn btn-success btn-fixed-bottom-right', onClick: this.viewEvent },
-                        'Event'
+                        t('clue::Event')
                     )
                 ) : _react2.default.createElement(_loading2.default, null)
             );
@@ -6000,9 +6004,75 @@ var Clue = function (_React$Component) {
     return Clue;
 }(_react2.default.Component);
 
-exports.default = Clue;
+exports.default = Clue = (0, _reactI18next.translate)(['clue'], { wait: true })(Clue);
 
-},{"./auth":42,"./bucket":43,"./loading":50,"html-purify":"html-purify","react":"react","react-router":"react-router"}],45:[function(require,module,exports){
+},{"./auth":42,"./bucket":43,"./loading":52,"html-purify":"html-purify","react":"react","react-i18next":34,"react-router":"react-router"}],45:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _htmlPurify = require('html-purify');
+
+var _htmlPurify2 = _interopRequireDefault(_htmlPurify);
+
+var _reactI18next = require('react-i18next');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var ClueRow = function (_React$Component) {
+    _inherits(ClueRow, _React$Component);
+
+    function ClueRow() {
+        _classCallCheck(this, ClueRow);
+
+        return _possibleConstructorReturn(this, (ClueRow.__proto__ || Object.getPrototypeOf(ClueRow)).apply(this, arguments));
+    }
+
+    _createClass(ClueRow, [{
+        key: 'render',
+        value: function render() {
+            var self = this;
+            function createMarkup() {
+                var purifier = new _htmlPurify2.default();
+                var input = self.props.clue.challenge.desc;
+                var result = purifier.purify(input);
+                return { __html: result };
+            }
+            return _react2.default.createElement(
+                'div',
+                { className: 'clue' },
+                _react2.default.createElement(
+                    'strong',
+                    null,
+                    this.props.clue.challenge.name
+                ),
+                ':',
+                _react2.default.createElement('br', null),
+                _react2.default.createElement('div', { dangerouslySetInnerHTML: createMarkup() })
+            );
+        }
+    }]);
+
+    return ClueRow;
+}(_react2.default.Component);
+
+exports.default = ClueRow = (0, _reactI18next.translate)(['clue'], { wait: true })(ClueRow);
+
+},{"html-purify":"html-purify","react":"react","react-i18next":34}],46:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6178,13 +6248,12 @@ var Connect = function (_React$Component) {
 
 exports.default = (0, _reactI18next.translate)(['connect'], { wait: true })(Connect);
 
-},{"./api":40,"./auth":42,"./bucket":43,"./i18n":49,"./loading":50,"html-purify":"html-purify","react":"react","react-i18next":34,"react-router":"react-router"}],46:[function(require,module,exports){
+},{"./api":40,"./auth":42,"./bucket":43,"./i18n":51,"./loading":52,"html-purify":"html-purify","react":"react","react-i18next":34,"react-router":"react-router"}],47:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.ClueRow = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -6208,7 +6277,13 @@ var _htmlPurify = require('html-purify');
 
 var _htmlPurify2 = _interopRequireDefault(_htmlPurify);
 
-var _events = require('./events');
+var _eventrow = require('./eventrow');
+
+var _eventrow2 = _interopRequireDefault(_eventrow);
+
+var _cluerow = require('./cluerow');
+
+var _cluerow2 = _interopRequireDefault(_cluerow);
 
 var _loading = require('./loading');
 
@@ -6227,50 +6302,13 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 // TODO, solve a clue. Clues can also be solved, but for now we don't
 // support this.
 
-var ClueRow = exports.ClueRow = function (_React$Component) {
-    _inherits(ClueRow, _React$Component);
-
-    function ClueRow() {
-        _classCallCheck(this, ClueRow);
-
-        return _possibleConstructorReturn(this, (ClueRow.__proto__ || Object.getPrototypeOf(ClueRow)).apply(this, arguments));
-    }
-
-    _createClass(ClueRow, [{
-        key: 'render',
-        value: function render() {
-            var self = this;
-            function createMarkup() {
-                var purifier = new _htmlPurify2.default();
-                var input = self.props.clue.challenge.desc;
-                var result = purifier.purify(input);
-                return { __html: result };
-            }
-            return _react2.default.createElement(
-                'div',
-                { className: 'clue' },
-                _react2.default.createElement(
-                    'strong',
-                    null,
-                    this.props.clue.challenge.name
-                ),
-                ':',
-                _react2.default.createElement('br', null),
-                _react2.default.createElement('div', { dangerouslySetInnerHTML: createMarkup() })
-            );
-        }
-    }]);
-
-    return ClueRow;
-}(_react2.default.Component);
-
-var Event = function (_React$Component2) {
-    _inherits(Event, _React$Component2);
+var Event = function (_React$Component) {
+    _inherits(Event, _React$Component);
 
     function Event() {
         var _ref;
 
-        var _temp, _this2, _ret;
+        var _temp, _this, _ret;
 
         _classCallCheck(this, Event);
 
@@ -6278,43 +6316,43 @@ var Event = function (_React$Component2) {
             args[_key] = arguments[_key];
         }
 
-        return _ret = (_temp = (_this2 = _possibleConstructorReturn(this, (_ref = Event.__proto__ || Object.getPrototypeOf(Event)).call.apply(_ref, [this].concat(args))), _this2), _this2.state = {
+        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = Event.__proto__ || Object.getPrototypeOf(Event)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
             user: _auth.user,
             ev: null,
             clues: null,
             solution: null,
             state: 'loading' // loading | event | solving | solving-loading | solved
-        }, _this2.updateClues = function () {
-            var self = _this2;
+        }, _this.updateClues = function () {
+            var self = _this;
             _api2.default.clues(self.state.ev.game.pk).then(function (clues) {
-                self.setState({ clues: clues });
-                self.setState({ state: 'event' });
                 var ev = self.state.ev;
                 if (ev.solved) {
-                    self.setState({ 'state': 'solved', 'solution': ev.solved });
+                    self.setState({ clues: clues, state: 'solved', solution: ev.solved });
+                } else {
+                    self.setState({ clues: clues, state: 'event' });
                 }
             });
-        }, _this2.updateEvents = function () {
-            var self = _this2;
+        }, _this.updateEvents = function () {
+            var self = _this;
             _api2.default.EventDetail(self.props.params.pk).then(function (ev) {
                 self.setState({ ev: ev });
                 self.updateClues();
             });
-        }, _this2.retitle = function () {
-            var title = _this2.props.t('events::Event');
-            if (_this2.state.ev) {
-                title = title + ' - ' + _this2.state.name;
+        }, _this.retitle = function () {
+            var title = _this.props.t('events::Event');
+            if (_this.state.ev) {
+                title = title + ' - ' + _this.state.name;
             }
-            _this2.props.setAppState({ title: title, active: 'event' });
-        }, _this2.tryToSolve = function () {
-            _this2.setState({ state: 'solving' });
-        }, _this2.sendSolution = function () {
-            var t = _this2.props.t;
+            _this.props.setAppState({ title: title, active: 'event' });
+        }, _this.tryToSolve = function () {
+            _this.setState({ state: 'solving' });
+        }, _this.sendSolution = function () {
+            var t = _this.props.t;
 
-            var self = _this2;
+            var self = _this;
             var solution = document.querySelector(".solve-input").value;
-            _this2.setState({ state: 'solving-loading' });
-            _api2.default.solve(_this2.state.ev.pk, solution).then(function (resp) {
+            _this.setState({ state: 'solving-loading' });
+            _api2.default.solve(_this.state.ev.pk, solution).then(function (resp) {
                 if (resp.status == 'correct') {
                     self.setState({ state: 'solved', solution: solution });
                     alert(t('events::Conglatulations!'));
@@ -6326,33 +6364,33 @@ var Event = function (_React$Component2) {
                 self.setState({ state: 'solving' });
                 alert(t('common::Unknown error'));
             });
-        }, _this2.renderSolveButton = function () {
-            var t = _this2.props.t;
+        }, _this.renderSolveButton = function () {
+            var t = _this.props.t;
 
             var button = _react2.default.createElement(
                 'button',
-                { onClick: _this2.tryToSolve, className: 'btn btn-primary btn-fixed-bottom' },
+                { onClick: _this.tryToSolve, className: 'btn btn-primary btn-fixed-bottom' },
                 t('events::Solve')
             );
 
-            if (_this2.state.state == 'solved') {
+            if (_this.state.state == 'solved') {
                 button = _react2.default.createElement(
                     'button',
                     { className: 'btn btn-success btn-fixed-bottom' },
-                    _this2.state.solution
+                    _this.state.solution
                 );
             }
             return button;
-        }, _this2.renderSolving = function () {
-            var t = _this2.props.t;
+        }, _this.renderSolving = function () {
+            var t = _this.props.t;
 
-            var solving = _this2.state.state == 'solving-loading';
+            var solving = _this.state.state == 'solving-loading';
             var button = _react2.default.createElement(
                 'button',
-                { onClick: _this2.sendSolution, className: 'btn btn-primary', type: 'button' },
+                { onClick: _this.sendSolution, className: 'btn btn-primary', type: 'button' },
                 t('events::Go!')
             );
-            if (_this2.state.state == 'solving-loading') {
+            if (_this.state.state == 'solving-loading') {
                 button = _react2.default.createElement(
                     'button',
                     { className: 'btn btn-primary disabled', type: 'button' },
@@ -6370,12 +6408,12 @@ var Event = function (_React$Component2) {
                 _react2.default.createElement(
                     'h2',
                     null,
-                    _this2.state.ev.game.name
+                    _this.state.ev.game.name
                 ),
                 _react2.default.createElement(
                     'p',
                     null,
-                    _this2.state.ev.game.desc
+                    _this.state.ev.game.desc
                 ),
                 _react2.default.createElement(
                     'div',
@@ -6388,32 +6426,33 @@ var Event = function (_React$Component2) {
                     )
                 )
             );
-        }, _this2.renderEvent = function () {
-            var t = _this2.props.t;
+        }, _this.renderEvent = function () {
+            var t = _this.props.t;
 
-            switch (_this2.state.state) {
+            switch (_this.state.state) {
                 case 'loading':
                     return _react2.default.createElement(_loading2.default, null);
                 case 'solving-loading':
                 case 'solving':
-                    return _this2.renderSolving();
+                    return _this.renderSolving();
                 case 'solved':
                 case 'event':
                     {
-                        var ev = _this2.state.ev;
+                        var ev = _this.state.ev;
 
                         return _react2.default.createElement(
                             'div',
                             { className: 'event-desc' },
-                            _react2.default.createElement(_events.EventRow, { ev: ev, expand: true, hiddenbuttons: true }),
-                            _this2.state.clues && _this2.state.clues.length ? _react2.default.createElement(
+                            _react2.default.createElement(_eventrow2.default, { ev: ev, expand: true, hiddenbuttons: true }),
+                            _this.state.clues && _this.state.clues.length ? _react2.default.createElement(
                                 'h2',
                                 null,
-                                'Clues'
+                                t('events::Clues')
                             ) : _react2.default.createElement(
                                 'p',
                                 { className: 'text-center' },
-                                'No Clues yet,',
+                                t('events::No Clues yet'),
+                                ',',
                                 _react2.default.createElement(
                                     _reactRouter.Link,
                                     { to: '/map' },
@@ -6422,14 +6461,14 @@ var Event = function (_React$Component2) {
                                     t('events::go to find someone')
                                 )
                             ),
-                            _this2.state.clues && _this2.state.clues.map(function (clue, i) {
-                                return _react2.default.createElement(ClueRow, { ev: ev, clue: clue });
+                            _this.state.clues && _this.state.clues.map(function (clue, i) {
+                                return _react2.default.createElement(_cluerow2.default, { ev: ev, clue: clue });
                             }),
-                            _this2.renderSolveButton()
+                            _this.renderSolveButton()
                         );
                     }
             }
-        }, _temp), _possibleConstructorReturn(_this2, _ret);
+        }, _temp), _possibleConstructorReturn(_this, _ret);
     }
 
     _createClass(Event, [{
@@ -6454,7 +6493,7 @@ var Event = function (_React$Component2) {
 
 exports.default = Event = (0, _reactI18next.translate)(['events', 'common'], { wait: true })(Event);
 
-},{"./api":40,"./auth":42,"./events":47,"./loading":50,"html-purify":"html-purify","moment":"moment","react":"react","react-i18next":34,"react-router":"react-router"}],47:[function(require,module,exports){
+},{"./api":40,"./auth":42,"./cluerow":45,"./eventrow":48,"./loading":52,"html-purify":"html-purify","moment":"moment","react":"react","react-i18next":34,"react-router":"react-router"}],48:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6469,15 +6508,9 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactRouter = require('react-router');
 
-var _auth = require('./auth');
-
 var _api = require('./api');
 
 var _api2 = _interopRequireDefault(_api);
-
-var _loading = require('./loading');
-
-var _loading2 = _interopRequireDefault(_loading);
 
 var _moment = require('moment');
 
@@ -6693,65 +6726,108 @@ var EventRow = function (_React$Component) {
     return EventRow;
 }(_react2.default.Component);
 
-EventRow = (0, _reactI18next.translate)(['events'], { wait: true })(EventRow);
+exports.default = EventRow = (0, _reactI18next.translate)(['events'], { wait: true })(EventRow);
 
-var Events = function (_React$Component2) {
-    _inherits(Events, _React$Component2);
+},{"./api":40,"moment":"moment","react":"react","react-i18next":34,"react-router":"react-router"}],49:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRouter = require('react-router');
+
+var _auth = require('./auth');
+
+var _api = require('./api');
+
+var _api2 = _interopRequireDefault(_api);
+
+var _loading = require('./loading');
+
+var _loading2 = _interopRequireDefault(_loading);
+
+var _moment = require('moment');
+
+var _moment2 = _interopRequireDefault(_moment);
+
+var _eventrow = require('./eventrow');
+
+var _eventrow2 = _interopRequireDefault(_eventrow);
+
+var _reactI18next = require('react-i18next');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Events = function (_React$Component) {
+    _inherits(Events, _React$Component);
 
     function Events() {
-        var _ref2;
+        var _ref;
 
-        var _temp2, _this2, _ret2;
+        var _temp, _this, _ret;
 
         _classCallCheck(this, Events);
 
-        for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-            args[_key2] = arguments[_key2];
+        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+            args[_key] = arguments[_key];
         }
 
-        return _ret2 = (_temp2 = (_this2 = _possibleConstructorReturn(this, (_ref2 = Events.__proto__ || Object.getPrototypeOf(Events)).call.apply(_ref2, [this].concat(args))), _this2), _this2.state = {
+        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = Events.__proto__ || Object.getPrototypeOf(Events)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
             user: _auth.user,
             events: null,
             loadingMore: false,
             q: null,
             page: 0
-        }, _this2.updateEvents = function () {
-            var self = _this2;
-            _this2.setState({ events: null });
-            _api2.default.allEvents(_this2.state.q).then(function (events) {
+        }, _this.updateEvents = function () {
+            var self = _this;
+            _this.setState({ events: null });
+            _api2.default.allEvents(_this.state.q).then(function (events) {
                 self.setState({ events: events });
             });
-        }, _this2.loadMore = function () {
-            var self = _this2;
-            _this2.setState({ loadingMore: true });
-            _this2.state.page += 1;
+        }, _this.loadMore = function () {
+            var self = _this;
+            _this.setState({ loadingMore: true });
+            _this.state.page += 1;
 
             var q = {
-                page: _this2.state.page
+                page: _this.state.page
             };
 
-            if (_this2.state.q) $.extend(q, _this2.state.q);
+            if (_this.state.q) $.extend(q, _this.state.q);
 
             _api2.default.allEvents(q).then(function (events) {
                 self.setState({ events: self.state.events.concat(events) });
                 self.setState({ loadingMore: false });
             });
-        }, _this2.retitle = function () {
-            var title = _this2.props.t('events::Events');
+        }, _this.retitle = function () {
+            var title = _this.props.t('events::Events');
             if (_auth.user.activeEvent) {
                 title = title + ' - ' + _auth.user.activeEvent.name;
             }
-            _this2.props.setAppState({ title: title, active: 'events' });
-        }, _this2.searchChange = function (e) {
-            var q = _this2.state.q || {};
+            _this.props.setAppState({ title: title, active: 'events' });
+        }, _this.searchChange = function (e) {
+            var q = _this.state.q || {};
             q.q = e.target.value;
-            _this2.setState({ q: q });
-        }, _this2.filterEvents = function (v) {
-            var q = _this2.state.q || {};
+            _this.setState({ q: q });
+        }, _this.filterEvents = function (v) {
+            var q = _this.state.q || {};
             q.filter = v;
-            _this2.state.q = q;
-            _this2.updateEvents();
-        }, _temp2), _possibleConstructorReturn(_this2, _ret2);
+            _this.state.q = q;
+            _this.updateEvents();
+        }, _temp), _possibleConstructorReturn(_this, _ret);
     }
 
     _createClass(Events, [{
@@ -6770,7 +6846,7 @@ var Events = function (_React$Component2) {
                 'div',
                 null,
                 this.state.events.map(function (ev, i) {
-                    return _react2.default.createElement(EventRow, { ev: ev, key: i, active: self.state.active });
+                    return _react2.default.createElement(_eventrow2.default, { ev: ev, key: i, active: self.state.active });
                 }),
                 this.state.events.length ? _react2.default.createElement('span', null) : _react2.default.createElement(
                     'div',
@@ -6851,7 +6927,7 @@ var Events = function (_React$Component2) {
 
 exports.default = Events = (0, _reactI18next.translate)(['events'], { wait: true })(Events);
 
-},{"./api":40,"./auth":42,"./loading":50,"moment":"moment","react":"react","react-i18next":34,"react-router":"react-router"}],48:[function(require,module,exports){
+},{"./api":40,"./auth":42,"./eventrow":48,"./loading":52,"moment":"moment","react":"react","react-i18next":34,"react-router":"react-router"}],50:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6925,7 +7001,7 @@ document.addEventListener("resume", function () {
     }
 }, false);
 
-},{}],49:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6971,7 +7047,7 @@ _i18next2.default.use(_i18nextXhrBackend2.default).use(_i18nextBrowserLanguagede
 
 exports.default = _i18next2.default;
 
-},{"i18next":30,"i18next-browser-languagedetector":10,"i18next-xhr-backend":14}],50:[function(require,module,exports){
+},{"i18next":30,"i18next-browser-languagedetector":10,"i18next-xhr-backend":14}],52:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7026,7 +7102,7 @@ var Loading = function (_React$Component) {
 
 exports.default = Loading = (0, _reactI18next.translate)(['common'], { wait: true })(Loading);
 
-},{"react":"react","react-i18next":34}],51:[function(require,module,exports){
+},{"react":"react","react-i18next":34}],53:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7256,7 +7332,7 @@ var Login = function (_React$Component) {
 
 exports.default = (0, _reactI18next.translate)(['login'], { wait: true })(Login);
 
-},{"./api":40,"./auth":42,"jquery":"jquery","react":"react","react-i18next":34,"react-router":"react-router"}],52:[function(require,module,exports){
+},{"./api":40,"./auth":42,"jquery":"jquery","react":"react","react-i18next":34,"react-router":"react-router"}],54:[function(require,module,exports){
 'use strict';
 
 var _react = require('react');
@@ -7353,7 +7429,7 @@ _reactDom2.default.render(_react2.default.createElement(
   )
 ), document.getElementById('content'));
 
-},{"./admin":39,"./app":41,"./auth":42,"./clue":44,"./connect":45,"./event":46,"./events":47,"./i18n":49,"./login":51,"./map":53,"./profile":55,"./qrcapt":56,"./qrview":57,"./register":58,"react":"react","react-dom":"react-dom","react-i18next":34,"react-router":"react-router"}],53:[function(require,module,exports){
+},{"./admin":39,"./app":41,"./auth":42,"./clue":44,"./connect":46,"./event":47,"./events":49,"./i18n":51,"./login":53,"./map":55,"./profile":57,"./qrcapt":58,"./qrview":59,"./register":60,"react":"react","react-dom":"react-dom","react-i18next":34,"react-router":"react-router"}],55:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7830,7 +7906,7 @@ var Map = function (_React$Component) {
 
 exports.default = Map = (0, _reactI18next.translate)(['map'], { wait: true })(Map);
 
-},{"./api":40,"./auth":42,"./bucket":43,"./geo":48,"openlayers":"openlayers","react":"react","react-i18next":34,"react-router":"react-router"}],54:[function(require,module,exports){
+},{"./api":40,"./auth":42,"./bucket":43,"./geo":50,"openlayers":"openlayers","react":"react","react-i18next":34,"react-router":"react-router"}],56:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7986,7 +8062,7 @@ var NavBar = function (_React$Component) {
 
 exports.default = NavBar = (0, _reactI18next.translate)(['navbar'], { wait: true })(NavBar);
 
-},{"./auth":42,"react":"react","react-i18next":34,"react-router":"react-router"}],55:[function(require,module,exports){
+},{"./auth":42,"react":"react","react-i18next":34,"react-router":"react-router"}],57:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -8183,7 +8259,7 @@ var Profile = function (_React$Component) {
 
 exports.default = Profile = (0, _reactI18next.translate)(['profile'], { wait: true })(Profile);
 
-},{"./api":40,"./auth":42,"./loading":50,"react":"react","react-i18next":34,"react-router":"react-router"}],56:[function(require,module,exports){
+},{"./api":40,"./auth":42,"./loading":52,"react":"react","react-i18next":34,"react-router":"react-router"}],58:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -8269,7 +8345,7 @@ var QRCapt = function (_React$Component) {
 
 exports.default = QRCapt = (0, _reactI18next.translate)(['qr'], { wait: true })(QRCapt);
 
-},{"./api":40,"./auth":42,"./connect":45,"react":"react","react-i18next":34,"react-router":"react-router"}],57:[function(require,module,exports){
+},{"./api":40,"./auth":42,"./connect":46,"react":"react","react-i18next":34,"react-router":"react-router"}],59:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -8379,7 +8455,7 @@ var QRView = function (_React$Component) {
 
 exports.default = QRView = (0, _reactI18next.translate)(['qr'], { wait: true })(QRView);
 
-},{"./api":40,"./auth":42,"./connect":45,"qrcode.react":"qrcode.react","react":"react","react-i18next":34,"react-router":"react-router"}],58:[function(require,module,exports){
+},{"./api":40,"./auth":42,"./connect":46,"qrcode.react":"qrcode.react","react":"react","react-i18next":34,"react-router":"react-router"}],60:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -8477,4 +8553,4 @@ var Register = function (_React$Component) {
 
 exports.default = Register = (0, _reactI18next.translate)(['login'], { wait: true })(Register);
 
-},{"./auth":42,"jquery":"jquery","react":"react","react-i18next":34,"react-router":"react-router"}]},{},[52]);
+},{"./auth":42,"jquery":"jquery","react":"react","react-i18next":34,"react-router":"react-router"}]},{},[54]);
