@@ -34,6 +34,9 @@ DEV = False
 
 ALLOWED_HOSTS = []
 
+ADMINS = (
+    ('wadobo', 'socializa@wadobo.com'),
+)
 
 # Application definition
 
@@ -188,6 +191,9 @@ if DEV:
         'all_applications': False,
         'group_models': True,
     }
+
+if DEBUG:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 
 # SOCIAL AUTHENTICATION
