@@ -54,6 +54,18 @@
         <header class="masthead">
             <div class="slider-container" id="slider">
                 <div class="container">
+
+                    {% if messages %}
+                        <div class="messages">
+                            {% for message in messages %}
+                                <div{% if message.tags %} class="alert alert-dismissable alert-{{ message.tags }}"{% endif %}>
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
                     <div class="row mh-container">
                         <h1><span>Socializa</span></h1>
                         <h3>{% trans "Discover the world playing" %}</h3>
@@ -717,8 +729,11 @@
                             <span class="divider scrollpoint sp-effect3"></span>
                             <p class="scrollpoint sp-effect3">{% trans "Send us your google account and we'll give you access to the beta" %}</p>
                             <div class="form-group has-feedback">
-                                <input type="text" class="form-control" placeholder="Email">
-                                <button class="form-control-feedback">{% trans "Send" %}</button>
+                            <form method="POST" action="">
+                            {% csrf_token %}
+                                <input type="text" class="form-control" name="email" placeholder="Email">
+                                <button class="form-control-feedback" name="action" value="beta">{% trans "Send" %}</button>
+                            </form>
                             </div>
                             <p>{% blocktrans %}We're currently in Beta,
                             testing the application and organizing some
@@ -767,31 +782,42 @@
                         <div class="section-heading scrollpoint sp-effect3">
                             <h3>Socializa<span> {% trans "get in touch" %}</span></h3>
                             <span class="divider"></span>
-                            <p>{% blocktrans %}You can ask you something or send us a message with the following form or directly sending an email to socializa@wadobo.com{% endblocktrans %}</p>
+                            <p>{% blocktrans %}You can ask us something or send us a message with the following form or directly sending an email to socializa@wadobo.com{% endblocktrans %}</p>
                         </div>
                     </div>
                     <div class="col-md-12">
-                        <form role="form">
+                        <form role="form" method="POST" action="">
+                        {% csrf_token %}
+                            <div class="col-md-6">
+                                <h3>{% trans "Contact us if:" %}</h3>
+                                <ul>
+                                    <li>{% trans "You organize an event and want to prepare a game for it" %}</li>
+                                    <li>{% trans "You're a writter and want to create stories and games" %}</li>
+                                    <li>{% trans "You want to collaborate in the development, translations, etc." %}</li>
+                                </ul>
+                            </div>
                             <div class="col-md-6">
                                 <div class="row">
                                     <div class="col-md-6 spirat">
                                         <div class="form-group">
-                                            <input type="text" class="form-control" placeholder="{% trans "Your Name" %}">
+                                            <input type="text" class="form-control" name="name" placeholder="{% trans "Your Name" %}">
                                         </div>
                                     </div>
                                     <div class="col-md-6 spirat">
                                         <div class="form-group">
-                                            <input type="email" class="form-control" placeholder="{% trans "Your Email" %}">
+                                            <input type="email" class="form-control" name="email" placeholder="{% trans "Your Email" %}">
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="{% trans "Your Message" %}">
-                                    <span class="input-group-btn">
-                                        <button class="btn" type="button">{% trans "submit your message" %}</button>
-                                    </span>
+                                    <div class="col-md-12 spirat">
+                                        <div class="form-group">
+                                            <textarea class="form-control" name="msg" placeholder="{% trans "Your Message" %}"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 spirat">
+                                        <div class="form-group">
+                                            <button class="btn" type="submit" name="action" value="contact">{% trans "submit your message" %}</button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </form>
