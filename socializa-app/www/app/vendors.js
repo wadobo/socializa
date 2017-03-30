@@ -12219,7 +12219,6 @@ function focusNode(node) {
 
 module.exports = focusNode;
 },{}],44:[function(require,module,exports){
-(function (global){
 'use strict';
 
 /**
@@ -12246,7 +12245,7 @@ module.exports = focusNode;
  * @return {?DOMElement}
  */
 function getActiveElement(doc) /*?DOMElement*/{
-  doc = doc || global.document;
+  doc = doc || (typeof document !== 'undefined' ? document : undefined);
   if (typeof doc === 'undefined') {
     return null;
   }
@@ -12258,7 +12257,6 @@ function getActiveElement(doc) /*?DOMElement*/{
 }
 
 module.exports = getActiveElement;
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],45:[function(require,module,exports){
 'use strict';
 
