@@ -1,0 +1,543 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-03-30 12:30+0000\n"
+"PO-Revision-Date: 2017-03-30 14:48+0200\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Last-Translator: Daniel Garcia Moreno <danigm@wadobo.com>\n"
+"Language-Team: \n"
+"X-Generator: Poedit 1.8.12\n"
+
+#: editor/templates/editor/base.html:13 editor/templates/editor/base.html:46
+#: editor/templates/editor/editor.html:6
+msgid "Editor"
+msgstr "Editor"
+
+#: editor/templates/editor/edit_event.html:10
+msgid "Add Event"
+msgstr "Añadir Evento"
+
+#: editor/templates/editor/edit_event.html:23
+msgid "Assign challenges"
+msgstr "Asignar retos"
+
+#: editor/templates/editor/edit_event.html:24
+#: editor/templates/editor/edit_game.html:27
+msgid "Edit:"
+msgstr "Editar:"
+
+#: editor/templates/editor/edit_event.html:27
+msgid "Create a new Event"
+msgstr "Crear un nuevo Evento"
+
+#: editor/templates/editor/edit_event.html:41
+msgid "Select the game"
+msgstr "Selecciona el juego"
+
+#: editor/templates/editor/edit_event.html:58
+msgid "challenges"
+msgstr "retos"
+
+#: editor/templates/editor/edit_event.html:71
+#: editor/templates/editor/event_challenges.html:90
+msgid "Save and continue"
+msgstr "Guardar y continuar"
+
+#: editor/templates/editor/edit_game.html:10
+msgid "Add Game"
+msgstr "Añadir Juego"
+
+#: editor/templates/editor/edit_game.html:29
+msgid "Create a new Game"
+msgstr "Crear un nuevo juego"
+
+#: editor/templates/editor/edit_game.html:62
+#: editor/templates/editor/edit_game.html:76
+msgid "New challenge"
+msgstr "Nuevo reto"
+
+#: editor/templates/editor/edit_game.html:90
+msgid "Add challenge"
+msgstr "Añadir reto"
+
+#: editor/templates/editor/edit_game.html:96
+msgid "Save"
+msgstr "Guardar"
+
+#: editor/templates/editor/editor.html:12
+msgid "Games"
+msgstr "Juegos"
+
+#: editor/templates/editor/editor.html:15
+msgid "New game"
+msgstr "Nuevo juego"
+
+#: editor/templates/editor/editor.html:24
+#: landing/templates/landing/index.html:133
+#: landing/templates/landing/index.html:171
+#: landing/templates/landing/index.html:760
+msgid "Events"
+msgstr "Eventos"
+
+#: editor/templates/editor/editor.html:27
+msgid "New event"
+msgstr "Nuevo evento"
+
+#: editor/templates/editor/event_challenges.html:7
+msgid "Challenges"
+msgstr "Retos"
+
+#: editor/templates/editor/event_challenges.html:12
+msgid "Edit event"
+msgstr "Editar evento"
+
+#: editor/templates/editor/event_challenges.html:13
+msgid "Challenges for:"
+msgstr "Retos para:"
+
+#: editor/templates/editor/event_challenges.html:21
+msgid "Actors / AI"
+msgstr "Actores / IA"
+
+#: editor/templates/editor/event_challenges.html:35
+msgid "AI"
+msgstr "IA"
+
+#: editor/templates/editor/event_challenges.html:36
+msgid "Actor"
+msgstr "Actor"
+
+#: editor/templates/editor/event_challenges.html:51
+msgid "AI position in format: Lat, Lon"
+msgstr "Posición de la IA en el formato: Lat, Lon"
+
+#: editor/templates/editor/event_challenges.html:53
+msgid "Position, only if it's an AI. For example: 37.3580539, -5.9866369"
+msgstr "Posición, sólo si es una IA. Por ejemplo: 37.3580539, -5.9866369"
+
+#: editor/templates/editor/event_challenges.html:63
+msgid "Player name"
+msgstr "Nombre del jugador"
+
+#: editor/templates/editor/event_challenges.html:66
+msgid "Actor password:"
+msgstr "Contraseña del actor:"
+
+#: editor/templates/editor/event_challenges.html:68
+msgid ""
+"Player name, to assign this challenge. If not exists, we'll create a new one"
+msgstr ""
+"Nombre del jugador, al que asignar este reto. Si no existe se creará uno "
+"nuevo"
+
+#: editor/templates/editor/event_challenges.html:73
+msgid "No actor challenges in this game"
+msgstr "No hay retos de actor en este juego"
+
+#: editor/templates/editor/event_challenges.html:79
+msgid "Players"
+msgstr "Jugadores"
+
+#: editor/templates/editor/event_challenges.html:101
+msgid "Select position"
+msgstr "Selecciona posición"
+
+#: editor/templates/editor/forms/challenge.html:7
+msgid "Challenge name"
+msgstr "Nombre de reto"
+
+#: editor/templates/editor/forms/challenge.html:13
+msgid "Player"
+msgstr "Jugador"
+
+#: editor/templates/editor/forms/challenge.html:14
+msgid "Position / Actor"
+msgstr "Posición / Actor"
+
+#: editor/templates/editor/forms/challenge.html:22
+msgid "Challenge description"
+msgstr "Descripción del reto"
+
+#: editor/templates/editor/forms/challenge.html:23
+#: editor/templates/editor/forms/game.html:27
+msgid "You can use here html"
+msgstr "Puedes usar html aquí"
+
+#: editor/templates/editor/forms/challenge.html:32
+msgid "Challenge depends"
+msgstr "Dependencias del reto"
+
+#: editor/templates/editor/forms/challenge.html:33
+msgid ""
+"Names separated by ','. To get this challenge the player should have all the "
+"challenges named here before"
+msgstr ""
+"Nombres separados por ','. Para conseguir esta pista el jugador debe tener "
+"antes todas las pistas nombradas aquí"
+
+#: editor/templates/editor/forms/ev.html:7
+msgid "Name"
+msgstr "Nombre"
+
+#: editor/templates/editor/forms/ev.html:12
+msgid "Price"
+msgstr "Precio"
+
+#: editor/templates/editor/forms/ev.html:15
+msgid "Use 0 for free events"
+msgstr "Usa 0 para eventos gratuitos"
+
+#: editor/templates/editor/forms/ev.html:20
+msgid "Max players"
+msgstr "Número máximo de jugadores"
+
+#: editor/templates/editor/forms/ev.html:25
+msgid "Use 0 for unlimited"
+msgstr "Usa 0 para ilimitado"
+
+#: editor/templates/editor/forms/ev.html:30
+msgid "Vision distance"
+msgstr "Distancia de visión"
+
+#: editor/templates/editor/forms/ev.html:35
+msgid "Vision distance in meters"
+msgstr "Distancia de visión en metros"
+
+#: editor/templates/editor/forms/ev.html:40
+msgid "Interaction distance"
+msgstr "Distancia de conexión"
+
+#: editor/templates/editor/forms/ev.html:45
+msgid "Interaction distance in meters"
+msgstr "Distancia de conexión en metros"
+
+#: editor/templates/editor/forms/ev.html:52
+msgid "Start date"
+msgstr "Fecha de inico"
+
+#: editor/templates/editor/forms/ev.html:57
+#: editor/templates/editor/forms/ev.html:67
+msgid "Use the form: yyyy-mm-dd HH:MM"
+msgstr "Usa la forma: yyyy-mm-dd HH:MM"
+
+#: editor/templates/editor/forms/ev.html:62
+msgid "End date"
+msgstr "Fecha de fin"
+
+#: editor/templates/editor/forms/ev.html:72
+msgid "Event place"
+msgstr "Lugar del evento"
+
+#: editor/templates/editor/forms/ev.html:73
+msgid "Clear"
+msgstr "Limpiar"
+
+#: editor/templates/editor/forms/ev.html:74
+msgid "Select a region where the event take place"
+msgstr "Selecciona la zona donde tendrá lugar el evento"
+
+#: editor/templates/editor/forms/game.html:7
+msgid "Game name"
+msgstr "Nombre del juego"
+
+#: editor/templates/editor/forms/game.html:11
+msgid "Game solution"
+msgstr "Solución del juego"
+
+#: editor/templates/editor/forms/game.html:12
+msgid "Write here the solution"
+msgstr "Escribe aquí la solución"
+
+#: editor/templates/editor/forms/game.html:18
+msgid "Players view other players"
+msgstr "Jugadores verán a otros jugadores"
+
+#: editor/templates/editor/forms/game.html:26
+msgid "Game description"
+msgstr "Descripción del juego"
+
+#: editor/views.py:155 editor/views.py:185 editor/views.py:211
+#: editor/views.py:277 editor/views.py:354
+msgid "Unauthorized user"
+msgstr "Usuario no autorizado"
+
+#: editor/views.py:161
+msgid "Challenge removed correctly"
+msgstr "Reto eliminado correctamente"
+
+#: editor/views.py:169
+msgid "Updated game"
+msgstr "Juego actualizado"
+
+#: editor/views.py:172
+#, python-brace-format
+msgid "Created game with {0} challenges"
+msgstr "Juego creado con {0} retos"
+
+#: editor/views.py:182
+#, python-brace-format
+msgid "Deleted game: {0}"
+msgstr "Eliminado juego: {0}"
+
+#: editor/views.py:260
+msgid "Updated event"
+msgstr "Evento actualizado"
+
+#: editor/views.py:262
+msgid "Created event."
+msgstr "Evento creado."
+
+#: editor/views.py:274
+#, python-brace-format
+msgid "Deleted event: {0}"
+msgstr "Evento eliminado: {0}"
+
+#: landing/templates/landing/index.html:71
+msgid "Discover the world playing"
+msgstr "Descubre el mundo jugando"
+
+#: landing/templates/landing/index.html:101
+msgid "Get the beta"
+msgstr "Consigue la beta"
+
+#: landing/templates/landing/index.html:167
+msgid "Home"
+msgstr "Inicio"
+
+#: landing/templates/landing/index.html:168
+msgid "Features"
+msgstr "Características"
+
+#: landing/templates/landing/index.html:169
+msgid "How"
+msgstr "Cómo"
+
+#: landing/templates/landing/index.html:170
+msgid "Beta"
+msgstr "Beta"
+
+#: landing/templates/landing/index.html:172
+msgid "Contact"
+msgstr "Contacto"
+
+#: landing/templates/landing/index.html:188
+msgid "features"
+msgstr "características"
+
+#: landing/templates/landing/index.html:190
+msgid "Socializa is a game to play in the outside with other people"
+msgstr "Socializa es un juego para jugar fuera de casa con otras personas"
+
+#: landing/templates/landing/index.html:200
+msgid "The world is your game board"
+msgstr "El mundo es tu tablero de juego"
+
+#: landing/templates/landing/index.html:208
+msgid "Interact with your friends and other people playing"
+msgstr "Interactua con tus amigos y otras personas jugando"
+
+#: landing/templates/landing/index.html:216
+msgid "Solve amazing puzzles and mysteries"
+msgstr "Resuelve puzzles y misterios emocionantes"
+
+#: landing/templates/landing/index.html:224
+msgid ""
+"Create your own stories and mysteries and play with your friends, or shell "
+"it in the store to earn money"
+msgstr ""
+"Crea tus propias historias y misterios y juega con tus amigos, o vende las "
+"in la tienda para ganar dinero"
+
+#: landing/templates/landing/index.html:238
+msgid "How to play"
+msgstr "Cómo se juega"
+
+#: landing/templates/landing/index.html:240
+msgid ""
+"Is easy, you only need to find clues walking around and try to solve the game"
+msgstr ""
+"Es fácil, sólo tienes que encontrar pistas paseando e intentar resolver el "
+"juego"
+
+#: landing/templates/landing/index.html:250
+msgid "Join to an event"
+msgstr "Únete a un evento"
+
+#: landing/templates/landing/index.html:251
+msgid ""
+"Select one or more\n"
+"                                    events in your zone to play. Each event\n"
+"                                    has a game with a mistery or a puzzle\n"
+"                                    to solve"
+msgstr ""
+"Selecciona uno o varios\n"
+"\t\t\t\teventos en tu zona para jugar. Cada evento\n"
+"\t\t\t\ttiene un juego con un misterio o un puzzle\n"
+"\t\t\t\tpara resolver"
+
+#: landing/templates/landing/index.html:262
+msgid "Start to play"
+msgstr "Comienza a jugar"
+
+#: landing/templates/landing/index.html:263
+msgid ""
+"Go to the map and\n"
+"                                    start to play in an event, sharing your\n"
+"                                    position"
+msgstr ""
+"Ve al mapa y\n"
+"\t\tcomienza a jugar en un evento, compartiendo tu posición"
+
+#: landing/templates/landing/index.html:273
+msgid "Search clues"
+msgstr "Busca pistas"
+
+#: landing/templates/landing/index.html:274
+msgid ""
+"Move around the map\n"
+"                                    and search other people or points to\n"
+"                                    interact and get clues"
+msgstr ""
+"Muévete por el mapa\n"
+"\ty busca a otras personas o puntos para interactuar y conseguir pistas"
+
+#: landing/templates/landing/index.html:286
+msgid "Interact"
+msgstr "Interactúa"
+
+#: landing/templates/landing/index.html:287
+msgid ""
+"Capture the other\n"
+"                                    player clue using the QRCode and your\n"
+"                                    mobile camera"
+msgstr ""
+"Consigue la pista del otro jugador usando el código QR y la cámara de tu "
+"móvil"
+
+#: landing/templates/landing/index.html:297
+msgid "To win the game you should think"
+msgstr "Para ganar el juego debes pensar"
+
+#: landing/templates/landing/index.html:298
+msgid ""
+"One clue can give\n"
+"                                    you instructions to find the next one,\n"
+"                                    or joining all clues you'll be able to\n"
+"                                    find the solution to the game. In any\n"
+"                                    case, you need to be a good detective\n"
+"                                    to solve a game"
+msgstr ""
+"Una pista puede darte instrucciones para encontrar la siguiente, o juntando "
+"todas las pistas serás capaz de encontrar la solución del juego. En "
+"cualquier caso, deberás ser un buen detective para resolver un juego"
+
+#: landing/templates/landing/index.html:311
+msgid "Solve the game"
+msgstr "Resuelve un juego"
+
+#: landing/templates/landing/index.html:312
+msgid ""
+"Solve the game when\n"
+"                                    you know the answer. Some events are\n"
+"                                    competitives so if you're the first to\n"
+"                                    solve you can win a prize, like a\n"
+"                                    t-shirt, money, or other stuff"
+msgstr ""
+"Resuelve el juego cuando sepas la respuesta. Algunos eventos son "
+"competitivos así que si eres el primero en encontrar la solución podrás "
+"ganar un premio, como una camiseta, dinero, y otras cosas"
+
+#: landing/templates/landing/index.html:730
+msgid "Access to Beta"
+msgstr "Acceso a la beta"
+
+#: landing/templates/landing/index.html:732
+msgid "Send us your google account and we'll give you access to the beta"
+msgstr "Envíanos tu cuenta de google y te daremos acceso a la beta"
+
+#: landing/templates/landing/index.html:737
+msgid "Send"
+msgstr "Enviar"
+
+#: landing/templates/landing/index.html:740
+msgid ""
+"We're currently in Beta,\n"
+"                            testing the application and organizing some\n"
+"                            events, but if you want to test the app and try\n"
+"                            the game in our events, please, send us your\n"
+"                            google account and we'll give you development\n"
+"                            access to the app"
+msgstr ""
+"Actualmente estamos en fase Beta, probando la aplicación y organizando "
+"algunos eventos, pero si quieres probar la aplicación y jugar en alguno de "
+"nuestros eventos, por favor, envíanos tu cuenta de google y te daremos "
+"acceso de desarrollador a la aplicación"
+
+#: landing/templates/landing/index.html:762
+msgid ""
+"Here you have the next big events where you can find us and test the game"
+msgstr ""
+"Aquí podrás encontrar los próximos grandes eventos en los que podrás "
+"encontrarnos y probar el juego"
+
+#: landing/templates/landing/index.html:785
+msgid "get in touch"
+msgstr "ponte en contacto"
+
+#: landing/templates/landing/index.html:787
+msgid ""
+"You can ask us something or send us a message with the following form or "
+"directly sending an email to socializa@wadobo.com"
+msgstr ""
+"Puedes preguntarnos cualquier cosa o enviarnos un mensaje con el siguiente "
+"formulario o directamente enviando un email a socializa@wadobo.com"
+
+#: landing/templates/landing/index.html:794
+msgid "Contact us if:"
+msgstr "Contacta con nosotros si:"
+
+#: landing/templates/landing/index.html:796
+msgid "You organize an event and want to prepare a game for it"
+msgstr "Organizas un evento y quieres preparar un juego para el mismo"
+
+#: landing/templates/landing/index.html:797
+msgid "You're a writter and want to create stories and games"
+msgstr "Eres un escritor y quieres crear historias y juegos"
+
+#: landing/templates/landing/index.html:798
+msgid "You want to collaborate in the development, translations, etc."
+msgstr "Quieres colaborar en el desarrollo, traducciones, etc."
+
+#: landing/templates/landing/index.html:805
+msgid "Your Name"
+msgstr "Tu nombre"
+
+#: landing/templates/landing/index.html:810
+msgid "Your Email"
+msgstr "Tu Email"
+
+#: landing/templates/landing/index.html:815
+msgid "Your Message"
+msgstr "Tu mensaje"
+
+#: landing/templates/landing/index.html:820
+msgid "submit your message"
+msgstr "Enviar tu mensaje"
+
+#: landing/views.py:22
+msgid "Unknown error"
+msgstr "Error desconocido"
+
+#: landing/views.py:41
+msgid "Thank you!, we'll contact you as soon as possible"
+msgstr "Gracias! Contactaremos contigo tan pronto como nos sea posible"
