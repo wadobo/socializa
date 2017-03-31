@@ -3,9 +3,13 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import Point
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.utils import timezone
 
 from game.models import Game
 from player.models import Player
+from socializa.celery import app
 
 
 class Event(models.Model):
@@ -25,6 +29,7 @@ class Event(models.Model):
                                                    blank=True,
                                                    help_text='max meeting ditance in m')
     owners = models.ManyToManyField(User, related_name="events")
+    task_id = models.CharField(max_length=512, blank=True, null=True)
 
     def status(self):
         return "[{0}/{1}]".format(self.players.count(), self.max_players)
@@ -72,3 +77,15 @@ class Membership(models.Model):
 class PlayingEvent(models.Model):
     player = models.OneToOneField(Player, related_name="playing_event")
     event = models.ForeignKey(Event, blank=True, null=True, related_name="playing_event")
+
+
+@receiver(post_save, sender=Event, dispatch_uid="update_event_task")
+def update_event_task(sender, instance, **kwargs):
+    from .tasks import manage_ais_task
+    if instance.task_id:
+        app.control.revoke(instance.task_id)
+    if not instance.start_date or instance.start_date < timezone.now():
+        return
+    task = manage_ais_task.apply_async((instance, ), eta=instance.start_date)
+    # for avoid recursion, save with update instead save()
+    Event.objects.filter(pk=instance.pk).update(task_id=task.id)

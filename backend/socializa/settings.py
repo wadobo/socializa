@@ -55,8 +55,6 @@ INSTALLED_APPS = [
     'rest_framework_social_oauth2',
     'rest_framework_swagger',
     'django_nose',
-    'django_celery_beat',
-    'django_celery_results',
     'frontend',
     'player',
     'event',
@@ -295,7 +293,7 @@ SWAGGER_SETTINGS = {
 
 # For celery
 CELERY_BROKER_URL = 'amqp://localhost'
-CELERY_RESULT_BACKEND = 'django-db'
+CELERY_RESULT_BACKEND = 'amqp://localhost'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 
