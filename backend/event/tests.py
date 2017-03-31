@@ -1,5 +1,7 @@
+from django.test import override_settings
 from django.utils import timezone
 from rest_framework.test import APITestCase
+from time import sleep
 
 from event.utils import manage_ais
 from player.models import Player
@@ -129,6 +131,12 @@ class EventTestCase(APITestCase):
         self.assertEqual(response.status_code, 401)
         self.assertEqual(response.json(), anonymous_user)
 
+    @override_settings(
+        task_eager_propagates=True,
+        task_always_eager=True,
+        broker_url='memory://',
+        backend='memory'
+    )
     def test_get_all_events(self):
         self.authenticate('test5')
         response = self.client.get('/api/event/all/', {})
@@ -142,6 +150,12 @@ class EventTestCase(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), 1)
 
+    @override_settings(
+        task_eager_propagates=True,
+        task_always_eager=True,
+        broker_url='memory://',
+        backend='memory'
+    )
     def test_get_all_events_paginated(self):
         self.authenticate('test5')
         response = self.client.get('/api/event/all/', {})
@@ -180,6 +194,12 @@ class EventTestCase(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), 0)
 
+    @override_settings(
+        task_eager_propagates=True,
+        task_always_eager=True,
+        broker_url='memory://',
+        backend='memory'
+    )
     def test_get_events_filtered(self):
         self.authenticate('test5')
         response = self.client.get('/api/event/all/', {'filter': 'mine'})
@@ -218,6 +238,12 @@ class EventTestCase(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), 6)
 
+    @override_settings(
+        task_eager_propagates=True,
+        task_always_eager=True,
+        broker_url='memory://',
+        backend='memory'
+    )
     def test_get_event_detail(self):
         self.authenticate('test5')
         # Edit an event for tomorrow
@@ -576,3 +602,41 @@ class EventAdminTestCase(APITestCase):
         ev = Event.objects.get(pk=2)
         self.assertEqual(ev.vision_distance, 523)
         self.assertEqual(ev.meeting_distance, 32)
+
+
+class EventCeleryTestCase(APITestCase):
+    """ Test event celery tasks """
+    fixtures = ['player-test.json', 'event.json', 'celery-event.json']
+
+    def setUp(self):
+        self.client = JClient()
+
+    def get_event(self, pk):
+        return Event.objects.get(pk=pk)
+
+    @override_settings(
+        task_eager_propagates=True,
+        task_always_eager=True,
+        broker_url='memory://',
+        backend='memory'
+    )
+    def test_exec_task_manage_ias(self):
+        # When load fixture task, if datetime is less than now, not generate task
+        event = self.get_event(10)
+        self.assertFalse(event.task_id)
+
+        # Update start_date and end_date. When save, create the task, that run in 2 seconds
+        ini_players = event.players.count()
+        event.start_date = timezone.now() + timezone.timedelta(seconds=2)
+        event.end_date = timezone.now() + timezone.timedelta(days=1)
+        event.save()
+
+        # Check create task
+        event = self.get_event(10)
+        self.assertTrue(event.task_id)
+
+        # Wait more than 2 seconds for check if manage_ias exec
+        sleep(3)
+        event = Event.objects.get(pk=10)
+        end_players = event.players.count()
+        self.assertEqual(ini_players + event.max_players, end_players)

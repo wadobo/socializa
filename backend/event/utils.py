@@ -8,7 +8,7 @@ from .models import PlayingEvent
 
 def manage_ais(event, amount=0):
     now = timezone.now()
-    if not event or now < event.start_date or event.end_date <= now or event.place is None:
+    if not event or event.end_date <= now or event.place is None:
         return
     if amount <= 0:
         total_need_players = event.max_players
