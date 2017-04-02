@@ -611,7 +611,8 @@ class EventCeleryTestCase(APITestCase):
     def setUp(self):
         self.client = JClient()
 
-    def get_event(self, pk):
+    @classmethod
+    def get_event(cls, pk):
         return Event.objects.get(pk=pk)
 
     @override_settings(
