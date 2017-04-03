@@ -31,6 +31,7 @@
     <plugin name="phonegap-plugin-barcodescanner" source="npm" spec="~6.0.2" />
     <plugin name="cordova-plugin-whitelist" spec="~1.2.2" />
     <plugin name="cordova-plugin-inappbrowser" spec="~1.3.0" />
+    <plugin name="cordova-plugin-certificates" spec="~0.6.3" />
     <icon src="icons/icon.png" />
     <platform name="android">
         <icon density="ldpi" src="icons/res/icons/android/icon-36-ldpi.png" />

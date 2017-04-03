@@ -35,6 +35,7 @@ var app = {
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
+        cordova.plugins.certificates.trustUnsecureCerts(true);
         window.open = cordova.InAppBrowser.open;
     },
     // Update DOM on a Received Event
