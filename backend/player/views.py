@@ -2,8 +2,14 @@ from django.db.models import Q
 from django.conf import settings
 from django.contrib.gis.measure import D
 from django.contrib.gis.geos import GEOSException
+from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+from django.views.generic.base import TemplateView
+from django.shortcuts import redirect, reverse
+from django.utils.translation import ugettext as _
+from django.core.validators import validate_email
+from django.core.mail import EmailMultiAlternatives
 from rest_framework import status as rf_status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -349,3 +355,59 @@ class Profile(APIView):
         return Response({'status': 'ok'})
 
 profile = Profile.as_view()
+
+
+class Register(APIView):
+    def post(self, request):
+        email = request.data.get('email', '')
+        password = request.data.get('password', '')
+
+        if not email or not password:
+            return Response("Invalid email or password",
+                            status=rf_status.HTTP_400_BAD_REQUEST)
+
+        try:
+            validate_email(email)
+        except Exception as e:
+            return Response({'status': 'nok', 'msg': 'invalid email'})
+
+        try:
+            user = User.objects.create_user(username=email,
+                                            email=email,
+                                            password=password, is_active=False)
+            p = Player(user=user)
+            p.regen_confirm_code()
+            p.save()
+        except Exception as e:
+            return Response({'status': 'nok', 'msg': 'invalid email'})
+
+        url = 'https://socializa.wadobo.com' + reverse('confirm', kwargs={'code':p.confirm_code})
+        msg = EmailMultiAlternatives(
+            _('Socializa account validation'),
+            _('Validate your socializa account: %s') % url,
+            to=[email],
+            reply_to=['socializa@wadobo.com'],
+        )
+        html_message = _('Validate your socializa account: '
+                         '<a href="%s">%s</a>') % (url, p.confirm_code)
+        msg.attach_alternative(html_message, "text/html")
+        msg.send()
+
+        return Response({'status': 'ok'})
+register = Register.as_view()
+
+
+class RegisterConfirm(TemplateView):
+    template_name = 'register/confirmed.html'
+
+    def get_context_data(self, *args, **kwargs):
+        ctx = super().get_context_data(*args, **kwargs)
+
+        p = get_object_or_404(Player, confirm_code=kwargs.get('code', ''))
+        p.user.is_active = True
+        p.user.save()
+
+        ctx['player'] = p
+
+        return ctx
+confirm = RegisterConfirm.as_view()
