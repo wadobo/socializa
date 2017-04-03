@@ -48,7 +48,7 @@ class NavBar extends React.Component {
                       { this.activeEvent() }
                       <li className={ act == 'map' ? "active" : "" }><Link to="/map"> <i className="fa fa-fw fa-map-marker"></i> {t('navbar::map')}</Link></li>
                       <li className={ act == 'events' ? "active" : "" }><Link to="/events"> <i className="fa fa-fw fa-gamepad"></i> {t('navbar::events')}</Link></li>
-                      <li className={ act == 'profile' ? "active" : "" }><Link to="/profile"> <i className="fa fa-fw fa-user"></i> {t('navbar::profile')}</Link></li>
+                      <li className={ act == 'profile' ? "active" : "" }><Link to="/profile"> <i className="fa fa-fw fa-user"></i>{t('navbar::profile')} / {user.username}</Link></li>
                       <li><a onClick={ this.logout }> <i className="fa fa-fw fa-close"></i> {t('navbar::Logout')}</a></li>
                   </ul>
                 </div>

@@ -81,6 +81,15 @@ export default class API {
         return customFetch('/api/token/', data);
     }
 
+    static register(email, password) {
+        var data = JSONPost({
+            email: email,
+            password: password
+        });
+
+        return customFetch('/api/player/register/', data);
+    }
+
     static setPos(lat, lon) {
         var data = JSONPost({ lat: lat, lon: lon });
         return customFetch('/api/player/set-pos/', data);
