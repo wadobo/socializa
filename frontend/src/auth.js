@@ -71,10 +71,6 @@ export function logout() {
 };
 
 
-export function register(email, password) {
-    return true;
-};
-
 export function getIcon(p) {
     // returns an icon based on the player id
     var icons = {

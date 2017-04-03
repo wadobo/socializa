@@ -2,7 +2,8 @@ import React from 'react';
 import { hashHistory } from 'react-router'
 import $ from 'jquery';
 
-import { register } from './auth';
+import API from './api';
+import { login } from './auth';
 
 import { translate } from 'react-i18next';
 
@@ -25,13 +26,38 @@ class Register extends React.Component {
     }
 
     register = (e) => {
-        login(this.state.email, this.state.password);
-        hashHistory.push('/map');
+        const { t } = this.props;
+
+        var email = this.state.email;
+        var pwd = this.state.password;
+        var pwd2 = this.state.password2;
+        if (pwd != pwd2) {
+            alert(t("login::Passwords didn't match"));
+            return;
+        }
+        API.register(email, pwd)
+            .then(function(resp) {
+                if (resp.status == 'nok') {
+                    alert(t('login::Invalid or used email'));
+                } else {
+                    alert(t('login::Check your email and confirm your account'));
+                    hashHistory.push('/login');
+                }
+            }).catch(function(e) {
+                alert(e);
+            });
+    }
+
+    goBack = () => {
+        hashHistory.push('/login');
     }
 
     render() {
+        const { t } = this.props;
+
         return (
             <div id="register" className="container">
+                <div className="goback" onClick={ this.goBack }><i className="fa fa-chevron-left"></i></div>
                 <div className="header text-center">
                     <img src="app/images/icon.png" className="logo" alt="logo" height="50px"/><br/>
                     <h1>{t('login::Register')}</h1>

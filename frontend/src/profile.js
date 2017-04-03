@@ -85,6 +85,7 @@ class Profile extends React.Component {
 
         return (
             <div id="profile" className="container mbottom">
+                <h2>{user.username}</h2>
                 <h3>{t('profile::About you')}</h3>
                 <textarea className="form-control" placeholder={t('profile::about you')} onChange={ this.aboutChange } value={ this.state.player.about }/>
 
