@@ -20,4 +20,7 @@ urlpatterns = [
     url(r'^set-pos/$', views.set_position, name="set_position"),
     url(r'^profile/$', views.profile, name="profile"),
     url(r'^profile/(?P<player_id>\d+)/$', views.profile, name="profile_user"),
+
+    url(r'^register/$', views.register, name="register"),
+    url(r'^register/confirm/(?P<code>\w+)/$', views.confirm, name="confirm"),
 ]
