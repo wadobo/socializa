@@ -5536,6 +5536,16 @@ var API = function () {
             return customFetch('/api/token/', data);
         }
     }, {
+        key: 'register',
+        value: function register(email, password) {
+            var data = JSONPost({
+                email: email,
+                password: password
+            });
+
+            return customFetch('/api/player/register/', data);
+        }
+    }, {
         key: 'setPos',
         value: function setPos(lat, lon) {
             var data = JSONPost({ lat: lat, lon: lon });
@@ -5786,7 +5796,6 @@ exports.isAuthenticated = isAuthenticated;
 exports.login = login;
 exports.storeUser = storeUser;
 exports.logout = logout;
-exports.register = register;
 exports.getIcon = getIcon;
 
 var _jquery = require('jquery');
@@ -5854,10 +5863,6 @@ function logout() {
     localStorage['socializa-user'] = '';
     exports.user = user = _jquery2.default.extend({}, defuser);
     console.log("logout");
-};
-
-function register(email, password) {
-    return true;
 };
 
 function getIcon(p) {
@@ -8035,8 +8040,9 @@ var NavBar = function (_React$Component) {
                                 { to: '/profile' },
                                 ' ',
                                 _react2.default.createElement('i', { className: 'fa fa-fw fa-user' }),
-                                ' ',
-                                t('navbar::profile')
+                                t('navbar::profile'),
+                                ' / ',
+                                _auth.user.username
                             )
                         ),
                         _react2.default.createElement(
@@ -8181,6 +8187,11 @@ var Profile = function (_React$Component) {
             return _react2.default.createElement(
                 'div',
                 { id: 'profile', className: 'container mbottom' },
+                _react2.default.createElement(
+                    'h2',
+                    null,
+                    _auth.user.username
+                ),
                 _react2.default.createElement(
                     'h3',
                     null,
@@ -8474,6 +8485,10 @@ var _jquery = require('jquery');
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
+var _api = require('./api');
+
+var _api2 = _interopRequireDefault(_api);
+
 var _auth = require('./auth');
 
 var _reactI18next = require('react-i18next');
@@ -8509,17 +8524,45 @@ var Register = function (_React$Component) {
         }, _this.passChange2 = function (e) {
             _this.setState({ password2: e.target.value });
         }, _this.register = function (e) {
-            login(_this.state.email, _this.state.password);
-            _reactRouter.hashHistory.push('/map');
+            var t = _this.props.t;
+
+
+            var email = _this.state.email;
+            var pwd = _this.state.password;
+            var pwd2 = _this.state.password2;
+            if (pwd != pwd2) {
+                alert(t("login::Passwords didn't match"));
+                return;
+            }
+            _api2.default.register(email, pwd).then(function (resp) {
+                if (resp.status == 'nok') {
+                    alert(t('login::Invalid or used email'));
+                } else {
+                    alert(t('login::Check your email and confirm your account'));
+                    _reactRouter.hashHistory.push('/login');
+                }
+            }).catch(function (e) {
+                alert(e);
+            });
+        }, _this.goBack = function () {
+            _reactRouter.hashHistory.push('/login');
         }, _temp), _possibleConstructorReturn(_this, _ret);
     }
 
     _createClass(Register, [{
         key: 'render',
         value: function render() {
+            var t = this.props.t;
+
+
             return _react2.default.createElement(
                 'div',
                 { id: 'register', className: 'container' },
+                _react2.default.createElement(
+                    'div',
+                    { className: 'goback', onClick: this.goBack },
+                    _react2.default.createElement('i', { className: 'fa fa-chevron-left' })
+                ),
                 _react2.default.createElement(
                     'div',
                     { className: 'header text-center' },
@@ -8553,4 +8596,4 @@ var Register = function (_React$Component) {
 
 exports.default = Register = (0, _reactI18next.translate)(['login'], { wait: true })(Register);
 
-},{"./auth":42,"jquery":"jquery","react":"react","react-i18next":34,"react-router":"react-router"}]},{},[54]);
+},{"./api":40,"./auth":42,"jquery":"jquery","react":"react","react-i18next":34,"react-router":"react-router"}]},{},[54]);
