@@ -5676,7 +5676,12 @@ var API = function () {
         key: 'setPlayingEvent',
         value: function setPlayingEvent(evid) {
             var data = JSONPost({});
-            return customFetch('/api/event/current/' + evid + '/', data);
+            var url = '/api/event/current/';
+            if (evid) {
+                url += evid + '/';
+            }
+
+            return customFetch(url, data);
         }
     }, {
         key: 'getEventChallenges',
@@ -6545,7 +6550,7 @@ var EventRow = function (_React$Component) {
             args[_key] = arguments[_key];
         }
 
-        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = EventRow.__proto__ || Object.getPrototypeOf(EventRow)).call.apply(_ref, [this].concat(args))), _this), _this.state = { joined: false, expand: false }, _this.expand = function (e) {
+        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = EventRow.__proto__ || Object.getPrototypeOf(EventRow)).call.apply(_ref, [this].concat(args))), _this), _this.state = { joined: false, expand: false, solved: false }, _this.expand = function (e) {
             if (_this.state.expand) {
                 _this.setState({ expand: false });
             } else {
@@ -6642,7 +6647,7 @@ var EventRow = function (_React$Component) {
     _createClass(EventRow, [{
         key: 'componentWillMount',
         value: function componentWillMount() {
-            this.setState({ joined: this.props.ev.joined });
+            this.setState({ joined: this.props.ev.joined, solved: this.props.ev.solved });
         }
     }, {
         key: 'shortDesc',
@@ -6703,9 +6708,13 @@ var EventRow = function (_React$Component) {
         key: 'render',
         value: function render() {
             var classes = 'event';
-            if (!this.props.hiddenbuttons && this.state.joined) {
+            if (this.state.joined) {
                 classes += ' joined';
             }
+            if (this.state.solved) {
+                classes += ' solved';
+            }
+
             return _react2.default.createElement(
                 'div',
                 { className: classes, onClick: this.expand.bind(this) },
@@ -7629,7 +7638,7 @@ var Map = function (_React$Component) {
             }
 
             var self = _this;
-            _api2.default.setPlayingEvent('').then(function () {
+            _api2.default.setPlayingEvent(null).then(function () {
                 _auth.user.activeEvent = null;
                 (0, _auth.storeUser)();
                 self.setState({ active: _auth.user.activeEvent });
@@ -7646,7 +7655,7 @@ var Map = function (_React$Component) {
             }
 
             var self = _this;
-            _api2.default.setPlayingEvent('').then(function () {
+            _api2.default.setPlayingEvent(null).then(function () {
                 _auth.user.activeEvent = null;
                 (0, _auth.storeUser)();
                 self.setState({ active: _auth.user.activeEvent });
