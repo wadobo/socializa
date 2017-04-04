@@ -8,10 +8,10 @@ import { translate } from 'react-i18next';
 
 
 class EventRow extends React.Component {
-    state = { joined: false, expand: false }
+    state = { joined: false, expand: false, solved: false }
 
     componentWillMount() {
-      this.setState({ joined: this.props.ev.joined });
+      this.setState({ joined: this.props.ev.joined, solved: this.props.ev.solved });
     }
 
     expand = (e) => {
@@ -146,9 +146,13 @@ class EventRow extends React.Component {
 
     render() {
         var classes = 'event';
-        if (!this.props.hiddenbuttons && this.state.joined) {
+        if (this.state.joined) {
             classes += ' joined';
         }
+        if (this.state.solved) {
+            classes += ' solved';
+        }
+
         return (
             <div className={ classes } onClick={ this.expand.bind(this) }>
                 { this.price(this.props.ev) }

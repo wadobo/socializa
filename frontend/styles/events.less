@@ -2,7 +2,9 @@
 .event {
     padding: 10px;
     margin: 5px;
-    border-bottom: 1px dashed #ccc;
+    border: 1px solid #ccc;
+    border-left: 5px solid #ccc;
+    box-shadow: 2px 2px 2px #ccc;
     position: relative;
     cursor: pointer;
 }
@@ -32,5 +34,9 @@
 }
 
 .event.joined {
-    background-color: @brand-info;
+    border-left: 5px solid @brand-primary;
+}
+
+.event.solved {
+    border-left: 5px solid @brand-success;
 }
