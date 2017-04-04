@@ -65,7 +65,6 @@ def oauth2apps(request):
     data = {
         'google': settings.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY,
         'facebook': settings.SOCIAL_AUTH_FACEBOOK_KEY,
-        'twitter': settings.SOCIAL_AUTH_TWITTER_KEY,
     }
 
     return JsonResponse(data)

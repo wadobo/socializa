@@ -206,7 +206,6 @@ if DEBUG:
 
 AUTHENTICATION_BACKENDS = (
     'social_core.backends.google.GoogleOAuth2',
-    'social_core.backends.twitter.TwitterOAuth',
     'social_core.backends.facebook.FacebookOAuth2',
     'rest_framework_social_oauth2.backends.DjangoOAuth2',
     'django.contrib.auth.backends.ModelBackend'
@@ -267,9 +266,6 @@ SOCIAL_AUTH_RAISE_EXCEPTIONS = False
 # GOOGLE
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = 'update me'
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'update me'
-# TWITTER
-SOCIAL_AUTH_TWITTER_KEY = 'update me'
-SOCIAL_AUTH_TWITTER_SECRET = 'update me'
 # FACEBOOK
 SOCIAL_AUTH_FACEBOOK_KEY = 'update me'
 SOCIAL_AUTH_FACEBOOK_SECRET = 'update me'

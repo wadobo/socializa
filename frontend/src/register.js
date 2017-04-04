@@ -56,7 +56,7 @@ class Register extends React.Component {
         const { t } = this.props;
 
         return (
-            <div id="register" className="container">
+            <div id="register" className="container mbottom">
                 <div className="goback" onClick={ this.goBack }><i className="fa fa-chevron-left"></i></div>
                 <div className="header text-center">
                     <img src="app/images/icon.png" className="logo" alt="logo" height="50px"/><br/>

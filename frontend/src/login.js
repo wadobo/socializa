@@ -26,7 +26,6 @@ class Login extends React.Component {
                     self.setState({
                         gapp: resp.google,
                         fapp: resp.facebook,
-                        tapp: resp.twitter
                     });
                 });
         }
@@ -63,7 +62,7 @@ class Login extends React.Component {
 
     state = {
         email: '', password: '',
-        gapp: null, tapp: null, fapp: null
+        gapp: null, fapp: null
     }
 
     login = (e) => {
@@ -135,7 +134,7 @@ class Login extends React.Component {
         const { t } = this.props;
 
         return (
-            <div id="login" className="container">
+            <div id="login" className="container mbottom">
                 <div className="header text-center">
                     <img src="app/images/icon.png" className="logo" alt="logo"/><br/>
                     <h1>Socializa</h1>
@@ -146,24 +145,21 @@ class Login extends React.Component {
                         <input className="form-control" type="password" id="password" name="password" placeholder={t('login::password')} value={ this.state.password } onChange={ this.passChange }/>
                 </form>
 
-                <Link to="/register">{t('login::New account')}</Link>
+                <br/>
+                <Link to="/register" className="pull-right btn btn-primary">{t('login::New account')}</Link>
 
                 <hr/>
 
+                <center><h3>{t('login::Login using Facebook or Google')}</h3></center>
                 <div className="social row text-center">
-                    <div className="col-xs-4">
+                    <div className="col-xs-6">
                         { this.state.fapp ? (
                             <a onClick={ this.socialAuth.bind(this, 'facebook') } className="btn btn-primary btn-circle">
                                 <i className="fa fa-facebook" aria-hidden="true"></i>
                             </a> )
                         : (<span></span>) }
                     </div>
-                    <div className="col-xs-4">
-                        <a href="#" className="btn btn-info btn-circle">
-                            <i className="fa fa-twitter" aria-hidden="true"></i>
-                        </a>
-                    </div>
-                    <div className="col-xs-4">
+                    <div className="col-xs-6">
                         { this.state.gapp ? (
                             <a onClick={ this.socialAuth.bind(this, 'google') } className="btn btn-danger btn-circle">
                                 <i className="fa fa-google-plus" aria-hidden="true"></i>
