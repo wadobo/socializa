@@ -351,7 +351,7 @@ class Map extends React.Component {
         }
 
         var self = this;
-        API.setPlayingEvent('')
+        API.setPlayingEvent(null)
             .then(function() {
                 user.activeEvent = null;
                 storeUser();
@@ -370,7 +370,7 @@ class Map extends React.Component {
         }
 
         var self = this;
-        API.setPlayingEvent('')
+        API.setPlayingEvent(null)
             .then(function() {
                 user.activeEvent = null;
                 storeUser();
