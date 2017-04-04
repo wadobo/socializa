@@ -1,3 +1,5 @@
+from base64 import b64decode
+import json
 import requests
 from django.shortcuts import render
 from django.shortcuts import redirect
@@ -17,7 +19,17 @@ def oauth2callback(request):
     else:
         token = request.GET['access_token']
         state = request.GET['state']
-        backend = 'google-oauth2'
+        state = json.loads(b64decode(state).decode())
+
+        # TODO manage errors:
+        # * no token in the request
+        # * no email in the user created
+
+        backend = ''
+        if state['app'] == 'google':
+            backend = 'google-oauth2'
+        elif state['app'] == 'facebook':
+            backend = 'facebook'
 
         strategy = load_strategy(request=request)
 
@@ -35,13 +47,14 @@ def oauth2callback(request):
 
         token, _ = Token.objects.get_or_create(user=user)
 
+        url = state['url'].split('#')[0]
         # don't redirect if phonegap
-        if 'file://' in state:
-            state = state.split('/')[-1]
-            location = '?url=' + state + '&email=' + user.email + '&token=' + token.key
+        if 'file://' in url:
+            url = url.split('/')[-1]
+            location = '?url=' + url + '&email=' + user.email + '&token=' + token.key
             return redirect(reverse('oauth2redirect') + location)
 
-        return redirect(state + '?email=' + user.email + '&token=' + token.key)
+        return redirect(url + '?email=' + user.email + '&token=' + token.key)
 
 
 def oauth2redirect(request):
