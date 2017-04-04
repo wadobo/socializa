@@ -7175,7 +7175,7 @@ var Login = function (_React$Component) {
 
         _this.state = {
             email: '', password: '',
-            gapp: null, tapp: null, fapp: null
+            gapp: null, fapp: null
         };
 
         _this.login = function (e) {
@@ -7190,19 +7190,61 @@ var Login = function (_React$Component) {
             });
         };
 
-        _this.googleAuth = function (e) {
-            var self = _this;
-            var redirect = encodeURIComponent('https://socializa.wadobo.com/oauth2callback/');
-            var gapp = _this.state.gapp;
+        return _this;
+    }
 
-            var guri = 'https://accounts.google.com/o/oauth2/v2/auth?scope=email%20profile&response_type=token&client_id=' + gapp;
-            guri += '&redirect_uri=' + redirect;
-            guri += '&state=' + location.href;
+    _createClass(Login, [{
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            var self = this;
+
+            var q = this.getQueryParams();
+
+            if (q.token) {
+                self.authWithToken(q.token, q.email);
+            } else {
+                _api2.default.oauth2apps().then(function (resp) {
+                    self.setState({
+                        gapp: resp.google,
+                        fapp: resp.facebook
+                    });
+                });
+            }
+        }
+    }, {
+        key: 'authWithToken',
+        value: function authWithToken(token, email) {
+            (0, _auth.login)(email, token, 'token');
+            _reactRouter.hashHistory.push('/map');
+            document.location.search = '';
+        }
+    }, {
+        key: 'socialAuth',
+        value: function socialAuth(backend) {
+            var self = this;
+            var redirect = encodeURIComponent('https://socializa.wadobo.com/oauth2callback');
+
+            var app = '';
+            var uri = '';
+            switch (backend) {
+                case 'google':
+                    uri = 'https://accounts.google.com/o/oauth2/v2/auth?response_type=token&scope=email&client_id=';
+                    app = this.state.gapp;
+                    break;
+                case 'facebook':
+                    app = this.state.fapp;
+                    uri = 'https://www.facebook.com/v2.8/dialog/oauth?response_type=token&scope=email&client_id=';
+                    break;
+            }
+
+            uri += app;
+            uri += '&redirect_uri=' + redirect;
+            uri += '&state=' + btoa(JSON.stringify({ app: backend, url: location.href }));
 
             if (window.HOST != '') {
-                _this.win = window.open(guri, '_blank', 'location=no');
+                this.win = window.open(uri, '_blank', 'location=no');
             } else {
-                location.href = guri;
+                location.href = uri;
             }
 
             function loadCallBack(ev) {
@@ -7225,39 +7267,9 @@ var Login = function (_React$Component) {
                 self.win.close();
             }
 
-            if (_this.win) {
-                _this.win.addEventListener('loadstart', loadCallBack);
+            if (this.win) {
+                this.win.addEventListener('loadstart', loadCallBack);
             }
-        };
-
-        return _this;
-    }
-
-    _createClass(Login, [{
-        key: 'componentDidMount',
-        value: function componentDidMount() {
-            var self = this;
-
-            var q = this.getQueryParams();
-
-            if (q.token) {
-                self.authWithToken(q.token, q.email);
-            } else {
-                _api2.default.oauth2apps().then(function (resp) {
-                    self.setState({
-                        gapp: resp.google,
-                        fapp: resp.facebook,
-                        tapp: resp.twitter
-                    });
-                });
-            }
-        }
-    }, {
-        key: 'authWithToken',
-        value: function authWithToken(token, email) {
-            (0, _auth.login)(email, token, 'token');
-            _reactRouter.hashHistory.push('/map');
-            document.location.search = '';
         }
     }, {
         key: 'render',
@@ -7267,7 +7279,7 @@ var Login = function (_React$Component) {
 
             return _react2.default.createElement(
                 'div',
-                { id: 'login', className: 'container' },
+                { id: 'login', className: 'container mbottom' },
                 _react2.default.createElement(
                     'div',
                     { className: 'header text-center' },
@@ -7285,39 +7297,40 @@ var Login = function (_React$Component) {
                     _react2.default.createElement('input', { className: 'form-control', type: 'email', id: 'email', name: 'email', placeholder: t('login::email'), value: this.state.email, onChange: this.emailChange }),
                     _react2.default.createElement('input', { className: 'form-control', type: 'password', id: 'password', name: 'password', placeholder: t('login::password'), value: this.state.password, onChange: this.passChange })
                 ),
+                _react2.default.createElement('br', null),
                 _react2.default.createElement(
                     _reactRouter.Link,
-                    { to: '/register' },
+                    { to: '/register', className: 'pull-right btn btn-primary' },
                     t('login::New account')
                 ),
                 _react2.default.createElement('hr', null),
+                _react2.default.createElement(
+                    'center',
+                    null,
+                    _react2.default.createElement(
+                        'h3',
+                        null,
+                        t('login::Login using Facebook or Google')
+                    )
+                ),
                 _react2.default.createElement(
                     'div',
                     { className: 'social row text-center' },
                     _react2.default.createElement(
                         'div',
-                        { className: 'col-xs-4' },
-                        _react2.default.createElement(
+                        { className: 'col-xs-6' },
+                        this.state.fapp ? _react2.default.createElement(
                             'a',
-                            { href: '#', className: 'btn btn-primary btn-circle' },
+                            { onClick: this.socialAuth.bind(this, 'facebook'), className: 'btn btn-primary btn-circle' },
                             _react2.default.createElement('i', { className: 'fa fa-facebook', 'aria-hidden': 'true' })
-                        )
+                        ) : _react2.default.createElement('span', null)
                     ),
                     _react2.default.createElement(
                         'div',
-                        { className: 'col-xs-4' },
-                        _react2.default.createElement(
-                            'a',
-                            { href: '#', className: 'btn btn-info btn-circle' },
-                            _react2.default.createElement('i', { className: 'fa fa-twitter', 'aria-hidden': 'true' })
-                        )
-                    ),
-                    _react2.default.createElement(
-                        'div',
-                        { className: 'col-xs-4' },
+                        { className: 'col-xs-6' },
                         this.state.gapp ? _react2.default.createElement(
                             'a',
-                            { onClick: this.googleAuth, className: 'btn btn-danger btn-circle' },
+                            { onClick: this.socialAuth.bind(this, 'google'), className: 'btn btn-danger btn-circle' },
                             _react2.default.createElement('i', { className: 'fa fa-google-plus', 'aria-hidden': 'true' })
                         ) : _react2.default.createElement('span', null)
                     )
@@ -8557,7 +8570,7 @@ var Register = function (_React$Component) {
 
             return _react2.default.createElement(
                 'div',
-                { id: 'register', className: 'container' },
+                { id: 'register', className: 'container mbottom' },
                 _react2.default.createElement(
                     'div',
                     { className: 'goback', onClick: this.goBack },
