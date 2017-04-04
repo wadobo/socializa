@@ -79,19 +79,31 @@ class Login extends React.Component {
             });
     }
 
-    googleAuth = (e) => {
+    socialAuth(backend) {
         var self = this;
-        var redirect = encodeURIComponent('https://socializa.wadobo.com/oauth2callback/');
-        var gapp = this.state.gapp;
+        var redirect = encodeURIComponent('https://socializa.wadobo.com/oauth2callback');
 
-        var guri = 'https://accounts.google.com/o/oauth2/v2/auth?scope=email%20profile&response_type=token&client_id='+gapp;
-        guri += '&redirect_uri='+redirect;
-        guri += '&state='+location.href;
+        var app = '';
+        var uri = '';
+        switch (backend) {
+            case 'google':
+                uri = 'https://accounts.google.com/o/oauth2/v2/auth?response_type=token&scope=email&client_id=';
+                app = this.state.gapp;
+                break;
+            case 'facebook':
+                app = this.state.fapp;
+                uri = 'https://www.facebook.com/v2.8/dialog/oauth?response_type=token&scope=email&client_id=';
+                break;
+        }
+
+        uri += app;
+        uri += '&redirect_uri='+redirect;
+        uri += '&state='+btoa(JSON.stringify({app: backend, url: location.href}));
 
         if (window.HOST != '') {
-            this.win = window.open(guri, '_blank', 'location=no');
+            this.win = window.open(uri, '_blank', 'location=no');
         } else {
-            location.href = guri;
+            location.href = uri;
         }
 
         function loadCallBack(ev) {
@@ -140,9 +152,11 @@ class Login extends React.Component {
 
                 <div className="social row text-center">
                     <div className="col-xs-4">
-                        <a href="#" className="btn btn-primary btn-circle">
-                            <i className="fa fa-facebook" aria-hidden="true"></i>
-                        </a>
+                        { this.state.fapp ? (
+                            <a onClick={ this.socialAuth.bind(this, 'facebook') } className="btn btn-primary btn-circle">
+                                <i className="fa fa-facebook" aria-hidden="true"></i>
+                            </a> )
+                        : (<span></span>) }
                     </div>
                     <div className="col-xs-4">
                         <a href="#" className="btn btn-info btn-circle">
@@ -151,7 +165,7 @@ class Login extends React.Component {
                     </div>
                     <div className="col-xs-4">
                         { this.state.gapp ? (
-                            <a onClick={ this.googleAuth } className="btn btn-danger btn-circle">
+                            <a onClick={ this.socialAuth.bind(this, 'google') } className="btn btn-danger btn-circle">
                                 <i className="fa fa-google-plus" aria-hidden="true"></i>
                             </a> )
                          : (<span></span>) }
