@@ -197,7 +197,12 @@ export default class API {
 
     static setPlayingEvent(evid) {
         var data = JSONPost({});
-        return customFetch('/api/event/current/' + evid + '/', data);
+        var url = '/api/event/current/';
+        if (evid) {
+            url += evid + '/';
+        }
+
+        return customFetch(url, data);
     }
 
     static getEventChallenges(evid) {
