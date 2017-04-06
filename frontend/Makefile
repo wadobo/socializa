@@ -1,19 +1,34 @@
-all: serve
+all: web
 
 dev: package.json
 	npm install
 
-serve: clean
-	./node_modules/.bin/gulp
+web: clean css webpack indexweb files
 
-web: clean
-	NODE_ENV=production ./node_modules/.bin/gulp deploy
+app: clean css webpack indexapp files
 
-app: clean
-	NODE_ENV=production ./node_modules/.bin/gulp deploy --app
+css:
+	node_modules/less/bin/lessc styles/app.less > dist/app/main.css
+
+webpack:
+	./node_modules/webpack/bin/webpack.js -p
+
+files:
+	cp -rf js dist/app/
+	cp -rf images dist/app/
+	cp manifest.json dist/app/
+	cp -rf locales dist/app/
+
+indexapp: index.html
+	cat index.html | tr '\n', '\r' | perl -pe 's|<!--<web>-->.*?<!--</web>-->|\1|g' | tr '\r' '\n' > dist/index.html
+indexweb: index.html
+	cat index.html | tr '\n', '\r' | perl -pe 's|<!--<app>-->.*?<!--</app>-->|\1|g' | tr '\r' '\n' > dist/index.html
 
 extract:
-	./node_modules/.bin/gulp i18next
+	cd src
+	../node_modules/i18next-parser/bin/cli.js -r -s "::" -k ":::" -f "t" "i18n.t" -l es src/*.js -o ../locales/
+	cd ..
 
 clean:
 	rm -rf build dist
+	mkdir -p build/app dist/app
