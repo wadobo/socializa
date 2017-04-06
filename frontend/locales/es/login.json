@@ -1,8 +1,12 @@
 {
+  "Check your email and confirm your account": "",
+  "Invalid or used email": "",
+  "Login": "Iniciar sesión",
+  "Login using Facebook or Google": "",
+  "New account": "Nueva cuenta",
+  "Passwords didn't match": "",
+  "Register": "Registrarse",
   "email": "correo electrónico",
   "password": "contraseña",
-  "New account": "Nueva cuenta",
-  "Login": "Iniciar sesión",
-  "Register": "Registrarse",
   "repeat the password": "repite la contraseña"
 }

@@ -1,6 +1,6 @@
 {
-  "map": "mapa",
+  "Logout": "salir",
   "events": "eventos",
-  "profile": "perfil",
-  "Logout": "salir"
+  "map": "mapa",
+  "profile": "perfil"
 }
