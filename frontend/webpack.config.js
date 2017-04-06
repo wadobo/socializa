@@ -23,6 +23,10 @@ module.exports = {
   plugins: [
       new webpack.optimize.CommonsChunkPlugin({
           name: 'vendors'
+      }),
+      new webpack.ProvidePlugin({
+          $: "jquery",
+          jQuery: "jquery"
       })
   ],
   module: {

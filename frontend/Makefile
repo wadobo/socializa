@@ -9,9 +9,10 @@ app: clean css webpack indexapp files
 
 css:
 	node_modules/less/bin/lessc styles/app.less > dist/app/main.css
+	cp -rf node_modules/font-awesome/fonts/ dist/app/
 
 webpack:
-	./node_modules/webpack/bin/webpack.js -p
+	./node_modules/webpack/bin/webpack.js
 
 files:
 	cp -rf js dist/app/
