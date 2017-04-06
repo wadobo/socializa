@@ -31,5 +31,5 @@ extract:
 	cd ..
 
 clean:
-	rm -rf build dist
-	mkdir -p build/app dist/app
+	rm -rf dist
+	mkdir -p dist/app
