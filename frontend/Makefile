@@ -12,7 +12,7 @@ css:
 	cp -rf node_modules/font-awesome/fonts/ dist/app/
 
 webpack:
-	./node_modules/webpack/bin/webpack.js
+	NODE_ENV=production ./node_modules/webpack/bin/webpack.js
 
 files:
 	cp -rf js dist/app/
