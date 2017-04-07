@@ -1,6 +1,6 @@
 import React from 'react';
+import { withRouter } from 'react-router';
 import QRCode from 'qrcode.react';
-import { hashHistory } from 'react-router';
 
 import API from './api';
 
@@ -16,7 +16,7 @@ class QRView extends React.Component {
         var self = this;
         clearTimeout(this.qrcodeTimer);
         this.qrcodeTimer = setTimeout(function() {
-            self.qrcodePolling.bind(self)(self.props.params.user, self.props.params.ev);
+            self.qrcodePolling.bind(self)(self.props.match.params.user, self.props.match.params.ev);
         }, 500);
     }
 
@@ -45,7 +45,7 @@ class QRView extends React.Component {
     }
 
     goBack = () => {
-        hashHistory.push('/map');
+        this.props.history.push('/map');
     }
 
     render() {
@@ -53,11 +53,11 @@ class QRView extends React.Component {
 
         return (
             <div id="qrcode">
-                <QRCode value={ this.props.params.secret } size={ qrsize } />
+                <QRCode value={ this.props.match.params.secret } size={ qrsize } />
                 <div className="closebtn" onClick={ this.goBack }><i className="fa fa-close"></i></div>
             </div>
         );
     }
 }
 
-export default QRView = translate(['qr'], { wait: true })(QRView);
+export default QRView = translate(['qr'], { wait: true })(withRouter(QRView));

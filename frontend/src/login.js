@@ -1,5 +1,6 @@
 import React from 'react';
-import { hashHistory, Link } from 'react-router'
+import { withRouter } from 'react-router';
+import { Link } from 'react-router-dom'
 import $ from 'jquery';
 
 import API from './api';
@@ -48,7 +49,7 @@ class Login extends React.Component {
 
     authWithToken(token, email) {
         login(email, token, 'token');
-        hashHistory.push('/map');
+        this.props.history.push('/map');
         document.location.search = '';
     }
 
@@ -68,11 +69,12 @@ class Login extends React.Component {
     login = (e) => {
         var email = this.state.email;
         var password = this.state.password;
+        var self = this;
 
         return API.login(email, password)
             .then(function(resp) {
                 login(email, resp.token, 'token');
-                hashHistory.push('/map');
+                self.props.history.push('/map');
             }).catch(function(error) {
                 alert(error);
             });
@@ -177,4 +179,4 @@ class Login extends React.Component {
     }
 }
 
-export default translate(['login'], { wait: true })(Login);
+export default translate(['login'], { wait: true })(withRouter(Login));

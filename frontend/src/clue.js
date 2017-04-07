@@ -1,5 +1,5 @@
 import React from 'react';
-import { hashHistory } from 'react-router';
+import { withRouter } from 'react-router';
 import Purifier from 'html-purify';
 
 import { user, getIcon } from './auth';
@@ -18,11 +18,11 @@ class Clue extends React.Component {
     }
 
     goBack = () => {
-        hashHistory.push('/map');
+        this.props.history.push('/map');
     }
 
     viewEvent = () => {
-        hashHistory.push('/event/' + user.activeEvent.pk);
+        this.props.history.push('/event/' + user.activeEvent.pk);
     }
 
     render() {
@@ -54,4 +54,4 @@ class Clue extends React.Component {
         );
     }
 }
-export default Clue = translate(['clue'], { wait: true })(Clue);
+export default Clue = translate(['clue'], { wait: true })(withRouter(Clue));

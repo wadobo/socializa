@@ -1,5 +1,4 @@
 import React from 'react';
-import { hashHistory } from 'react-router'
 import { Link } from 'react-router'
 
 import { storeUser, user, logout } from './auth';
@@ -12,6 +11,7 @@ import ClueRow from './cluerow';
 
 import Loading from './loading';
 
+import Bucket from './bucket';
 import { translate } from 'react-i18next';
 
 // TODO, solve a clue. Clues can also be solved, but for now we don't
@@ -46,7 +46,7 @@ class Event extends React.Component {
 
     updateEvents = () => {
         var self = this;
-        API.EventDetail(self.props.params.pk)
+        API.EventDetail(self.props.match.params.pk)
             .then(function(ev) {
                 self.setState({ ev: ev });
                 self.updateClues();
@@ -58,7 +58,7 @@ class Event extends React.Component {
         if (this.state.ev) {
           title = title + ' - ' + this.state.name;
         }
-        this.props.setAppState({ title: title, active: 'event' });
+        Bucket.setAppState({ title: title, active: 'event' });
     }
 
     tryToSolve = () => {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { hashHistory } from 'react-router';
+import { withRouter } from 'react-router';
 
 import API from './api';
 import { user } from './auth';
@@ -10,15 +10,15 @@ import { translate } from 'react-i18next';
 class QRCapt extends React.Component {
     componentDidMount() {
         var self = this;
-        var id = this.props.params.user;
-        var ev = this.props.params.ev;
+        var id = this.props.match.params.user;
+        var ev = this.props.match.params.ev;
 
         window.scanQR(function(resp) {
             self.capturedQR.bind(self)(id, ev, resp);
         }, function(err) { });
 
         $("#overlay .close").click(function() {
-            hashHistory.push('/map');
+            self.props.history.push('/map');
         });
     }
 
@@ -41,4 +41,4 @@ class QRCapt extends React.Component {
         );
     }
 }
-export default QRCapt = translate(['qr'], { wait: true })(QRCapt);
+export default QRCapt = translate(['qr'], { wait: true })(withRouter(QRCapt));
