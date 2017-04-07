@@ -5,6 +5,7 @@ import API from './api';
 
 import Loading from './loading';
 
+import Bucket from './bucket';
 import { translate } from 'react-i18next';
 
 class Challenge extends React.Component {
@@ -41,7 +42,7 @@ class Admin extends React.Component {
 
     updateEvents = () => {
         var self = this;
-        API.EventDetail(self.props.params.pk)
+        API.EventDetail(self.props.match.params.pk)
             .then(function(ev) {
                 self.setState({ ev: ev, vd: ev.vision_distance, md: ev.meeting_distance });
                 self.retitle();
@@ -51,7 +52,7 @@ class Admin extends React.Component {
 
     updateChallenges = () => {
         var self = this;
-        API.getEventChallenges(self.props.params.pk)
+        API.getEventChallenges(self.props.match.params.pk)
             .then(function(cs) {
                 self.setState({ cs: cs });
             });
@@ -62,7 +63,7 @@ class Admin extends React.Component {
         if (this.state.ev) {
           title = title + ' - ' + this.state.ev.name;
         }
-        this.props.setAppState({ title: title, active: 'event' });
+        Bucket.setAppState({ title: title, active: 'event' });
     }
 
     save = () => {

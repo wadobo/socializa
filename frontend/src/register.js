@@ -1,5 +1,5 @@
 import React from 'react';
-import { hashHistory } from 'react-router'
+import { withRouter } from 'react-router';
 import $ from 'jquery';
 
 import API from './api';
@@ -27,6 +27,7 @@ class Register extends React.Component {
 
     register = (e) => {
         const { t } = this.props;
+        var self = this;
 
         var email = this.state.email;
         var pwd = this.state.password;
@@ -41,7 +42,7 @@ class Register extends React.Component {
                     alert(t('login::Invalid or used email'));
                 } else {
                     alert(t('login::Check your email and confirm your account'));
-                    hashHistory.push('/login');
+                    self.props.history.push('/login');
                 }
             }).catch(function(e) {
                 alert(e);
@@ -49,7 +50,7 @@ class Register extends React.Component {
     }
 
     goBack = () => {
-        hashHistory.push('/login');
+        this.props.history.push('/login');
     }
 
     render() {
@@ -77,4 +78,4 @@ class Register extends React.Component {
     }
 }
 
-export default Register = translate(['login'], { wait: true })(Register);
+export default Register = translate(['login'], { wait: true })(withRouter(Register));
