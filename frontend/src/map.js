@@ -1,7 +1,6 @@
 import React from 'react';
-import { hashHistory } from 'react-router'
-import { Link } from 'react-router'
-import ol from 'openlayers'
+import { withRouter } from 'react-router';
+import ol from 'openlayers';
 
 import { storeUser, user, logout, getIcon } from './auth';
 import API from './api';
@@ -25,10 +24,10 @@ class Map extends React.Component {
       this.retitle();
       window.addEventListener("resize", this.updateDimensions.bind(this));
 
-      if (this.props.params.ev) {
+      if (this.props.match.params.ev) {
         var self = this;
         self.toggleEventMenu();
-        API.EventDetail(self.props.params.ev)
+        API.EventDetail(self.props.match.params.ev)
             .then(function(ev) {
                 self.play(null, ev);
             });
@@ -120,6 +119,7 @@ class Map extends React.Component {
 
     startGeolocation() {
       var map = this.map;
+      var self = this;
 
       this.positionFeature = new ol.Feature();
       this.positionFeature.setStyle(new ol.style.Style({
@@ -186,7 +186,6 @@ class Map extends React.Component {
         this.setUpdateTimer(500);
       }
 
-      var self = this;
       var select = new ol.interaction.Select({
         filter: function (f, l) {
             if (f == self.visionFeature) {
@@ -208,7 +207,7 @@ class Map extends React.Component {
           if (f.getLength()) {
               var i = 0;
               var feature = f.getArray()[i];
-              hashHistory.push('/connect/' + feature.customData.id);
+              self.props.history.push('/connect/' + feature.customData.id);
           }
       });
     }
@@ -319,7 +318,7 @@ class Map extends React.Component {
         if (user.activeEvent) {
           title = title + ' - ' + user.activeEvent.name;
         }
-        this.props.setAppState({ title: title, active: 'map' });
+        Bucket.setAppState({ title: title, active: 'map' });
     }
 
     play = (e, ev) => {
@@ -426,4 +425,4 @@ class Map extends React.Component {
     }
 }
 
-export default Map = translate(['map'], { wait: true })(Map);
+export default Map = translate(['map'], { wait: true })(withRouter(Map));

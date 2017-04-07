@@ -1,5 +1,5 @@
 import React from 'react';
-import { hashHistory } from 'react-router';
+import { withRouter } from 'react-router';
 import Purifier from 'html-purify';
 
 import { user, getIcon } from './auth';
@@ -14,11 +14,11 @@ import i18n from './i18n';
 export function connected(resp) {
     if (resp.pk) {
         Bucket.clue = resp;
-        hashHistory.push('/clue');
+        this.props.history.push('/clue');
     } else {
         Bucket.clue = null;
         alert(i18n.t("connect::I've nothing to say"));
-        hashHistory.push('/map');
+        this.props.history.push('/map');
     }
 }
 
@@ -37,18 +37,18 @@ class Connect extends React.Component {
         const { t } = this.props;
 
         var self = this;
-        API.getProfile(self.props.params.pk)
+        API.getProfile(self.props.match.params.pk)
             .then(function(profile) {
                 if (!profile.username) {
                     alert(t('connect::Too far!'));
-                    hashHistory.push('/map');
+                    self.props.history.push('/map');
                 }
                 self.setState({ other: profile });
             });
     }
 
     goBack = () => {
-        hashHistory.push('/map');
+        this.props.history.push('/map');
     }
 
     connect = () => {
@@ -66,10 +66,10 @@ class Connect extends React.Component {
                         connected(resp.clue);
                         break;
                     case 'step1':
-                        hashHistory.push('/qrcapt/' + id + '/' + ev);
+                        self.props.history.push('/qrcapt/' + id + '/' + ev);
                         break;
                     case 'step2':
-                        hashHistory.push('/qrcode/' + id + '/' + ev + '/' + resp.secret);
+                        self.props.history.push('/qrcode/' + id + '/' + ev + '/' + resp.secret);
                         break;
                     default:
                         alert(t('connect::too far, get near'));
@@ -89,7 +89,6 @@ class Connect extends React.Component {
         }
 
         var icon = this.state.other ? getIcon(this.state.other) : '';
-        console.log("connect", this.state.other);
 
         return (
             <div id="connect" className="container mbottom">
@@ -112,4 +111,4 @@ class Connect extends React.Component {
     }
 }
 
-export default translate(['connect'], { wait: true })(Connect);
+export default translate(['connect'], { wait: true })(withRouter(Connect));

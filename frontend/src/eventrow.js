@@ -1,5 +1,5 @@
 import React from 'react';
-import { hashHistory } from 'react-router'
+import { withRouter } from 'react-router';
 
 import API from './api';
 import moment from 'moment';
@@ -43,11 +43,11 @@ class EventRow extends React.Component {
     }
 
     play = (ev) => {
-        hashHistory.push('/map/' + ev.pk);
+        this.props.history.push('/map/' + ev.pk);
     }
 
     admin = (ev) => {
-        hashHistory.push('/admin/' + ev.pk);
+        this.props.history.push('/admin/' + ev.pk);
     }
 
     price = (ev) => {
@@ -166,4 +166,4 @@ class EventRow extends React.Component {
         )
     }
 }
-export default EventRow = translate(['events'], { wait: true })(EventRow);
+export default EventRow = translate(['events'], { wait: true })(withRouter(EventRow));

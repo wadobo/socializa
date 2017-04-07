@@ -1,5 +1,4 @@
 import React from 'react';
-import { hashHistory } from 'react-router'
 import { Link } from 'react-router'
 
 import { user, logout } from './auth';
@@ -8,6 +7,7 @@ import Loading from './loading';
 import moment from 'moment';
 import EventRow from './eventrow';
 
+import Bucket from './bucket';
 import { translate } from 'react-i18next';
 
 
@@ -57,7 +57,7 @@ class Events extends React.Component {
         if (user.activeEvent) {
           title = title + ' - ' + user.activeEvent.name;
         }
-        this.props.setAppState({ title: title, active: 'events' });
+        Bucket.setAppState({ title: title, active: 'events' });
     }
 
     searchChange = (e) => {

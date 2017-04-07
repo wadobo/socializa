@@ -67,7 +67,6 @@ export function storeUser() {
 export function logout() {
     localStorage['socializa-user'] = ''
     user = $.extend({}, defuser);
-    console.log("logout");
 };
 
 

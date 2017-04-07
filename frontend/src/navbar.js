@@ -1,6 +1,6 @@
 import React from 'react';
-import { Link } from 'react-router'
-import { hashHistory } from 'react-router'
+import { withRouter } from 'react-router';
+import { Link } from 'react-router-dom';
 import { user, logout } from './auth';
 import { translate } from 'react-i18next';
 
@@ -9,7 +9,7 @@ class NavBar extends React.Component {
 
     logout = (e) => {
         logout();
-        hashHistory.push('/login');
+        this.props.history.push('/login');
     }
 
     openmenu = (e) => {
@@ -56,4 +56,4 @@ class NavBar extends React.Component {
         );
     }
 }
-export default NavBar = translate(['navbar'], { wait: true })(NavBar);
+export default NavBar = translate(['navbar'], { wait: true })(withRouter(NavBar));
