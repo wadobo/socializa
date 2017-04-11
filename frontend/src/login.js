@@ -79,44 +79,46 @@ class Login extends React.Component {
             });
     }
 
+    facebookAuth = (e) => {
+        var self = this;
+
+        var fbLoginSuccess = function (userData) {
+            var token = userData.authResponse.accessToken;
+            facebookConnectPlugin.api("/me?fields=email", null,
+                function (data) {
+                    alert("TOKEN: " + token);
+                    var email = data.email;
+                    self.authWithToken(token, email);
+                },
+                function (error) {
+                    console.log("ERROR", error);
+                }
+            );
+        }
+
+        var fbError = function(error) {
+            alert(error);
+        }
+
+        facebookConnectPlugin.login(["public_profile"], fbLoginSuccess, fbError);
+    }
+
     googleAuth = (e) => {
         var self = this;
-        var redirect = encodeURIComponent('https://socializa.wadobo.com/oauth2callback/');
-        var gapp = this.state.gapp;
 
-        var guri = 'https://accounts.google.com/o/oauth2/v2/auth?scope=email%20profile&response_type=token&client_id='+gapp;
-        guri += '&redirect_uri='+redirect;
-        guri += '&state='+location.href;
-
-        if (window.HOST != '') {
-            this.win = window.open(guri, '_blank', 'location=no');
-        } else {
-            location.href = guri;
-        }
-
-        function loadCallBack(ev) {
-            var qs = ev.url;
-            qs = qs.split('+').join(' ');
-            if (!qs.includes('oauth2redirect')) {
-                return;
+        var config = {'offline': true};
+        window.plugins.googleplus.login(
+            config,
+            function(obj) {
+                alert(JSON.stringify(obj));
+                token = obj.idToken;
+                email = obj.email;
+                self.authWithToken(token, email);
+            },
+            function(msg) {
+                alert("ERROR" + msg);
             }
-
-            var params = {},
-                tokens,
-                re = /[?&]?([^=]+)=([^&]*)/g;
-
-            while (tokens = re.exec(qs)) {
-                params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
-            }
-            if (params.token) {
-                self.authWithToken(params.token, params.email);
-            }
-            self.win.close();
-        }
-
-        if (this.win) {
-            this.win.addEventListener('loadstart', loadCallBack);
-        }
+        );
     }
 
     render() {
@@ -140,7 +142,7 @@ class Login extends React.Component {
 
                 <div className="social row text-center">
                     <div className="col-xs-4">
-                        <a href="#" className="btn btn-primary btn-circle">
+                        <a onClick={ this.facebookAuth } className="btn btn-primary btn-circle">
                             <i className="fa fa-facebook" aria-hidden="true"></i>
                         </a>
                     </div>

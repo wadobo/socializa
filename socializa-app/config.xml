@@ -61,4 +61,11 @@
     </platform>
     <engine name="android" spec="~6.0.0" />
     <allow-navigation href="*" />
+    <plugin name="cordova-plugin-facebook4" spec="https://github.com/jeduan/cordova-plugin-facebook4">
+        <variable name="APP_ID" value="TODO_APP_ID" />
+        <variable name="APP_NAME" value="TODO_APP_NAME" />
+    </plugin>
+    <plugin name="cordova-plugin-googleplus" spec="https://github.com/EddyVerbruggen/cordova-plugin-googleplus">
+        <variable name="REVERSED_CLIENT_ID" value="TODO_REVERSED_CLIENT_ID" />
+    </plugin>
 </widget>
