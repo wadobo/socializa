@@ -9,7 +9,7 @@ from .models import Player
 
 
 def create_player(backend, user, *args, **kwargs):
-    if backend.name == "google-oauth2":
+    if backend.name in ["google-oauth2", "facebook"]:
         player, new = Player.objects.get_or_create(user=user)
         if new and player:
             player.save()

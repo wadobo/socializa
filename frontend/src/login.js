@@ -24,10 +24,7 @@ class Login extends React.Component {
         } else {
             API.oauth2apps()
                 .then(function(resp) {
-                    self.setState({
-                        gapp: resp.google,
-                        fapp: resp.facebook,
-                    });
+                    self.setState({ social: resp });
                 });
         }
     }
@@ -63,7 +60,7 @@ class Login extends React.Component {
 
     state = {
         email: '', password: '',
-        gapp: null, fapp: null
+        social: {}
     }
 
     login = (e) => {
@@ -71,65 +68,81 @@ class Login extends React.Component {
         var password = this.state.password;
         var self = this;
 
-        return API.login(email, password)
+        return API.login(self.state.social.local.id, email, password)
             .then(function(resp) {
-                login(email, resp.token, 'token');
+                login(email, resp.access_token, 'token');
                 self.props.history.push('/map');
             }).catch(function(error) {
                 alert(error);
             });
     }
 
-    socialAuth(backend) {
+    facebookAuth() {
+        const { t } = this.props;
         var self = this;
-        var redirect = encodeURIComponent('https://socializa.wadobo.com/oauth2callback');
 
-        var app = '';
-        var uri = '';
-        switch (backend) {
-            case 'google':
-                uri = 'https://accounts.google.com/o/oauth2/v2/auth?response_type=token&scope=email&client_id=';
-                app = this.state.gapp;
-                break;
-            case 'facebook':
-                app = this.state.fapp;
-                uri = 'https://www.facebook.com/v2.8/dialog/oauth?response_type=token&scope=email&client_id=';
-                break;
-        }
+        FB.init({
+          appId      : self.state.social.facebook.oauth,
+          xfbml      : true,
+          version    : 'v2.8'
+        });
+        FB.AppEvents.logPageView();
 
-        uri += app;
-        uri += '&redirect_uri='+redirect;
-        uri += '&state='+btoa(JSON.stringify({app: backend, url: location.href}));
+        // Using facebook auth SDK
+        window.FB.login(function(response) {
+            if (response.status === 'connected') {
+                // we've the token, we can auth with this
+                var tk = response.authResponse.accessToken;
 
-        if (window.HOST != '') {
-            this.win = window.open(uri, '_blank', 'location=no');
-        } else {
-            location.href = uri;
-        }
-
-        function loadCallBack(ev) {
-            var qs = ev.url;
-            qs = qs.split('+').join(' ');
-            if (!qs.includes('oauth2redirect')) {
-                return;
+                // getting the email
+                FB.api('/me?fields=email', function(response) {
+                    // converting the token to our AccessToken. This will
+                    // create the user if it doesn't exists
+                    API.convert_token(self.state.social.facebook.id, 'facebook', tk)
+                        .then(function(resp) {
+                            login(response.email, resp.access_token, 'token');
+                            self.props.history.push('/map');
+                        }).catch(function(error) {
+                            alert(error);
+                        });
+                });
+            } else {
+                alert(t("login::Unauthorized"));
             }
+        }, {scope: 'public_profile,email'});
+    }
 
-            var params = {},
-                tokens,
-                re = /[?&]?([^=]+)=([^&]*)/g;
+    googleAuth() {
+        const { t } = this.props;
+        var self = this;
 
-            while (tokens = re.exec(qs)) {
-                params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
-            }
-            if (params.token) {
-                self.authWithToken(params.token, params.email);
-            }
-            self.win.close();
-        }
+        function start() {
+          gapi.client.init({
+            'apiKey': self.state.social.google.apikey,
+            'discoveryDocs': ['https://people.googleapis.com/$discovery/rest'],
+            // clientId and scope are optional if auth is not required.
+            'clientId': self.state.social.google.oauth,
+            'scope': 'profile email',
+          }).then(function() {
+            var auth = gapi.auth2.getAuthInstance();
+            auth.signIn()
+                .then(function(response) {
+                    var tk = response.getAuthResponse().access_token;
+                    var email = response.getBasicProfile().getEmail();
 
-        if (this.win) {
-            this.win.addEventListener('loadstart', loadCallBack);
-        }
+                    API.convert_token(self.state.social.google.id, 'google-oauth2', tk)
+                        .then(function(resp) {
+                            login(email, resp.access_token, 'token');
+                            self.props.history.push('/map');
+                        }).catch(function(error) {
+                            alert(error);
+                        });
+                });
+          });
+        };
+        // 1. Load the JavaScript client library.
+        gapi.load('client', start);
+
     }
 
     render() {
@@ -155,15 +168,15 @@ class Login extends React.Component {
                 <center><h3>{t('login::Login using Facebook or Google')}</h3></center>
                 <div className="social row text-center">
                     <div className="col-xs-6">
-                        { this.state.fapp ? (
-                            <a onClick={ this.socialAuth.bind(this, 'facebook') } className="btn btn-primary btn-circle">
+                        { this.state.social.facebook ? (
+                            <a onClick={ this.facebookAuth.bind(this) } className="btn btn-primary btn-circle">
                                 <i className="fa fa-facebook" aria-hidden="true"></i>
                             </a> )
                         : (<span></span>) }
                     </div>
                     <div className="col-xs-6">
-                        { this.state.gapp ? (
-                            <a onClick={ this.socialAuth.bind(this, 'google') } className="btn btn-danger btn-circle">
+                        { this.state.social.google ? (
+                            <a onClick={ this.googleAuth.bind(this) } className="btn btn-danger btn-circle">
                                 <i className="fa fa-google-plus" aria-hidden="true"></i>
                             </a> )
                          : (<span></span>) }

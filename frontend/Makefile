@@ -21,9 +21,9 @@ files:
 	cp -rf locales dist/app/
 
 indexapp: index.html
-	cat index.html | tr '\n', '\r' | perl -pe 's|<!--<web>-->.*?<!--</web>-->|\1|g' | tr '\r' '\n' > dist/index.html
+	cat index.html | tr '\n' '\r' | perl -pe 's|<!--<web>-->.*?<!--</web>-->|\1|g' | tr '\r' '\n' > dist/index.html
 indexweb: index.html
-	cat index.html | tr '\n', '\r' | perl -pe 's|<!--<app>-->.*?<!--</app>-->|\1|g' | tr '\r' '\n' > dist/index.html
+	cat index.html | tr '\n' '\r' | perl -pe 's|<!--<app>-->.*?<!--</app>-->|\1|g' | tr '\r' '\n' > dist/index.html
 
 extract:
 	cd src && ../node_modules/i18next-parser/bin/cli.js --write-old false -r -s "::" -k ":::" -f "t" "i18n.t" -l es src/*.js -o ../locales/

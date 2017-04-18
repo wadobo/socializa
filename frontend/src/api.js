@@ -44,7 +44,7 @@ function JSONq(method, data) {
     }
 
     if (user.apikey) {
-        d.headers.Authorization = 'Token ' + user.apikey;
+        d.headers.Authorization = 'Bearer ' + user.apikey;
     }
 
     return d;
@@ -72,13 +72,26 @@ function customFetch(path, data) {
 
 
 export default class API {
-    static login(email, password) {
+    static convert_token(clientid, backend, token) {
         var data = JSONPost({
+            client_id: clientid,
+            grant_type: 'convert_token',
+            backend: backend,
+            token: token
+        });
+
+        return customFetch('/api/social/convert-token/', data);
+    }
+
+    static login(clientid, email, password) {
+        var data = JSONPost({
+            client_id: clientid,
+            grant_type: 'password',
             username: email,
             password: password
         });
 
-        return customFetch('/api/token/', data);
+        return customFetch('/api/social/token/', data);
     }
 
     static register(email, password) {
