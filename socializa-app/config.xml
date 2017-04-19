@@ -61,11 +61,12 @@
     </platform>
     <engine name="android" spec="~6.0.0" />
     <allow-navigation href="*" />
-    <plugin name="cordova-plugin-facebook4" spec="https://github.com/jeduan/cordova-plugin-facebook4">
-        <variable name="APP_ID" value="TODO_APP_ID" />
-        <variable name="APP_NAME" value="TODO_APP_NAME" />
+    <plugin name="cordova-plugin-facebook4" spec="~1.7.4">
+        <variable name="APP_ID" value="535483196622224" />
+        <variable name="APP_NAME" value="Socializa" />
     </plugin>
-    <plugin name="cordova-plugin-googleplus" spec="https://github.com/EddyVerbruggen/cordova-plugin-googleplus">
-        <variable name="REVERSED_CLIENT_ID" value="TODO_REVERSED_CLIENT_ID" />
+    <plugin name="cordova-plugin-contacts" spec="~2.3.0" />
+    <plugin name="cordova-plugin-googleplus" spec="https://github.com/EddyVerbruggen/cordova-plugin-googleplus.git" source="git">
+        <variable name="REVERSED_CLIENT_ID" value="com.googleusercontent.apps.521528522962-569ibib9fih3lo11r3tkr55si8gmsdsg" />
     </plugin>
 </widget>

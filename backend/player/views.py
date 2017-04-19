@@ -381,7 +381,7 @@ class Register(APIView):
         except Exception as e:
             return Response({'status': 'nok', 'msg': 'invalid email'})
 
-        url = 'https://socializa.wadobo.com' + reverse('confirm', kwargs={'code':p.confirm_code})
+        url = 'https://devsocializa.wadobo.com' + reverse('confirm', kwargs={'code':p.confirm_code})
         msg = EmailMultiAlternatives(
             _('Socializa account validation'),
             _('Validate your socializa account: %s') % url,

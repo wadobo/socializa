@@ -112,7 +112,7 @@ class Login extends React.Component {
         const { t } = this.props;
         var self = this;
 
-        var config = {'offline': true};
+        var config = {'webClientId': '521528522962-569ibib9fih3lo11r3tkr55si8gmsdsg.apps.googleusercontent.com', 'offline': true};
         window.plugins.googleplus.login(
             config,
             function(obj) {
