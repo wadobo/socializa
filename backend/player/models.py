@@ -21,6 +21,11 @@ class Player(models.Model):
     ptype = models.CharField(max_length=16, choices=PLAYER_TYPE, default='player')
     about = models.TextField(blank=True, null=True)
     extra = models.TextField(max_length=1024, blank=True, null=True)
+    confirm_code = models.CharField(max_length=80, blank=True, null=True)
+
+    def regen_confirm_code(self):
+        chars = ascii_uppercase + digits
+        self.confirm_code = ''.join([SystemRandom().choice(chars) for i in range(80)])
 
     def set_position(self, lon, lat):
         self.pos = GEOSGeometry('POINT({0} {1})'.format(lon, lat))

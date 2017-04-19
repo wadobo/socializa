@@ -1,5 +1,5 @@
 import React from 'react';
-import { hashHistory } from 'react-router'
+import { withRouter } from 'react-router';
 
 import API from './api';
 import moment from 'moment';
@@ -8,10 +8,10 @@ import { translate } from 'react-i18next';
 
 
 class EventRow extends React.Component {
-    state = { joined: false, expand: false }
+    state = { joined: false, expand: false, solved: false }
 
     componentWillMount() {
-      this.setState({ joined: this.props.ev.joined });
+      this.setState({ joined: this.props.ev.joined, solved: this.props.ev.solved });
     }
 
     expand = (e) => {
@@ -43,11 +43,11 @@ class EventRow extends React.Component {
     }
 
     play = (ev) => {
-        hashHistory.push('/map/' + ev.pk);
+        this.props.history.push('/map/' + ev.pk);
     }
 
     admin = (ev) => {
-        hashHistory.push('/admin/' + ev.pk);
+        this.props.history.push('/admin/' + ev.pk);
     }
 
     price = (ev) => {
@@ -146,9 +146,13 @@ class EventRow extends React.Component {
 
     render() {
         var classes = 'event';
-        if (!this.props.hiddenbuttons && this.state.joined) {
+        if (this.state.joined) {
             classes += ' joined';
         }
+        if (this.state.solved) {
+            classes += ' solved';
+        }
+
         return (
             <div className={ classes } onClick={ this.expand.bind(this) }>
                 { this.price(this.props.ev) }
@@ -162,4 +166,4 @@ class EventRow extends React.Component {
         )
     }
 }
-export default EventRow = translate(['events'], { wait: true })(EventRow);
+export default EventRow = translate(['events'], { wait: true })(withRouter(EventRow));

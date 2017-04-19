@@ -1,6 +1,6 @@
 import React from 'react';
-import { Link } from 'react-router'
-import { hashHistory } from 'react-router'
+import { withRouter } from 'react-router';
+import { Link } from 'react-router-dom';
 import { user, logout } from './auth';
 import { translate } from 'react-i18next';
 
@@ -9,7 +9,7 @@ class NavBar extends React.Component {
 
     logout = (e) => {
         logout();
-        hashHistory.push('/login');
+        this.props.history.push('/login');
     }
 
     openmenu = (e) => {
@@ -48,7 +48,7 @@ class NavBar extends React.Component {
                       { this.activeEvent() }
                       <li className={ act == 'map' ? "active" : "" }><Link to="/map"> <i className="fa fa-fw fa-map-marker"></i> {t('navbar::map')}</Link></li>
                       <li className={ act == 'events' ? "active" : "" }><Link to="/events"> <i className="fa fa-fw fa-gamepad"></i> {t('navbar::events')}</Link></li>
-                      <li className={ act == 'profile' ? "active" : "" }><Link to="/profile"> <i className="fa fa-fw fa-user"></i> {t('navbar::profile')}</Link></li>
+                      <li className={ act == 'profile' ? "active" : "" }><Link to="/profile"> <i className="fa fa-fw fa-user"></i>{t('navbar::profile')} / {user.username}</Link></li>
                       <li><a onClick={ this.logout }> <i className="fa fa-fw fa-close"></i> {t('navbar::Logout')}</a></li>
                   </ul>
                 </div>
@@ -56,4 +56,4 @@ class NavBar extends React.Component {
         );
     }
 }
-export default NavBar = translate(['navbar'], { wait: true })(NavBar);
+export default NavBar = translate(['navbar'], { wait: true })(withRouter(NavBar));

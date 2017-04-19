@@ -1,5 +1,6 @@
 import React from 'react';
-import { hashHistory, Link } from 'react-router'
+import { withRouter } from 'react-router';
+import { Link } from 'react-router-dom'
 import $ from 'jquery';
 
 import API from './api';
@@ -23,11 +24,7 @@ class Login extends React.Component {
         } else {
             API.oauth2apps()
                 .then(function(resp) {
-                    self.setState({
-                        gapp: resp.google,
-                        fapp: resp.facebook,
-                        tapp: resp.twitter
-                    });
+                    self.setState({ social: resp });
                 });
         }
     }
@@ -49,7 +46,7 @@ class Login extends React.Component {
 
     authWithToken(token, email) {
         login(email, token, 'token');
-        hashHistory.push('/map');
+        this.props.history.push('/map');
         document.location.search = '';
     }
 
@@ -63,35 +60,42 @@ class Login extends React.Component {
 
     state = {
         email: '', password: '',
-        gapp: null, tapp: null, fapp: null
+        social: {}
     }
 
     login = (e) => {
         var email = this.state.email;
         var password = this.state.password;
+        var self = this;
 
-        return API.login(email, password)
+        return API.login(self.state.social.local.id, email, password)
             .then(function(resp) {
-                login(email, resp.token, 'token');
-                hashHistory.push('/map');
+                login(email, resp.access_token, 'token');
+                self.props.history.push('/map');
             }).catch(function(error) {
                 alert(error);
             });
     }
 
-    facebookAuth = (e) => {
+    facebookAuth() {
+        const { t } = this.props;
         var self = this;
 
         var fbLoginSuccess = function (userData) {
             var token = userData.authResponse.accessToken;
             facebookConnectPlugin.api("/me?fields=email", null,
                 function (data) {
-                    alert("TOKEN: " + token);
                     var email = data.email;
-                    self.authWithToken(token, email);
+                    API.convert_token(self.state.social.facebook.id, 'facebook', token)
+                        .then(function(resp) {
+                            login(email, resp.access_token, 'token');
+                            self.props.history.push('/map');
+                        }).catch(function(error) {
+                            alert(error);
+                        });
                 },
                 function (error) {
-                    console.log("ERROR", error);
+                    alert(t("login::Unauthorized"));
                 }
             );
         }
@@ -101,19 +105,26 @@ class Login extends React.Component {
         }
 
         facebookConnectPlugin.login(["public_profile"], fbLoginSuccess, fbError);
+
     }
 
-    googleAuth = (e) => {
+    googleAuth() {
+        const { t } = this.props;
         var self = this;
 
         var config = {'offline': true};
         window.plugins.googleplus.login(
             config,
             function(obj) {
-                alert(JSON.stringify(obj));
-                token = obj.idToken;
-                email = obj.email;
-                self.authWithToken(token, email);
+                var token = obj.idToken;
+                var email = obj.email;
+                API.convert_token(self.state.social.google.id, 'google-oauth2', token)
+                    .then(function(resp) {
+                        login(email, resp.access_token, 'token');
+                        self.props.history.push('/map');
+                    }).catch(function(error) {
+                        alert(error);
+                    });
             },
             function(msg) {
                 alert("ERROR" + msg);
@@ -125,7 +136,7 @@ class Login extends React.Component {
         const { t } = this.props;
 
         return (
-            <div id="login" className="container">
+            <div id="login" className="container mbottom">
                 <div className="header text-center">
                     <img src="app/images/icon.png" className="logo" alt="logo"/><br/>
                     <h1>Socializa</h1>
@@ -136,24 +147,23 @@ class Login extends React.Component {
                         <input className="form-control" type="password" id="password" name="password" placeholder={t('login::password')} value={ this.state.password } onChange={ this.passChange }/>
                 </form>
 
-                <Link to="/register">{t('login::New account')}</Link>
+                <br/>
+                <Link to="/register" className="pull-right btn btn-primary">{t('login::New account')}</Link>
 
                 <hr/>
 
+                <center><h3>{t('login::Login using Facebook or Google')}</h3></center>
                 <div className="social row text-center">
-                    <div className="col-xs-4">
-                        <a onClick={ this.facebookAuth } className="btn btn-primary btn-circle">
-                            <i className="fa fa-facebook" aria-hidden="true"></i>
-                        </a>
+                    <div className="col-xs-6">
+                        { this.state.social.facebook ? (
+                            <a onClick={ this.facebookAuth.bind(this) } className="btn btn-primary btn-circle">
+                                <i className="fa fa-facebook" aria-hidden="true"></i>
+                            </a> )
+                        : (<span></span>) }
                     </div>
-                    <div className="col-xs-4">
-                        <a href="#" className="btn btn-info btn-circle">
-                            <i className="fa fa-twitter" aria-hidden="true"></i>
-                        </a>
-                    </div>
-                    <div className="col-xs-4">
-                        { this.state.gapp ? (
-                            <a onClick={ this.googleAuth } className="btn btn-danger btn-circle">
+                    <div className="col-xs-6">
+                        { this.state.social.google ? (
+                            <a onClick={ this.googleAuth.bind(this) } className="btn btn-danger btn-circle">
                                 <i className="fa fa-google-plus" aria-hidden="true"></i>
                             </a> )
                          : (<span></span>) }
@@ -169,4 +179,4 @@ class Login extends React.Component {
     }
 }
 
-export default translate(['login'], { wait: true })(Login);
+export default translate(['login'], { wait: true })(withRouter(Login));

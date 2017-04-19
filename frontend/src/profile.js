@@ -1,11 +1,11 @@
 import React from 'react';
-import { hashHistory } from 'react-router'
-import { Link } from 'react-router'
+import { withRouter } from 'react-router';
 
 import { setUser, user, logout } from './auth';
 import Loading from './loading';
 import API from './api';
 
+import Bucket from './bucket';
 import { translate } from 'react-i18next';
 
 
@@ -13,7 +13,7 @@ class Profile extends React.Component {
     state = { user: user, player: null }
 
     componentDidMount() {
-        this.props.setAppState({ title: this.props.t('profile::Profile'), active: 'profile' });
+        Bucket.setAppState({ title: this.props.t('profile::Profile'), active: 'profile' });
         this.updateProfile();
     }
 
@@ -27,9 +27,10 @@ class Profile extends React.Component {
 
     save = (e) => {
         var p = this.state.player;
+        var self = this;
         API.setProfile(p)
             .then(function() {
-                hashHistory.push('/map');
+                self.props.history.push('/map');
             });
 
         setUser(this.state.user);
@@ -85,6 +86,7 @@ class Profile extends React.Component {
 
         return (
             <div id="profile" className="container mbottom">
+                <h2>{user.username}</h2>
                 <h3>{t('profile::About you')}</h3>
                 <textarea className="form-control" placeholder={t('profile::about you')} onChange={ this.aboutChange } value={ this.state.player.about }/>
 
@@ -134,4 +136,4 @@ class Profile extends React.Component {
     }
 }
 
-export default Profile = translate(['profile'], { wait: true })(Profile);
+export default Profile = translate(['profile'], { wait: true })(withRouter(Profile));

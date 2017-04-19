@@ -72,13 +72,8 @@ export function logout() {
     // normal logout
     localStorage['socializa-user'] = ''
     user = $.extend({}, defuser);
-    console.log("logout");
 };
 
-
-export function register(email, password) {
-    return true;
-};
 
 export function getIcon(p) {
     // returns an icon based on the player id

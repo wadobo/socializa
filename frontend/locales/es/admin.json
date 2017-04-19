@@ -1,8 +1,8 @@
 {
+  "Challenges": "Retos",
   "Game": "Juego",
-  "Vision distance (m)": "Distancia de visión (m)",
-  "vision distance": "distancia de visión",
   "Interact distance (m)": "Distancia de conexión (m)",
+  "Vision distance (m)": "Distancia de visión (m)",
   "interact distance": "distancia de conexión",
-  "Challenges": "Retos"
+  "vision distance": "distancia de visión"
 }
