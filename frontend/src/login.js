@@ -10,44 +10,13 @@ import { translate, Interpolate } from 'react-i18next';
 
 
 class Login extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
     componentDidMount() {
         var self = this;
 
-        var q = this.getQueryParams();
-
-        if (q.token) {
-            self.authWithToken(q.token, q.email);
-        } else {
-            API.oauth2apps()
-                .then(function(resp) {
-                    self.setState({ social: resp });
-                });
-        }
-    }
-
-    getQueryParams = () => {
-        var qs = document.location.search;
-        qs = qs.split('+').join(' ');
-
-        var params = {},
-            tokens,
-            re = /[?&]?([^=]+)=([^&]*)/g;
-
-        while (tokens = re.exec(qs)) {
-            params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
-        }
-
-        return params;
-    }
-
-    authWithToken(token, email) {
-        login(email, token, 'token');
-        this.props.history.push('/map');
-        document.location.search = '';
+        API.oauth2apps()
+            .then(function(resp) {
+                self.setState({ social: resp });
+            });
     }
 
     emailChange = (e) => {
