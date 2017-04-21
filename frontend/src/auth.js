@@ -65,13 +65,14 @@ export function storeUser() {
 
 
 export function logout() {
-    // facebook logout
-    facebookConnectPlugin.logout(function(data) {console.log(data);}, function(error) {console.log(error);})
-    // googleplus logout
-    window.plugins.googleplus.logout(function (msg) {console.log(msg);});
     // normal logout
     localStorage['socializa-user'] = ''
     user = $.extend({}, defuser);
+
+    // facebook logout
+    window.FACEBOOK.logout();
+    // googleplus logout
+    window.GPLUS.logout();
 };
 
 

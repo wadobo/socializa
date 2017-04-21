@@ -16,6 +16,10 @@ class Login extends React.Component {
         API.oauth2apps()
             .then(function(resp) {
                 self.setState({ social: resp });
+
+                if (resp.google) {
+                    GPLUS.init(resp.google.apikey, resp.google.oauth);
+                }
             });
     }
 
@@ -49,56 +53,45 @@ class Login extends React.Component {
     facebookAuth() {
         const { t } = this.props;
         var self = this;
+        var appid = self.state.social.facebook.oauth;
 
-        var fbLoginSuccess = function (userData) {
-            var token = userData.authResponse.accessToken;
-            facebookConnectPlugin.api("/me?fields=email", null,
-                function (data) {
-                    var email = data.email;
-                    API.convert_token(self.state.social.facebook.id, 'facebook', token)
-                        .then(function(resp) {
-                            login(email, resp.access_token, 'token');
-                            self.props.history.push('/map');
-                        }).catch(function(error) {
-                            alert(error);
-                        });
-                },
-                function (error) {
-                    alert(t("login::Unauthorized"));
-                }
-            );
+        function success(tk, email) {
+            API.convert_token(self.state.social.facebook.id, 'facebook', tk)
+                .then(function(resp) {
+                    login(email, resp.access_token, 'token');
+                    self.props.history.push('/map');
+                }).catch(function(error) {
+                    alert(error);
+                });
         }
 
-        var fbError = function(error) {
-            alert(error);
+        function error(error) {
+            alert(t("login::Unauthorized"));
         }
 
-        facebookConnectPlugin.login(["public_profile"], fbLoginSuccess, fbError);
-
+        FACEBOOK.login(appid, success, error);
     }
 
     googleAuth() {
         const { t } = this.props;
         var self = this;
+        var appid = self.state.social.google.oauth;
 
-        var config = {'webClientId': '521528522962-569ibib9fih3lo11r3tkr55si8gmsdsg.apps.googleusercontent.com', 'offline': true};
-        window.plugins.googleplus.login(
-            config,
-            function(obj) {
-                var token = obj.idToken;
-                var email = obj.email;
-                API.convert_token(self.state.social.google.id, 'google-oauth2', token)
-                    .then(function(resp) {
-                        login(email, resp.access_token, 'token');
-                        self.props.history.push('/map');
-                    }).catch(function(error) {
-                        alert(error);
-                    });
-            },
-            function(msg) {
-                alert("ERROR" + msg);
-            }
-        );
+        function success(tk, email) {
+            API.convert_token(self.state.social.google.id, 'google-oauth2', tk)
+                .then(function(resp) {
+                    login(email, resp.access_token, 'token');
+                    self.props.history.push('/map');
+                }).catch(function(error) {
+                    alert(error);
+                });
+        }
+
+        function error(error) {
+            alert(t("login::Unauthorized"));
+        }
+
+        GPLUS.login(appid, success, error);
     }
 
     render() {
@@ -118,6 +111,7 @@ class Login extends React.Component {
 
                 <br/>
                 <Link to="/register" className="pull-right btn btn-primary">{t('login::New account')}</Link>
+                <div className="clearfix"></div>
 
                 <hr/>
 
