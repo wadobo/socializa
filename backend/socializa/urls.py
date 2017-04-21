@@ -19,7 +19,7 @@ from django.contrib import admin
 from rest_framework.authtoken import views
 from rest_framework_swagger.views import get_swagger_view
 
-from .views import oauth2apps
+from .views import oauth2apps, gplusid
 
 
 schema_view = get_swagger_view(title="Socializa API")
@@ -29,6 +29,7 @@ urlpatterns = [
     url(r'^docs/', schema_view),
     url(r"^editor/", include("editor.urls")),
     url(r'^api/oauth2apps/$', oauth2apps),
+    url(r'^api/gplusid/([\w.]+)/$', gplusid),
     url(r'^api/token/', views.obtain_auth_token),
     url(r"^api/social/", include("rest_framework_social_oauth2.urls")),
     url(r"^api/player/", include("player.urls")),

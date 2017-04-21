@@ -77,14 +77,19 @@ class Login extends React.Component {
         var self = this;
         var appid = self.state.social.google.oauth;
 
-        function success(tk, email) {
-            API.convert_token(self.state.social.google.id, 'google-oauth2', tk)
-                .then(function(resp) {
-                    login(email, resp.access_token, 'token');
-                    self.props.history.push('/map');
-                }).catch(function(error) {
-                    alert(error);
-                });
+        function success(tk, email, converted) {
+            if (converted) {
+                login(email, tk, 'token');
+                self.props.history.push('/map');
+            } else {
+                API.convert_token(self.state.social.google.id, 'google-oauth2', tk)
+                    .then(function(resp) {
+                        login(email, resp.access_token, 'token');
+                        self.props.history.push('/map');
+                    }).catch(function(error) {
+                        alert(error);
+                    });
+            }
         }
 
         function error(error) {

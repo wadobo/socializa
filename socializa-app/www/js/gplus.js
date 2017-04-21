@@ -12,12 +12,14 @@
             function(obj) {
                 var token = obj.idToken;
                 var email = obj.email;
-                console.log("TOKEN", obj);
-                // TODO: convert this token to a valid token... we should
-                // pass this to the backend, validate and create the user,
-                // then generate a token and return it
-                // https://developers.google.com/identity/sign-in/web/backend-auth
-                success(token, email);
+
+                $.get(HOST + '/api/gplusid/' + token + '/',
+                    function(response) {
+                        if (response.status == 'ok') {
+                            success(response.token, email, true);
+                        } else {
+                            error();
+                        }
             },
             function(msg) {
                 console.log("ERROR", msg);
