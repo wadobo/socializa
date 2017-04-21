@@ -20,6 +20,7 @@
                         } else {
                             error();
                         }
+                    });
             },
             function(msg) {
                 console.log("ERROR", msg);
