@@ -201,6 +201,8 @@ if DEV:
 if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+BASE_URL = 'https://socializa.wadobo.com'
+DEFAULT_FROM_EMAIL = 'socializa@wadobo.com'
 
 # SOCIAL AUTHENTICATION
 

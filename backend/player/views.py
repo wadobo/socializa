@@ -381,12 +381,11 @@ class Register(APIView):
         except Exception as e:
             return Response({'status': 'nok', 'msg': 'invalid email'})
 
-        url = 'https://socializa.wadobo.com' + reverse('confirm', kwargs={'code':p.confirm_code})
+        url = settings.BASE_URL + reverse('confirm', kwargs={'code':p.confirm_code})
         msg = EmailMultiAlternatives(
             _('Socializa account validation'),
             _('Validate your socializa account: %s') % url,
             to=[email],
-            reply_to=['socializa@wadobo.com'],
         )
         html_message = _('Validate your socializa account: '
                          '<a href="%s">%s</a>') % (url, p.confirm_code)
@@ -408,6 +407,7 @@ class RegisterConfirm(TemplateView):
         p.user.save()
 
         ctx['player'] = p
+        ctx['base_url'] = settings.BASE_URL
 
         return ctx
 confirm = RegisterConfirm.as_view()
