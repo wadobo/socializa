@@ -1,3 +1,5 @@
+import unidecode
+
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
@@ -16,6 +18,10 @@ from .models import Membership
 from .models import PlayingEvent
 from .serializers import EventSerializer
 from .serializers import AdminChallengeSerializer
+
+
+def normalize(txt):
+    return unidecode.unidecode(txt).strip().lower()
 
 
 class HasEventPermission(BasePermission):
@@ -199,8 +205,8 @@ class SolveEvent(APIView):
         event = Event.objects.get(pk=event_id)
         player = request.user.player
 
-        solution = request.data.get('solution', None)
-        correct_solution = event.game.solution
+        solution = normalize(request.data.get('solution', ''))
+        correct_solution = normalize(event.game.solution)
 
         if not solution or not correct_solution:
             return Response("Bad request", status=rf_status.HTTP_400_BAD_REQUEST)
