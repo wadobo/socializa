@@ -92,7 +92,7 @@ near = PlayersNear.as_view()
 class MeetingCreate(APIView):
 
     def create_clue(self, challenge):
-        clue = Clue(player=self.player1, event=self.event, challenge=challenge)
+        clue, new = Clue.objects.get_or_create(player=self.player1, event=self.event, challenge=challenge)
         clue.save()
         return clue
 
