@@ -1,4 +1,5 @@
 import json
+from django.utils.timezone import make_aware
 from django.utils.dateparse import parse_datetime
 from django.utils.translation import ugettext as _
 from django.views.generic.base import TemplateView, View
@@ -222,6 +223,10 @@ class EditEvent(TemplateView):
         _start_date = parse_datetime(_start_date)
         _end_date = data.get('ev_end_date', None)
         _end_date = parse_datetime(_end_date)
+
+        _start_date = make_aware(_start_date)
+        _end_date = make_aware(_end_date)
+
         _place = data.get('ev_place', None)
         if _place:
             _place = json.loads(_place)
