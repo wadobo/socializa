@@ -14,9 +14,6 @@ import Loading from './loading';
 import Bucket from './bucket';
 import { translate } from 'react-i18next';
 
-// TODO, solve a clue. Clues can also be solved, but for now we don't
-// support this.
-
 class Event extends React.Component {
     state = {
         user: user,
