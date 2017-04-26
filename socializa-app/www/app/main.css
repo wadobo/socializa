@@ -34,7 +34,7 @@
 .ol-unsupported {
   display: none;
 }
-.ol-viewport .ol-unselectable {
+.ol-viewport, .ol-unselectable {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;
@@ -240,6 +240,9 @@
   border: 2px dotted rgba(0,60,136,0.7);
 }
 
+.ol-overviewmap .ol-overviewmap-box:hover {
+  cursor: move;
+}
 /*!
  * Bootstrap v3.3.7 (http://getbootstrap.com)
  * Copyright 2011-2016 Twitter, Inc.
