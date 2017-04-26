@@ -1,7 +1,6 @@
 from django.test import Client
-from requests.auth import _basic_auth_str
-
 from oauth2_provider.models import Application
+from requests.auth import _basic_auth_str
 
 
 class JClient(Client):
@@ -15,15 +14,14 @@ class JClient(Client):
         access_token = json_res.get('access_token')
         self.auth_token = "%s %s" % (token_type, access_token)
 
-    def authenticate(self, user, password):
-        # test1:qweqweqwe
+    def authenticate(self, email, password):
         app = Application.objects.get(name='Twitter')
         data = {
+                "client_id": app.client_id,
                 "grant_type": "password",
-                "username": user,
+                "username": email,
                 "password": password
         }
-        self.auth_token = _basic_auth_str(app.client_id, app.client_secret) # tmp
         response = self.post('/api/social/token/', data)
         if response.status_code == 200:
             self.set_auth_token(response)
