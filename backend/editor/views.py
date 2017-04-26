@@ -224,8 +224,10 @@ class EditEvent(TemplateView):
         _end_date = data.get('ev_end_date', None)
         _end_date = parse_datetime(_end_date)
 
-        _start_date = make_aware(_start_date)
-        _end_date = make_aware(_end_date)
+        if _start_date:
+            _start_date = make_aware(_start_date)
+        if _end_date:
+            _end_date = make_aware(_end_date)
 
         _place = data.get('ev_place', None)
         if _place:
