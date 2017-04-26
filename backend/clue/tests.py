@@ -110,7 +110,7 @@ class ClueTestCase(APITestCase):
         data = {'solution': 'solution'}
         self.authenticate(self.get_username_by_player(player))
         response = self.client.post('/api/clue/solve/{0}/'.format(clue_id), data)
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 403)
 
     def test_solve_clue_unauthorized2(self):
         """ User try solve clue with clue_id unauthorized. """
@@ -119,7 +119,7 @@ class ClueTestCase(APITestCase):
         data = {'solution': 'solution'}
         self.authenticate(self.get_username_by_player(player))
         response = self.client.post('/api/clue/solve/{0}/'.format(clue_id), data)
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 403)
 
     def test_solve_clue_invalid(self):
         """ Clue can't solve because clue haven't solution. """

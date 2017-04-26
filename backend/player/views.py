@@ -15,7 +15,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from clue.models import Clue
-from game.serializers import ChallengeSerializer
+from clue.serializers import ClueSerializer
 from .models import Meeting
 from .models import Player
 from .models import PlayerInterests
@@ -192,7 +192,7 @@ class MeetingCreate(APIView):
             status = rf_status.HTTP_200_OK
 
             clue = self.give_clue(self.player2, self.event)
-            response['clue'] = ChallengeSerializer(clue.challenge).data if clue else {}
+            response['clue'] = ClueSerializer(clue).data if clue else {}
 
             # always connected if the secret is ok
             meeting.status = 'connected'
@@ -218,7 +218,7 @@ class MeetingCreate(APIView):
             new_meeting = create_meeting(self.player1, self.player2, event_id)
             status = rf_status.HTTP_201_CREATED
             clue = self.give_clue(self.player2, self.event)
-            response['clue'] = ChallengeSerializer(clue.challenge).data if clue else {}
+            response['clue'] = ClueSerializer(clue).data if clue else {}
 
         # STEP1: player1 not connected with player2 or vice versa
         elif not meeting1 and not meeting2:
@@ -280,7 +280,7 @@ class MeetingCreate(APIView):
         elif meeting.status == 'connected':
             clue = self.give_clue(self.player2, self.event)
             response['status'] = meeting.status
-            response['clue'] = ChallengeSerializer(clue.challenge).data if clue else {}
+            response['clue'] = ClueSerializer(clue).data if clue else {}
 
         elif meeting.status == 'step2':
             response['status'] = 'waiting'

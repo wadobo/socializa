@@ -18,6 +18,12 @@ class Challenge(models.Model):
     depends = models.ManyToManyField('Challenge', related_name="requiedby",
                                      blank=True)
 
+    # challenges to give when resolve this challenge, only if solution is
+    # not null and we resolve this
+    child_challenges = models.ManyToManyField('Challenge',
+                                              related_name="parents",
+                                              blank=True)
+
     def mainclues(self):
         return self.clues.filter(main=True)
 
@@ -25,7 +31,7 @@ class Challenge(models.Model):
         return ", ".join(i.name for i in self.depends.all())
 
     def __str__(self):
-        return self.name
+        return "{} - {}...".format(self.name, self.desc[0:10])
 
 
 class Game(models.Model):
