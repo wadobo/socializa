@@ -7,11 +7,10 @@ django-rest-swagger==2.1.2
 django==1.11
 djangorestframework==3.6.2
 psycopg2==2.7.1
-pylint==1.7.0
+pylint==1.7.1
 pylint-django==0.7.2
 radon==1.5.0
 social-auth-app-django==1.1.0
 social-auth-core==1.2.0
-python-social-auth==0.2.21
 oauth2client==4.0.0
 Unidecode==0.04.20
