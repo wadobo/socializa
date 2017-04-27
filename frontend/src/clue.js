@@ -6,14 +6,17 @@ import { user, getIcon } from './auth';
 import Bucket from './bucket';
 import Loading from './loading';
 import API from './api';
+import { EventSolveOpt } from './eventsolve';
+import { ResolvableComponent } from './eventsolve';
 
 import { translate } from 'react-i18next';
 
-class Clue extends React.Component {
+class Clue extends ResolvableComponent {
     state = {
         clue: null,
         state: 'normal',
         solution: '',
+        step: 0,
     }
 
     clueChange = (e) => {
@@ -21,7 +24,9 @@ class Clue extends React.Component {
     }
 
     componentDidMount() {
-        this.setState({ clue: Bucket.clue });
+        var clue = Bucket.clue;
+
+        this.setState({ clue: clue });
     }
 
     goBack = () => {
@@ -32,11 +37,11 @@ class Clue extends React.Component {
         this.props.history.push('/event/' + user.activeEvent.pk);
     }
 
-    solveClue = () => {
+    solve = (solution) => {
         const { t } = this.props;
         var self = this;
         this.setState({ state: 'solving' });
-        API.solve_clue(this.state.clue.pk, this.state.solution)
+        API.solve_clue(this.state.clue.pk, solution)
             .then(function(resp) {
                 if (resp.status == 'correct') {
                     var c = self.state.clue;
@@ -45,7 +50,7 @@ class Clue extends React.Component {
                         c = resp.clue;
                     } else {
                         c.status = 'solved';
-                        c.solution = self.state.solution;
+                        c.solution = solution;
                     }
                     self.setState({ clue: c, state: 'normal' });
                 } else {
@@ -56,6 +61,10 @@ class Clue extends React.Component {
                 self.setState({ state: 'normal' });
                 alert(t('common::Unknown error'));
             });
+    }
+
+    getField = () => {
+        return this.state.clue;
     }
 
     render() {
@@ -81,15 +90,7 @@ class Clue extends React.Component {
                      :
                         <div>
                         { this.state.clue.solution ?
-                            <div className="input-group">
-                                <input type="text" className="form-control" placeholder={t('clue::solution')} onChange={ this.clueChange }/>
-
-                                <div className="input-group-btn">
-                                    <button type="button" onClick={ this.solveClue } className="btn btn-success">
-                                      <i className="fa fa-sw fa-check"></i>
-                                    </button>
-                                </div>
-                            </div>
+                         this.renderState()
                          :
                          <span></span> }
                         { this.state.state == 'solving' ? <Loading /> : <span></span> }

@@ -42,21 +42,30 @@ class TextSolveB extends React.Component {
         );
     }
 }
-var TextSolve = translate(['events', 'common'], { wait: true })(TextSolveB);
+export let TextSolve = translate(['events', 'common'], { wait: true })(TextSolveB);
 
 
-class OptSolve extends React.Component {
+export class OptSolve extends React.Component {
+    state = { answers: [] }
+
     finish = (txt) => {
         this.props.finish(txt);
     }
 
     render() {
         var self = this;
+
+        // randomizing options
+        var answers = this.props.opt.answers;
+        answers = answers.sort(function(x, y) {
+            return (Math.random() - Math.random())
+        });
+
         return (
             <div className="event-solve">
                 <h3>{this.props.opt.question}</h3>
                 <div>
-                  {this.props.opt && this.props.opt.answers.map(function(a, i) {
+                  {answers.map(function(a, i) {
                       return (
                         <button className="btn btn-default btn-block" onClick={self.finish.bind(self, a)}>
                             {a}
@@ -70,7 +79,7 @@ class OptSolve extends React.Component {
 }
 
 
-class EventSolveOpt extends React.Component {
+export class EventSolveOpt extends React.Component {
     render() {
         return (
             <div>
@@ -88,46 +97,10 @@ class EventSolveOpt extends React.Component {
 }
 
 
-class EventSolve extends React.Component {
+export class ResolvableComponent extends React.Component {
     state = {
-        state: 'solving',
-        solution: null,
-        ev: null,
+        solution: '',
         step: 0,
-    }
-
-    componentDidMount() {
-        var ev = this.props.ev;
-
-        this.setState({
-            'ev': ev,
-            'state': this.props.state,
-        });
-    }
-
-    goBack = () => {
-        this.props.finish();
-    }
-
-    sendSolution = (solution) => {
-        const { t } = this.props;
-        var self = this;
-
-        this.setState({ state: 'solving-loading' });
-        API.solve(this.state.ev.pk, solution)
-            .then(function(resp) {
-                if (resp.status == 'correct') {
-                    self.setState({ state: 'solved', solution: solution });
-                    alert(t('events::Conglatulations!'));
-                    self.goBack();
-                } else {
-                    self.setState({ state: 'solving' });
-                    alert(t('events::Wrong answer. Try again'));
-                }
-            }).catch(function(err) {
-                self.setState({ state: 'solving' });
-                alert(t('common::Unknown error'));
-            });
     }
 
     concatSolution = (txt) => {
@@ -148,17 +121,16 @@ class EventSolve extends React.Component {
     setSolutionAndSend = (txt) => {
         var s = this.concatSolution(txt);
         this.setState({solution: '', step: 0});
-        this.sendSolution(s);
+        this.solve(s);
     }
 
-    render() {
-        const { t } = this.props;
-
+    renderState = () => {
         var options = [];
         var fn = this.setSolutionAndSend;
         var opt = null;
-        if (this.state.ev) {
-            options = this.state.ev.solution;
+        var field = this.getField();
+        if (field) {
+            options = field.solution;
             if (options && options.length > this.state.step) {
                 opt = options[this.state.step];
             }
@@ -167,6 +139,60 @@ class EventSolve extends React.Component {
                 fn = this.setSolutionAndNext;
             }
         }
+
+        return <EventSolveOpt opt={opt} finish={fn} />;
+    }
+}
+
+
+class EventSolve extends ResolvableComponent {
+    state = {
+        state: 'solving',
+        solution: null,
+        ev: null,
+        step: 0,
+    }
+
+    componentDidMount() {
+        var ev = this.props.ev;
+
+        this.setState({
+            'ev': ev,
+            'state': this.props.state,
+        });
+    }
+
+    goBack = () => {
+        this.props.finish();
+    }
+
+    solve = (solution) => {
+        const { t } = this.props;
+        var self = this;
+
+        this.setState({ state: 'solving-loading' });
+        API.solve(this.state.ev.pk, solution)
+            .then(function(resp) {
+                if (resp.status == 'correct') {
+                    self.setState({ state: 'solved', solution: solution });
+                    alert(t('events::Conglatulations!'));
+                    self.goBack();
+                } else {
+                    self.setState({ state: 'solving' });
+                    alert(t('events::Wrong answer. Try again'));
+                }
+            }).catch(function(err) {
+                self.setState({ state: 'solving' });
+                alert(t('common::Unknown error'));
+            });
+    }
+
+    getField = () => {
+        return this.state.ev;
+    }
+
+    render() {
+        const { t } = this.props;
 
         return (
             <div className="event-solving">
@@ -177,7 +203,9 @@ class EventSolve extends React.Component {
 
                     { this.state.state == 'solving-loading' ?
                         <Loading />
-                     : <EventSolveOpt opt={opt} finish={fn} /> }
+                     :
+                        this.renderState()
+                    }
 
                     <div className="closebtn" onClick={ this.goBack }><i className="fa fa-close"></i></div>
                 </div>
