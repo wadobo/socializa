@@ -82,7 +82,7 @@ class Clue extends React.Component {
                         <div>
                         { this.state.clue.solution ?
                             <div className="input-group">
-                                <input className="form-control" placeholder={t('clue::solution')} onChange={ this.clueChange }/>
+                                <input type="text" className="form-control" placeholder={t('clue::solution')} onChange={ this.clueChange }/>
 
                                 <div className="input-group-btn">
                                     <button type="button" onClick={ this.solveClue } className="btn btn-success">

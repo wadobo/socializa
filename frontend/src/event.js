@@ -9,6 +9,8 @@ import Purifier from 'html-purify';
 import EventRow from './eventrow';
 import ClueRow from './cluerow';
 
+import EventSolve from './eventsolve';
+
 import Loading from './loading';
 
 import Bucket from './bucket';
@@ -62,26 +64,6 @@ class Event extends React.Component {
         this.setState({ state: 'solving' });
     }
 
-    sendSolution = () => {
-        const { t } = this.props;
-        var self = this;
-        var solution = document.querySelector(".solve-input").value;
-        this.setState({ state: 'solving-loading' });
-        API.solve(this.state.ev.pk, solution)
-            .then(function(resp) {
-                if (resp.status == 'correct') {
-                    self.setState({ state: 'solved', solution: solution });
-                    alert(t('events::Conglatulations!'));
-                } else {
-                    self.setState({ state: 'solving' });
-                    alert(t('events::Wrong answer. Try again'));
-                }
-            }).catch(function(err) {
-                self.setState({ state: 'solving' });
-                alert(t('common::Unknown error'));
-            });
-    }
-
     renderSolveButton = () => {
         const { t } = this.props;
         var button = (
@@ -100,32 +82,9 @@ class Event extends React.Component {
         return button;
     }
 
-    renderSolving = () => {
-        const { t } = this.props;
-        var solving = this.state.state == 'solving-loading';
-        var button = (
-            <button onClick={ this.sendSolution } className="btn btn-primary" type="button">{t('events::Go!')}</button>
-        );
-        if (this.state.state == 'solving-loading') {
-            button = (
-                <button className="btn btn-primary disabled" type="button">
-                    <i className="fa fa-cog fa-spin fa-fw"></i>
-                    <span className="sr-only">{t('events::Loading...')}</span>
-                </button>
-            );
-        }
-        return (
-            <div className="event-solving">
-                <h2>{this.state.ev.game.name}</h2>
-                <p>{this.state.ev.game.desc}</p>
-                <div className="input-group">
-                  <input type="text" className="solve-input form-control" placeholder={t('events::The solution!')}/>
-                  <span className="input-group-btn">
-                    { button }
-                  </span>
-                </div>
-            </div>
-        );
+    solved = () => {
+        this.setState({'state': 'loading'});
+        this.updateEvents();
     }
 
     renderEvent = () => {
@@ -133,7 +92,7 @@ class Event extends React.Component {
         switch (this.state.state) {
             case 'loading': return <Loading />;
             case 'solving-loading':
-            case 'solving': return this.renderSolving();
+            case 'solving': return <EventSolve state={this.state.state} ev={this.state.ev} finish={this.solved} />;
             case 'solved':
             case 'event': {
                 var ev = this.state.ev;
