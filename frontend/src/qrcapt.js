@@ -27,7 +27,7 @@ class QRCapt extends React.Component {
         var self = this;
         API.captured(id, ev, resp.text)
             .then(function(resp) {
-                connected(resp.clue);
+                connected(self, resp.clue);
             })
             .catch(function(error) {
                 alert(t("qr::Invalid code!"));

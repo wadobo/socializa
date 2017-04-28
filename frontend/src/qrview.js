@@ -36,7 +36,7 @@ class QRView extends React.Component {
                         self.qrcodePolling.bind(self)(id, ev);
                     }, 1000);
                 } else if (resp.status == 'contected') {
-                    connected(resp.clue);
+                    connected(self, resp.clue);
                 }
             })
             .catch(function(err) {

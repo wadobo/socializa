@@ -11,14 +11,14 @@ import Loading from './loading';
 import { translate } from 'react-i18next';
 import i18n from './i18n';
 
-export function connected(resp) {
+export function connected(self, resp) {
     if (resp.pk) {
         Bucket.clue = resp;
-        this.props.history.push('/clue');
+        self.props.history.push('/clue');
     } else {
         Bucket.clue = null;
         alert(i18n.t("connect::I've nothing to say"));
-        this.props.history.push('/map');
+        self.props.history.push('/map');
     }
 }
 
@@ -63,7 +63,7 @@ class Connect extends React.Component {
             .then(function(resp) {
                 switch (resp.status) {
                     case 'connected':
-                        connected(resp.clue);
+                        connected(self, resp.clue);
                         break;
                     case 'step1':
                         self.props.history.push('/qrcapt/' + id + '/' + ev);

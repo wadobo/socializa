@@ -29,6 +29,9 @@ class Register extends React.Component {
         const { t } = this.props;
         var self = this;
 
+        e.preventDefault();
+        e.stopPropagation();
+
         var email = this.state.email;
         var pwd = this.state.password;
         var pwd2 = this.state.password2;
@@ -45,7 +48,7 @@ class Register extends React.Component {
                     self.props.history.push('/login');
                 }
             }).catch(function(e) {
-                alert(e);
+                alert("Error: " + e);
             });
     }
 
