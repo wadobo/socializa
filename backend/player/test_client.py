@@ -15,7 +15,7 @@ class JClient(Client):
         self.auth_token = "%s %s" % (token_type, access_token)
 
     def authenticate(self, email, password):
-        app = Application.objects.get(name='Twitter')
+        app = Application.objects.get(name='local')
         data = {
                 "client_id": app.client_id,
                 "grant_type": "password",

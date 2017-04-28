@@ -414,7 +414,7 @@
     "client_type": "public",
     "authorization_grant_type": "password",
     "client_secret": "gQVsC2wMMx0Wkp1pxHXHnhiRMFBXHqYcah3ABjqeHNXwoo2Ndl",
-    "name": "Twitter",
+    "name": "local",
     "skip_authorization": false
   }
 }

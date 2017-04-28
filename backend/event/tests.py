@@ -1,3 +1,4 @@
+import re
 from django.test import override_settings
 from django.utils import timezone
 from rest_framework.test import APITestCase
@@ -641,3 +642,47 @@ class EventCeleryTestCase(APITestCase):
         event = Event.objects.get(pk=10)
         end_players = event.players.count()
         self.assertEqual(ini_players + event.max_players, end_players)
+
+
+class EventSolveDropdownTestCase(APITestCase):
+    """ New event with descriptions for solve with dropdown. """
+    fixtures = ['event-solve-dropdown.json']
+
+    GAME_PK = 1
+
+    def setUp(self):
+        self.client = JClient()
+
+    def tearDown(self):
+        self.client = None
+
+    def authenticate(self, username, pwd='qweqweqwe'):
+        response = self.client.authenticate(username, pwd)
+        self.assertEqual(response.status_code, 200)
+
+    def test_convert_challengue_description(self):
+        self.authenticate('username@test.com')
+        response = self.client.get('/api/clue/my-clues/{0}/'.format(self.GAME_PK), {})
+        self.assertEqual(response.status_code, 200)
+        qregex = re.compile("#\[[\d]+\]\[([^#]*)\]")
+        for res in response.json():
+            desc = res.get('challenge').get('desc')
+            self.assertFalse(qregex.search(desc))
+
+    def test_convert_game_description(self):
+        self.authenticate('username@test.com')
+        response = self.client.get('/api/event/my-events/', {})
+        self.assertEqual(response.status_code, 200)
+        qregex = re.compile("#\[[\d]+\]\[(?:option|text)\]\[([^#]*)\]")
+        for res in response.json():
+            desc = res.get('game').get('desc')
+            self.assertFalse(qregex.search(desc))
+
+    def test_get_possible_solutions(self):
+        self.authenticate('username@test.com')
+        response = self.client.get('/api/event/{}/'.format(self.GAME_PK), {})
+        self.assertEqual(response.status_code, 200)
+        solution = response.json().get('solution')
+        self.assertTrue(isinstance(solution, list))
+        self.assertTrue(isinstance(solution[0], dict))
+        self.assertEqual(sorted(solution[0].keys()), ["answers", "question", "type"])

@@ -1,3 +1,5 @@
+import re
+
 from django.contrib.auth.models import User
 from django.db import models
 
@@ -30,6 +32,17 @@ class Challenge(models.Model):
     def depends_on(self):
         return ", ".join(i.name for i in self.depends.all())
 
+    def get_desc_html(self):
+        # search #[NUM][solution] and return [('NUM', 'solution'), ... ]
+        qregex = re.compile("#\[[\d]+\]\[([^#]*)\]")
+        desc_html = self.desc[:]
+        for sre in qregex.finditer(self.desc):
+            ini_pos, end_pos = sre.span()
+            rex = self.desc[ini_pos:end_pos]
+            solution = sre.group(1)
+            desc_html = desc_html.replace(rex, "<b>{}</b>".format(solution))
+        return desc_html
+
     def __str__(self):
         return "{} - {}...".format(self.name, self.desc[0:10])
 
@@ -42,6 +55,17 @@ class Game(models.Model):
     author = models.ForeignKey(User, related_name="games", blank=True, null=True)
     auto_assign_clue = models.BooleanField(default=True)
     visible_players = models.BooleanField(default=True)
+
+    def get_desc_html(self):
+        # search #[NUM][type][question] and return [('NUM', 'type', 'question'), ... ]
+        qregex = re.compile("#\[[\d]+\]\[(?:option|text)\]\[([^#]*)\]")
+        desc_html = self.desc[:]
+        for sre in qregex.finditer(self.desc):
+            ini_pos, end_pos = sre.span()
+            rex = self.desc[ini_pos:end_pos]
+            question = sre.group(1)
+            desc_html = desc_html.replace(rex, "<b>{}</b>".format(question))
+        return desc_html
 
     def __str__(self):
         return self.name
