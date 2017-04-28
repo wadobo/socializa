@@ -70,4 +70,5 @@
     </platform>
     <allow-navigation href="*" />
     <engine name="android" spec="~6.0.0" />
+    <plugin name="cordova-plugin-x-toast" spec="~2.6.0" />
 </widget>

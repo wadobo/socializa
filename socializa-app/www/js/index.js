@@ -36,6 +36,30 @@ var app = {
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
         cordova.plugins.certificates.trustUnsecureCerts(true);
+
+        var lastTimeBackPress=0;
+        var timePeriodToExit=2000;
+
+        document.addEventListener("backbutton", function(e) {
+            if (location.hash == '#/login' || location.hash == '#/map') {
+                e.preventDefault();
+                e.stopPropagation();
+                if (new Date().getTime() - lastTimeBackPress < timePeriodToExit) {
+                    navigator.app.exitApp();
+                } else {
+                    window.plugins.toast.showWithOptions({
+                        message: "Press again to exit.",
+                        duration: "short", // which is 2000 ms.
+                        position: "bottom",
+                        addPixelsY: -40  // added a negative value to move it up a bit (default 0)
+                    });
+
+                    lastTimeBackPress = new Date().getTime();
+                }
+            } else {
+                navigator.app.backHistory()
+            }
+        }, false);
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
