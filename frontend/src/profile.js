@@ -10,7 +10,14 @@ import { translate } from 'react-i18next';
 
 
 class Profile extends React.Component {
-    state = { user: user, player: null }
+    state = {
+        user: user,
+        player: null,
+        pwd1: '',
+        pwd2: '',
+        pwd3: '',
+        state: 'normal',
+    }
 
     componentDidMount() {
         Bucket.setAppState({ title: this.props.t('profile::Profile'), active: 'profile' });
@@ -63,24 +70,38 @@ class Profile extends React.Component {
         this.setState({player: p});
     }
 
+    changeField = (field, e) => {
+        var newst = {};
+        newst[field] = e.target.value;
+        this.setState(newst);
+    }
+
     changePassword = (e) => {
         const { t } = this.props;
-        var current = document.querySelector('#current').value;
-        var newp = document.querySelector('#new').value;
-        var repeat = document.querySelector('#repeat').value;
+        var self = this;
 
-        // TODO, change the password
-        if (newp != repeat) {
-            alert(t("profile::Password doesn't match, try again"));
-            return;
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (this.state.pwd2 != this.state.pwd3) {
+            alert(t("profile::Passwords didn't match"));
+            return false;
         }
 
-        alert(t("profile::Done!"));
+        this.setState({state: 'loading'});
+        API.changePassword(this.state.pwd1, this.state.pwd2)
+            .then(function(resp) {
+                alert(t("profile::Password changed correctly"));
+                self.props.history.push('/login');
+            }).catch(function(error) {
+                alert(t("profile::Error changing the password, try again"));
+                self.setState({state: 'normal'});
+            });
     }
 
     render() {
         const { t } = this.props;
-        if (!this.state.player) {
+        if (!this.state.player || this.state.state == 'loading') {
             return <Loading />;
         }
 
@@ -121,9 +142,10 @@ class Profile extends React.Component {
                 </a>
                 <div className="collapse" id="passwordChange">
                     <div className="well">
-                        <input type="password" id="current" className="form-control" placeholder={t('profile::current')}/>
-                        <input type="password" id="new" className="form-control" placeholder={t('profile::new')}/>
-                        <input type="password" id="repeat" className="form-control" placeholder={t('profile::repeat')}/>
+                        <input className="form-control" type="password" id="current" name="pwd1" value={ this.state.pwd1 } onChange={ this.changeField.bind(this, 'pwd1') } placeholder={t('profile::current')}/>
+                        <input className="form-control" type="password" id="new" name="pwd2" value={ this.state.pwd2 } onChange={ this.changeField.bind(this, 'pwd2') } placeholder={t('profile::new')}/>
+                        <input className="form-control" type="password" id="repeat" name="pwd3" value={ this.state.pwd3 } onChange={ this.changeField.bind(this, 'pwd3') } placeholder={t('profile::repeat')}/>
+
                     </div>
                     <button className="btn btn-danger btn-block" onClick={ this.changePassword }>{t('profile::Change')}</button>
                 </div>

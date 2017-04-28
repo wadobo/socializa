@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import $ from 'jquery';
 
 import API from './api';
-import { login } from './auth';
+import { login, logout } from './auth';
 
 import { translate, Interpolate } from 'react-i18next';
 
@@ -21,6 +21,8 @@ class Login extends React.Component {
                     GPLUS.init(resp.google.apikey, resp.google.oauth);
                 }
             });
+
+        logout();
     }
 
     emailChange = (e) => {

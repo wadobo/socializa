@@ -1,3 +1,5 @@
+from oauth2_provider.models import AccessToken
+
 from django.db.models import Q
 from django.conf import settings
 from django.contrib.gis.measure import D
@@ -13,6 +15,7 @@ from django.core.mail import EmailMultiAlternatives
 from rest_framework import status as rf_status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 
 from clue.models import Clue
 from clue.serializers import ClueSerializer
@@ -411,3 +414,25 @@ class RegisterConfirm(TemplateView):
 
         return ctx
 confirm = RegisterConfirm.as_view()
+
+
+class ChangePasswd(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        current = request.data.get('current', '')
+        newpwd = request.data.get('new', '')
+        u = request.user
+
+        if not current or not newpwd or not u.check_password(current):
+            return Response("Invalid password",
+                            status=rf_status.HTTP_400_BAD_REQUEST)
+
+        u.set_password(newpwd)
+        u.save()
+
+        AccessToken.objects.filter(user=u).delete()
+
+        return Response({'status': 'ok'})
+passwd = ChangePasswd.as_view()

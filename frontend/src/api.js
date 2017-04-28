@@ -227,4 +227,9 @@ export default class API {
         var data = JSONPost(options);
         return customFetch('/api/event/admin/'+evid+'/', data);
     }
+
+    static changePassword(pwd1, pwd2) {
+        var data = JSONPost({"current": pwd1, "new": pwd2});
+        return customFetch('/api/player/passwd/', data);
+    }
 }
