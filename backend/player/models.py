@@ -22,6 +22,7 @@ class Player(models.Model):
     about = models.TextField(blank=True, null=True)
     extra = models.TextField(max_length=1024, blank=True, null=True)
     confirm_code = models.CharField(max_length=80, blank=True, null=True)
+    associate_ai = models.PositiveIntegerField(null=True, blank=True, default=None)
 
     def regen_confirm_code(self):
         chars = ascii_uppercase + digits
@@ -48,6 +49,9 @@ class Player(models.Model):
             max_distance = settings.DEFAULT_MEETING_DISTANCE
 
         return distance(self.pos, p.pos, unit='m') <= max_distance
+
+    def is_ai(self):
+        return self.ptype == 'ai'
 
     def __str__(self):
         return self.user.username

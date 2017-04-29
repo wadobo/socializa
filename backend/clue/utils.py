@@ -59,7 +59,7 @@ def get_position_ai(player, event):
     return pos
 
 
-def detach_clue(player, event, main=True):
+def detach_clues(player, event, main=True):
     game = event.game
     challenges = game.challenges.all()
     query = Q(player=player, challenge__in=challenges, event=event)
@@ -75,3 +75,21 @@ def detach_clue(player, event, main=True):
             for clue in clues:
                 clue.player = playerAI
                 clue.save()
+
+
+def transfer_clues(player, old_event, new_event):
+    if new_event and player.associate_ai:
+        playerAI = Player.objects.get(pk=player.associate_ai)
+        for clue in playerAI.clues.filter(main=True):
+            clue.player = player
+            clue.save()
+        playerAI.delete()
+    if old_event:
+        pos = get_position_ai(player, old_event)
+        playerAI = create_random_player(old_event, position=pos)
+        for clue in player.clues.filter(main=True):
+            clue.player = playerAI
+            clue.save()
+        player.associate_ai = playerAI.pk
+        player.save()
+
