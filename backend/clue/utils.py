@@ -79,7 +79,7 @@ def detach_clues(player, event, main=True):
 
 def transfer_clues(player, old_event, new_event):
     if new_event and player.associate_ai:
-        playerAI = Player.objects.get(pk=player.associate_ai)
+        playerAI = player.associate_ai
         for clue in playerAI.clues.filter(main=True):
             clue.player = player
             clue.save()
@@ -90,6 +90,6 @@ def transfer_clues(player, old_event, new_event):
         for clue in player.clues.filter(main=True):
             clue.player = playerAI
             clue.save()
-        player.associate_ai = playerAI.pk
+        player.associate_ai = playerAI
         player.save()
 
