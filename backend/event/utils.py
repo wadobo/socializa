@@ -1,6 +1,6 @@
 from django.utils import timezone
 
-from clue.views import attach_clue
+from clue.utils import attach_clue
 from player.utils import create_random_player
 from .models import Membership
 from .models import PlayingEvent

@@ -11,8 +11,8 @@ from rest_framework.views import APIView
 from rest_framework.permissions import BasePermission
 from rest_framework.permissions import IsAuthenticated
 
-from clue.views import attach_clue
-from clue.views import detach_clue
+from clue.utils import attach_clue
+from clue.utils import detach_clue
 from .models import Event
 from .models import Membership
 from .models import PlayingEvent
@@ -102,7 +102,7 @@ class UnjoinEvent(APIView):
             Membership.objects.get(player=player, event=event).delete()
         except ObjectDoesNotExist:
             return Response("You aren't joined to this event.", status=rf_status.HTTP_400_BAD_REQUEST)
-        detach_clue(player, event)
+        detach_clue(player, event, main='all')
         return Response("Unjoined correctly.", status=rf_status.HTTP_200_OK)
 
 

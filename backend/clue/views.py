@@ -29,27 +29,6 @@ class HasCluePermission(BasePermission):
         return True
 
 
-def attach_clue(player, event, main=False):
-    game = event.game
-    challenges = game.challenges.all()
-    challenges_attach = Clue.objects.filter(challenge__in=challenges, main=True).\
-            values_list('challenge__pk', flat=True)
-    challenges = game.challenges.exclude(pk__in=challenges_attach)
-    avail_challenges = challenges.exclude(pk__in=challenges_attach)
-
-    if avail_challenges:
-        clue = Clue(player=player, challenge=avail_challenges[0], main=True, event=event)
-        clue.save()
-
-
-def detach_clue(player, event, main=False):
-    game = event.game
-    challenges = game.challenges.all()
-    clue = Clue.objects.filter(player=player, challenge__in=challenges, main=True, event=event)
-    if clue:
-        clue.delete()
-
-
 class MyClues(APIView):
 
     @classmethod
