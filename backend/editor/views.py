@@ -329,6 +329,7 @@ class EventChallenges(TemplateView):
             newu.save()
             p = Player(user=newu, ptype='ai')
             p.save()
+            event.set_playing(p)
 
             clue = Clue(player=p, event=event, challenge=c, main=True)
             clue.save()
@@ -351,6 +352,7 @@ class EventChallenges(TemplateView):
                 p = Player(user=newu, ptype='actor')
                 p.extra = pw
                 p.save()
+                event.set_playing(p)
 
             clue.player = newu.player
             clue.save()
