@@ -96,13 +96,16 @@ class ClueTestCase(APITestCase):
 
     def test_unjoin_event_delete_clue(self):
         player = 1
-        start_clues = Clue.objects.filter(player__pk=player).count()
-        self.assertTrue(start_clues > 0)
+        start_clues_player = Clue.objects.filter(player__pk=player).count()
+        start_clues_main = Clue.objects.filter(main=True).count()
+        self.assertTrue(start_clues_player > 0)
         self.authenticate(self.get_username_by_player(player))
         response = self.client.delete('/api/event/unjoin/{0}/'.format(self.EVENT_PK), {})
         self.assertEqual(response.status_code, 200)
-        end_clues = Clue.objects.filter(player__pk=player).count()
-        self.assertEqual(end_clues, 0)
+        end_clues_player = Clue.objects.filter(player__pk=player).count()
+        end_clues_main = Clue.objects.filter(main=True).count()
+        self.assertEqual(end_clues_player, 0)
+        self.assertEqual(start_clues_main, end_clues_main)
 
     def test_solve_clue_not_exist(self):
         """ User try solve clue with clue_id not exist. """

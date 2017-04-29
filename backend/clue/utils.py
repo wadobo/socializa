@@ -1,6 +1,7 @@
 import re
 from django.db.models import Q
 
+from player.utils import create_random_player
 from .models import Clue
 from .serializers import ClueSerializer
 
@@ -30,7 +31,7 @@ def possible_solutions(player, event):
             num = int(num) - 1
             if num < len(res) and res[num].get("type") == "option":
                 res[num]["answers"].append(sol)
-            
+
     return res
 
 
@@ -47,14 +48,30 @@ def attach_clue(player, event, main=True):
         clue.save()
 
 
+def get_position_ai(player, event):
+    if player.pos:
+        if event.place and not event.place.contains(player.pos):
+            pos = 'random'
+        else:
+            pos = player.pos
+    else:
+        pos = 'random' if event.place else None
+    return pos
+
+
 def detach_clue(player, event, main=True):
     game = event.game
     challenges = game.challenges.all()
     query = Q(player=player, challenge__in=challenges, event=event)
-    if main != 'all':
-        query &= Q(main=main)
-    clue = Clue.objects.filter(query)
-    if clue:
-        clue.delete()
-
-
+    if not main or main == 'all':
+        extra_query = Q(main=False)
+        Clue.objects.filter(query & extra_query).delete()
+    if main:
+        extra_query = Q(main=True)
+        clues = Clue.objects.filter(query & extra_query)
+        if clues:
+            pos = get_position_ai(player, event)
+            playerAI = create_random_player(event, position=pos)
+            for clue in clues:
+                clue.player = playerAI
+                clue.save()
