@@ -479,6 +479,7 @@ class EventTasksTestCase(APITestCase):
     fixtures = ['player-test.json', 'event.json']
 
     def setUp(self):
+        self.client = JClient()
         self.event2 = Event.objects.get(pk=2)
         self.event2.start_date = timezone.now() - timezone.timedelta(hours=2)
         self.event2.end_date = timezone.now() + timezone.timedelta(hours=2)
@@ -486,6 +487,10 @@ class EventTasksTestCase(APITestCase):
         self.event3.start_date = timezone.now() - timezone.timedelta(hours=2)
         self.event3.end_date = timezone.now() + timezone.timedelta(hours=2)
         self.ini_players = Player.objects.count()
+
+    def authenticate(self, username, pwd='qweqweqwe'):
+        response = self.client.authenticate(username, pwd)
+        self.assertEqual(response.status_code, 200)
 
     def get_member_players(self, event):
         return Membership.objects.filter(event=event).count()
@@ -541,6 +546,11 @@ class EventTasksTestCase(APITestCase):
         available = self.event3.max_players - self.event3.players.count()
         manage_ais(self.event3, amount=available)
         self.assertEqual(self.event3.max_players, self.event3.players.count())
+
+        self.authenticate('test1')
+        response = self.client.post('/api/event/join/{0}/'.format(self.event3.pk), {})
+        self.assertEqual(response.status_code, 201)
+
 
     def test_manage_ais_amount(self):
         """ Check that add players and these are add like member and like playing in event.

@@ -36,21 +36,18 @@ def possible_solutions(player, event):
 
 
 def attach_clue(player, event):
-    game = event.game
-    challenges = game.challenges.all()
-    clues = Clue.objects.filter(event=event, challenge__in=challenges, main=True)
+    challenges = event.game.challenges.all()
+    clues = event.clues.filter(main=True)
     challenges_attach_pks = clues.values_list('challenge__pk', flat=True)
 
     if challenges.count() > clues.count():
         avail_challenge = challenges.exclude(pk__in=challenges_attach_pks).first()
         clue = Clue(player=player, challenge=avail_challenge, main=True, event=event)
         clue.save()
-    elif clues.filter(player__ptype='ia').exists():
-        clue = clues.filter(player__ptype='ia').first()
+    elif clues.filter(player__ptype='ai').exists() and player.ptype != 'ai':
+        clue = clues.filter(player__ptype='ai').first()
         playerAI = clue.player
-        print("1", playerAI)
         clue.player = player
-        print("2", playerAI)
         clue.save()
         playerAI.delete()
     elif event.max_players > len(clues):

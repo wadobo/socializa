@@ -60,7 +60,8 @@ class IsEventAdminPermission(HasEventPermission):
 
 def create_member(player, event):
     member = None
-    if event.max_players != 0 and event.players.count() >= event.max_players:
+    ai_exist = event.clues.filter(main=True, player__ptype='ai')
+    if event.max_players != 0 and event.players.count() >= event.max_players and not ai_exist:
         msg = "Maximum number of player in this event"
         status = rf_status.HTTP_400_BAD_REQUEST
     else:
