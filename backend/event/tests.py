@@ -491,7 +491,7 @@ class EventTasksTestCase(APITestCase):
         return PlayingEvent.objects.filter(event=event).count()
 
     def get_need_players(self, event):
-        return event.max_players - event.players.count()
+        return event.game.challenges.count() - event.players.count()
 
     def test_manage_ais_not_change(self):
         """ test manage_ais fails:

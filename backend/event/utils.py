@@ -8,10 +8,10 @@ from .models import PlayingEvent
 
 def manage_ais(event, amount=0):
     now = timezone.now()
-    if not event or event.end_date <= now or event.place is None:
+    if not event or not event.game.auto_assign_clue or event.end_date <= now or event.place is None:
         return
     if amount <= 0:
-        total_need_players = event.max_players
+        total_need_players = event.game.challenges.count()
         current_players = event.players.count()
         need_player = total_need_players - current_players
     else:
