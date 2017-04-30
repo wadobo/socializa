@@ -15,7 +15,9 @@ def manage_ais(event, amount=0):
         current_players = event.players.count()
         need_player = total_need_players - current_players
     else:
-        need_player = amount
+        current_players = event.players.count()
+        available = event.max_players - current_players
+        need_player = amount if available >= amount else available
     if need_player == 0:  # Not changes necessaries
         return
     elif need_player > 0:  # Add some IAs
@@ -25,7 +27,7 @@ def manage_ais(event, amount=0):
             member.save()
             playing_event = PlayingEvent(event=event, player=player)
             playing_event.save()
-            attach_clue(player=player, event=event, main=True)
+            attach_clue(player=player, event=event)
             need_player -= 1
     else:  # Removed some IAs
         assert "Not work OK. When enter new player, this player should sustitute IA"

@@ -482,6 +482,9 @@ class EventTasksTestCase(APITestCase):
         self.event2 = Event.objects.get(pk=2)
         self.event2.start_date = timezone.now() - timezone.timedelta(hours=2)
         self.event2.end_date = timezone.now() + timezone.timedelta(hours=2)
+        self.event3 = Event.objects.get(pk=3)
+        self.event3.start_date = timezone.now() - timezone.timedelta(hours=2)
+        self.event3.end_date = timezone.now() + timezone.timedelta(hours=2)
         self.ini_players = Player.objects.count()
 
     def get_member_players(self, event):
@@ -533,11 +536,19 @@ class EventTasksTestCase(APITestCase):
         self.assertEqual(ini_member_players + need_players, end_member_players)
         self.assertEqual(ini_playing_players + need_players, end_playing_players)
 
+    def test_join_player_sustitute_ia(self):
+        """ Fill event with ai players, and join new player that sustitute onw ai. """
+        available = self.event3.max_players - self.event3.players.count()
+        manage_ais(self.event3, amount=available)
+        self.assertEqual(self.event3.max_players, self.event3.players.count())
+
     def test_manage_ais_amount(self):
-        """ Check that add players and these are add like member and like playing in event """
+        """ Check that add players and these are add like member and like playing in event.
+            And You can't create more players than max_players in event.
+        """
         ini_member_players = self.get_member_players(self.event2)
         ini_playing_players = self.get_playing_players(self.event2)
-        need_players = 20
+        need_players = 2
 
         manage_ais(self.event2, amount=need_players)
 
@@ -548,6 +559,25 @@ class EventTasksTestCase(APITestCase):
         self.assertEqual(self.ini_players + need_players, end_players)
         self.assertEqual(ini_member_players + need_players, end_member_players)
         self.assertEqual(ini_playing_players + need_players, end_playing_players)
+
+    def test_manage_ais_amount_max_players(self):
+        """ Check that add players and these are add like member and like playing in event """
+        ini_member_players = self.get_member_players(self.event2)
+        ini_playing_players = self.get_playing_players(self.event2)
+        need_players = 20
+
+        available = self.event2.max_players - self.event2.players.count()
+        players_are_created = need_players if available >= need_players else available
+
+        manage_ais(self.event2, amount=need_players)
+
+        end_players = Player.objects.count()
+        end_member_players = self.get_member_players(self.event2)
+        end_playing_players = self.get_playing_players(self.event2)
+
+        self.assertEqual(self.ini_players + players_are_created, end_players)
+        self.assertEqual(ini_member_players + players_are_created, end_member_players)
+        self.assertEqual(ini_playing_players + players_are_created, end_playing_players)
 
 
 class EventAdminTestCase(APITestCase):

@@ -11,6 +11,7 @@ from django.core.exceptions import ValidationError
 PLAYER_TYPE = (
     ('ai', 'AI'),
     ('actor', 'actor'),
+    ('pos', 'position'),
     ('player', 'player'),
 )
 

@@ -35,17 +35,30 @@ def possible_solutions(player, event):
     return res
 
 
-def attach_clue(player, event, main=True):
+def attach_clue(player, event):
     game = event.game
     challenges = game.challenges.all()
-    challenges_attach = Clue.objects.filter(challenge__in=challenges, main=main).\
-            values_list('challenge__pk', flat=True)
-    challenges = game.challenges.exclude(pk__in=challenges_attach)
-    avail_challenges = challenges.exclude(pk__in=challenges_attach)
+    clues = Clue.objects.filter(event=event, challenge__in=challenges, main=True)
+    challenges_attach_pks = clues.values_list('challenge__pk', flat=True)
 
-    if avail_challenges:
-        clue = Clue(player=player, challenge=avail_challenges[0], main=main, event=event)
+    if challenges.count() > clues.count():
+        avail_challenge = challenges.exclude(pk__in=challenges_attach_pks).first()
+        clue = Clue(player=player, challenge=avail_challenge, main=True, event=event)
         clue.save()
+    elif clues.filter(player__ptype='ia').exists():
+        clue = clues.filter(player__ptype='ia').first()
+        playerAI = clue.player
+        print("1", playerAI)
+        clue.player = player
+        print("2", playerAI)
+        clue.save()
+        playerAI.delete()
+    elif event.max_players > len(clues):
+        random_challenge = challenges.order_by('?').first()
+        clue = Clue(player=player, challenge=random_challenge, main=True, event=event)
+        clue.save()
+    else:
+        print("max player")
 
 
 def get_position_ai(player, event):
@@ -78,13 +91,13 @@ def detach_clues(player, event, main=True):
 
 
 def transfer_clues(player, old_event, new_event):
-    if new_event and player.associate_ai:
+    if new_event and new_event.game.auto_assign_clue and player.associate_ai:
         playerAI = player.associate_ai
         for clue in playerAI.clues.filter(main=True):
             clue.player = player
             clue.save()
         playerAI.delete()
-    if old_event:
+    if old_event and old_event.game.auto_assign_clue:
         pos = get_position_ai(player, old_event)
         playerAI = create_random_player(old_event, position=pos)
         for clue in player.clues.filter(main=True):
