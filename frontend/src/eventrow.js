@@ -1,4 +1,5 @@
 import React from 'react';
+import Purifier from 'html-purify';
 import { withRouter } from 'react-router';
 
 import API from './api';
@@ -125,12 +126,18 @@ class EventRow extends React.Component {
         if (!this.props.expand && !this.state.expand) {
             return (<div></div>);
         }
+        function createMarkup(desc) {
+            var purifier = new Purifier();
+            var input = desc;
+            var result = purifier.purify(input);
+            return {__html: result };
+        }
 
         return (
             <div className="eventdesc">
                 <div className="jumbotron">
                     <h2>{ this.props.ev.game.name }</h2>
-                    <p>{ this.props.ev.game.desc }</p>
+                    <p dangerouslySetInnerHTML={ createMarkup(this.props.ev.game.desc) } />
                 </div>
 
                 <div className="dates">
