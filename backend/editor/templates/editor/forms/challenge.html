@@ -10,8 +10,8 @@
     <div class="col-sm-2">
         <div class="form-group">
             <select id="type" class="type" name="challenge_type_{{ n }}">
-                <option value="p" {% if challenge.type == 'p' %}selected{% endif %}>{% trans "Player" %}</option>
-                <option value="np" {% if challenge.type == 'np' %}selected{% endif %}>{% trans "Position / Actor" %}</option>
+                <option value="p" {% if challenge.ctype == 'p' %}selected{% endif %}>{% trans "Player" %}</option>
+                <option value="np" {% if challenge.ctype == 'np' %}selected{% endif %}>{% trans "Position / Actor" %}</option>
             </select>
         </div>
     </div>
