@@ -135,9 +135,10 @@ class EditGame(TemplateView):
         if not challenge.games.count():
             challenge.delete()
 
-    def update_game(self, game, data):
+    def update_game(self, game, data, author):
         if not game:
             game = Game()
+            game.author = author
 
         game.name = data['name']
         game.desc = data['desc']
@@ -163,7 +164,7 @@ class EditGame(TemplateView):
             return redirect('edit_game', gameid=game.id)
 
         data = self.parse_input(request)
-        game = self.update_game(game, data)
+        game = self.update_game(game, data, request.user)
         self.update_challenges(game, data['challenges'])
 
         if gameid:
