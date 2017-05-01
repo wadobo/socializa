@@ -327,7 +327,7 @@ class EventChallenges(TemplateView):
             username = 'ai_' + User.objects.make_random_password(length=8)
             newu = User(username=username)
             newu.save()
-            p = Player(user=newu, ptype='ai')
+            p = Player(user=newu, ptype='pos')
             p.save()
             event.set_playing(p)
 

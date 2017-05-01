@@ -34,7 +34,7 @@ def distance(pos1, pos2, unit='m'):
 
 
 def create_meeting(player1, player2, event_id=None):
-    m_status = 'connected' if player2.ptype == 'ai' else 'step1'
+    m_status = 'connected' if player2.ptype in ['ai', 'pos'] else 'step1'
     meeting, created = Meeting.objects.get_or_create(
                                         player1=player1,
                                         player2=player2,
@@ -79,7 +79,7 @@ class PlayersNear(APIView):
                 q &= ~Q(ptype='player')
         else:
             _vision = settings.DEFAULT_VISION_DISTANCE
-            q &= ~Q(ptype='ai')  # ~ not equal not equal
+            q &= ~Q(ptype__in=['ai', 'pos'])  # ~ not equal not equal
             q &= Q(playing_event__event=None)
         q &= Q(pos__distance_lte=(self.player.pos, D(m=_vision)))
         near_players = Player.objects.filter(q).exclude(pk=self.player.pk)
@@ -217,7 +217,7 @@ class MeetingCreate(APIView):
         new_meeting = None
 
         # STEP1: exception player2 is ai
-        if self.player2.ptype == 'ai':
+        if self.player2.ptype in ['ai', 'pos']:
             new_meeting = create_meeting(self.player1, self.player2, event_id)
             status = rf_status.HTTP_201_CREATED
             clue = self.give_clue(self.player2, self.event)
