@@ -36,7 +36,7 @@ class Event extends React.Component {
             .then(function(clues) {
                 var ev = self.state.ev;
                 if (ev.solved) {
-                    self.setState({ clues: clues, state: 'solved', solution: ev.solved});
+                    self.setState({ clues: clues, state: 'solved', solved: ev.solved});
                 } else {
                     self.setState({ clues: clues, state: 'event'});
                 }
@@ -75,7 +75,7 @@ class Event extends React.Component {
         if (this.state.state == 'solved') {
             button = (
                 <button className="btn btn-success btn-fixed-bottom">
-                    { this.state.solution }
+                    { this.state.ev.solution }
                 </button>
             );
         }
