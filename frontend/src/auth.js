@@ -1,4 +1,6 @@
 import $ from 'jquery';
+import GEO from './geo';
+import API from './api';
 
 
 let defuser = {
@@ -66,6 +68,9 @@ export function storeUser() {
 
 export function logout() {
     // normal logout
+    API.setPlayingEvent(null);
+    GEO.stop();
+
     localStorage['socializa-user'] = ''
     user = $.extend({}, defuser);
 
