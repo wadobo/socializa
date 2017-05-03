@@ -44,7 +44,11 @@ class Challenge(models.Model):
         return desc_html
 
     def __str__(self):
-        return "{} - {}...".format(self.name, self.desc[0:10])
+        g = self.games.all()
+        if g:
+            g = g[0]
+            return "{} - {} - {}...".format(g, self.name, self.desc[0:10])
+        return "{} - {}...".format(g, self.name, self.desc[0:10])
 
 
 class Game(models.Model):

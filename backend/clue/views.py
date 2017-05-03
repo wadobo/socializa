@@ -71,13 +71,14 @@ class SolveClue(APIView):
             clue.status = 'solved'
             clue.save()
 
+            clues = []
             challenges = clue.challenge.child_challenges.all()
             for ch in challenges:
                 clue, new = Clue.objects.get_or_create(player=player,
                                                        event=event, challenge=ch)
                 clue.save()
-                # returning the last clue given
-                response['clue'] = ClueSerializer(clue).data if clue else {}
+                clues.append(clue)
+            response['clues'] = ClueSerializer(clues, many=True).data
         return Response(response, status)
 
 

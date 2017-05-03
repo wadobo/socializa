@@ -170,6 +170,6 @@ class ClueTestCase(APITestCase):
         self.authenticate(self.get_username_by_player(player))
         response = self.client.post('/api/clue/solve/{0}/'.format(clue_id), data)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), {'status': "correct"})
+        self.assertEqual(response.json(), {'status': "correct", 'clues': []})
         clue_status = Clue.objects.get(pk=clue_id).status
         self.assertEqual(clue_status, 'solved')

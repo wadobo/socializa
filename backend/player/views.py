@@ -157,13 +157,13 @@ class MeetingCreate(APIView):
 
         return {}, None
 
-    def give_clue(self, player, event):
+    def give_clues(self, player, event):
         '''
-        Gives all clues to the player and return the last one
+        Gives all clues to the player and return the list
         '''
         clues = Clue.objects.filter(event=event, player=player, main=True)
 
-        rclue = None
+        rclues = []
 
         # multiple challenges
         for clue in clues:
@@ -177,9 +177,9 @@ class MeetingCreate(APIView):
             # if doesn't have the dependencies clues, we shouldn't give the
             # clue
             if should_give_the_clue:
-                rclue = self.create_clue(clue.challenge)
+                rclues.append(self.create_clue(clue.challenge))
 
-        return rclue
+        return rclues
 
     def check_secret(self, event_id, secret):
         query = Q(event_id__isnull=True) if event_id is None else Q(event_id=event_id)
@@ -194,8 +194,8 @@ class MeetingCreate(APIView):
             response = {}
             status = rf_status.HTTP_200_OK
 
-            clue = self.give_clue(self.player2, self.event)
-            response['clue'] = ClueSerializer(clue).data if clue else {}
+            clues = self.give_clues(self.player2, self.event)
+            response['clues'] = ClueSerializer(clues, many=True).data
 
             # always connected if the secret is ok
             meeting.status = 'connected'
@@ -220,8 +220,8 @@ class MeetingCreate(APIView):
         if self.player2.ptype in ['ai', 'pos']:
             new_meeting = create_meeting(self.player1, self.player2, event_id)
             status = rf_status.HTTP_201_CREATED
-            clue = self.give_clue(self.player2, self.event)
-            response['clue'] = ClueSerializer(clue).data if clue else {}
+            clues = self.give_clues(self.player2, self.event)
+            response['clues'] = ClueSerializer(clues, many=True).data
 
         # STEP1: player1 not connected with player2 or vice versa
         elif not meeting1 and not meeting2:
@@ -281,9 +281,9 @@ class MeetingCreate(APIView):
             status = rf_status.HTTP_400_BAD_REQUEST
 
         elif meeting.status == 'connected':
-            clue = self.give_clue(self.player2, self.event)
+            clues = self.give_clues(self.player2, self.event)
             response['status'] = meeting.status
-            response['clue'] = ClueSerializer(clue).data if clue else {}
+            response['clues'] = ClueSerializer(clues, many=True).data
 
         elif meeting.status == 'step2':
             response['status'] = 'waiting'
