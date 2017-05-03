@@ -67,7 +67,7 @@ export class OptSolve extends React.Component {
                 <div>
                   {answers.map(function(a, i) {
                       return (
-                        <button className="btn btn-default btn-block" onClick={self.finish.bind(self, a)}>
+                        <button key={a} className="btn btn-default btn-block" onClick={self.finish.bind(self, a)}>
                             {a}
                         </button>
                       );

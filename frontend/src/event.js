@@ -113,7 +113,7 @@ class Event extends React.Component {
                         }
 
                         {this.state.clues && this.state.clues.map(function(clue, i) {
-                            return <ClueRow ev={ev} clue={clue}/>;
+                            return <ClueRow key={clue.pk} ev={ev} clue={clue}/>;
                          })}
 
                          { this.renderSolveButton() }

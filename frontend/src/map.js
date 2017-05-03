@@ -390,7 +390,7 @@ class Map extends React.Component {
                 <div className="eventMenu">
                     <div className="ev" onClick={ (e) => self.playGlobal(e) }>{t('map::Global event')}</div>
                     { this.state.events.map(function(ev, i) {
-                        return <div className="ev" onClick={ (e) => self.play(e, ev) }> { ev.name } </div>
+                        return <div className="ev" key={ev.pk} onClick={ (e) => self.play(e, ev) }> { ev.name } </div>
                       })}
                 </div>
             )

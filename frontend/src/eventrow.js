@@ -166,7 +166,7 @@ class EventRow extends React.Component {
                 { this.maxp(this.props.ev) }
 
                 <h2>{ this.props.ev.name }</h2>
-                <p className="desc"> { this.shortDesc() } </p>
+                <div className="desc"> { this.shortDesc() } </div>
 
                 { this.renderDesc() }
             </div>
