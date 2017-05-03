@@ -8,7 +8,7 @@ import Bucket from './bucket';
 
 class ClueRow extends React.Component {
     goToSolve = (e) => {
-        Bucket.clue = this.props.clue;
+        Bucket.clues = [this.props.clue];
         this.props.history.push('/clue');
     }
 

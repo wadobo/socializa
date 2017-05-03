@@ -1,11 +1,12 @@
 {
-  "Check your email and confirm your account": "",
-  "Invalid or used email": "",
+  "Check your email and confirm your account": "Mira tu email y confirma tu cuenta",
+  "Invalid or used email": "Email inválido o no disponible",
   "Login": "Iniciar sesión",
-  "Login using Facebook or Google": "",
+  "Login using Facebook or Google": "Login usando Facebook o Google",
   "New account": "Nueva cuenta",
-  "Passwords didn't match": "",
+  "Passwords didn't match": "Las contraseñas no coinciden",
   "Register": "Registrarse",
+  "Unauthorized": "No autorizado",
   "email": "correo electrónico",
   "password": "contraseña",
   "repeat the password": "repite la contraseña"

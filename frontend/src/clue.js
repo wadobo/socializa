@@ -11,11 +11,11 @@ import { ResolvableComponent } from './eventsolve';
 
 import { translate } from 'react-i18next';
 
-class Clue extends ResolvableComponent {
+class ClueItemB extends ResolvableComponent {
     state = {
         clue: null,
         state: 'normal',
-        solution: '',
+        solution: null,
         step: 0,
     }
 
@@ -24,17 +24,8 @@ class Clue extends ResolvableComponent {
     }
 
     componentDidMount() {
-        var clue = Bucket.clue;
-
+        var clue = this.props.clue;
         this.setState({ clue: clue });
-    }
-
-    goBack = () => {
-        this.props.history.push('/map');
-    }
-
-    viewEvent = () => {
-        this.props.history.push('/event/' + user.activeEvent.pk);
     }
 
     solve = (solution) => {
@@ -46,13 +37,13 @@ class Clue extends ResolvableComponent {
                 if (resp.status == 'correct') {
                     var c = self.state.clue;
                     alert(t('events::Conglatulations!'));
-                    if (resp.clue) {
-                        c = resp.clue;
+                    if (resp.clues.length) {
+                        self.props.newClues(resp.clues);
                     } else {
                         c.status = 'solved';
                         c.solution = solution;
+                        self.setState({ clue: c, state: 'normal' });
                     }
-                    self.setState({ clue: c, state: 'normal' });
                 } else {
                     self.setState({ state: 'normal' });
                     alert(t('events::Wrong answer. Try again'));
@@ -78,9 +69,8 @@ class Clue extends ResolvableComponent {
         }
 
         return (
-            <div id="clue" className="container mbottom">
+            <div>
             { this.state.clue ?
-                <div>
                 <div className="clue">
                     <h1>{ this.state.clue.challenge.name }</h1>
                     <div dangerouslySetInnerHTML={ createMarkup() } />
@@ -97,10 +87,6 @@ class Clue extends ResolvableComponent {
                         </div>
                     }
                 </div>
-
-                <button className="btn btn-primary btn-fixed-bottom-left" onClick={ this.goBack }>{t('clue::Map')}</button>
-                <button className="btn btn-success btn-fixed-bottom-right" onClick={ this.viewEvent }>{t('clue::Event')}</button>
-                </div>
               :
                 <Loading />
             }
@@ -108,4 +94,43 @@ class Clue extends ResolvableComponent {
         );
     }
 }
+export let ClueItem = translate(['event', 'clue'], { wait: true })(withRouter(ClueItemB));
+
+class Clue extends React.Component {
+    state = {
+        clues: [],
+    }
+
+    componentDidMount() {
+        this.setState({clues: Bucket.clues});
+    }
+
+    goBack = () => {
+        this.props.history.push('/map');
+    }
+
+    viewEvent = () => {
+        this.props.history.push('/event/' + user.activeEvent.pk);
+    }
+
+    newClues = (clues) => {
+        this.setState({'clues': clues});
+    }
+
+    render() {
+        const { t } = this.props;
+        var self = this;
+
+        return (
+            <div id="clue" className="container mbottom">
+                { this.state.clues.map(function(c, i) {
+                    return <ClueItem key={c.pk} clue={c} newClues={self.newClues.bind(self)}/>;
+                }) }
+                <button className="btn btn-primary btn-fixed-bottom-left" onClick={ this.goBack }>{t('clue::Map')}</button>
+                <button className="btn btn-success btn-fixed-bottom-right" onClick={ this.viewEvent }>{t('clue::Event')}</button>
+            </div>
+        );
+    }
+}
+
 export default Clue = translate(['event', 'clue'], { wait: true })(withRouter(Clue));

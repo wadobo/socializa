@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router'
+import { Link } from 'react-router-dom';
 
 import { storeUser, user, logout } from './auth';
 import API from './api';
@@ -40,6 +40,8 @@ class Event extends React.Component {
                 } else {
                     self.setState({ clues: clues, state: 'event'});
                 }
+            }).catch(function(error) {
+                alert(error);
             });
     }
 
