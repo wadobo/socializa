@@ -10,6 +10,13 @@ import Register from './register';
 import i18n from './i18n';
 
 
+//override defaults
+alertify.defaults.theme.ok = "btn btn-success";
+alertify.defaults.theme.cancel = "btn btn-danger";
+alertify.defaults.theme.input = "form-control";
+
+window.alert = alertify.alert;
+
 ReactDOM.render((
   <I18nextProvider i18n={ i18n }>
   <Router>

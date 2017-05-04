@@ -68,8 +68,10 @@ export function storeUser() {
 
 export function logout() {
     // normal logout
-    API.setPlayingEvent(null);
-    GEO.stop();
+    if (user.isAuthenticated) {
+        API.setPlayingEvent(null);
+        GEO.stop();
+    }
 
     localStorage['socializa-user'] = ''
     user = $.extend({}, defuser);

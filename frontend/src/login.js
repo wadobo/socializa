@@ -1,6 +1,6 @@
 import React from 'react';
 import { withRouter } from 'react-router';
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
 import $ from 'jquery';
 
 import API from './api';
@@ -42,13 +42,14 @@ class Login extends React.Component {
         var email = this.state.email;
         var password = this.state.password;
         var self = this;
+        const { t } = this.props;
 
         return API.login(self.state.social.local.id, email, password)
             .then(function(resp) {
                 login(email, resp.access_token, 'token');
                 self.props.history.push('/map');
             }).catch(function(error) {
-                alert(error);
+                alert(t("login::Invalid credentials, try again"));
             });
     }
 

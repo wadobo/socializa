@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router'
 
 import { user, logout } from './auth';
 import API from './api';
