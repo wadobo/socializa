@@ -232,4 +232,9 @@ export default class API {
         var data = JSONPost({"current": pwd1, "new": pwd2});
         return customFetch('/api/player/passwd/', data);
     }
+
+    static getStoreProducts() {
+        var data = JSONGet({});
+        return customFetch('/api/store/products/', data);
+    }
 }

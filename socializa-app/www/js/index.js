@@ -28,6 +28,7 @@ var app = {
     // 'load', 'deviceready', 'offline', and 'online'.
     bindEvents: function() {
         document.addEventListener('deviceready', this.onDeviceReady, false);
+        document.addEventListener('deviceready', this.initStore, false);
     },
     // deviceready Event Handler
     //
@@ -37,6 +38,7 @@ var app = {
         app.receivedEvent('deviceready');
         cordova.plugins.certificates.trustUnsecureCerts(true);
 
+        // backbutton for exit
         var lastTimeBackPress=0;
         var timePeriodToExit=2000;
 
@@ -60,6 +62,74 @@ var app = {
                 navigator.app.backHistory()
             }
         }, false);
+    },
+    initStore: function() {
+        if (!store) {
+            alert('===============STORE NOT AVAILABLE');
+            return;
+        }
+
+        store.verbosity = store.DEBUG;
+        store.register({
+            id: "coin_100",
+            alias: "100 monedas",
+            type: store.CONSUMABLE
+        });
+        store.register({
+            id: "coin_200",
+            alias: "200 monedas",
+            type: store.CONSUMABLE
+        });
+        store.register({
+            id: "coin_500",
+            alias: "500 monedas",
+            type: store.CONSUMABLE
+        });
+        store.register({
+            id: "coin_1000",
+            alias: "1000 monedas",
+            type: store.CONSUMABLE
+        });
+        store.register({
+            id: "coin_2000",
+            alias: "2000 monedas",
+            type: store.CONSUMABLE
+        });
+        store.register({
+            id: "coin_5000",
+            alias: "5000 monedas",
+            type: store.CONSUMABLE
+        });
+
+        store.ready( function() {
+            alert("STORE READY");
+        });
+
+        store.error(function(error) {
+            alert("ERROR STORE " + error.code + ": " + error.message);
+        });
+
+        store.when("product").updated(function(p) {
+            alert("update");
+            //navigator.notification.confirm(message, confirmCallback, [title], [buttonLabels]);
+            //store.order(p.id);
+        });
+
+        store.when("product").downloading(function(p) {
+            alter("downloading");
+        });
+
+        store.when("product").downloaded(function(p) {
+            alter("downloaded");
+            p.finish();
+        });
+
+        store.when("product").approved(function(p) {
+            alert("approved");
+            p.verify();
+        });
+
+        store.refresh();
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
