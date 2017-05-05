@@ -1,7 +1,6 @@
 import React from 'react';
 import { withRouter } from 'react-router';
 
-import { setUser, user, logout } from './auth';
 import Loading from './loading';
 import API from './api';
 
@@ -9,7 +8,7 @@ import Bucket from './bucket';
 import { translate } from 'react-i18next';
 
 
-class Profile extends React.Component {
+class Store extends React.Component {
     state = {
         storeProducts: null,
         state: 'normal',
@@ -23,7 +22,7 @@ class Profile extends React.Component {
     updateStore = () => {
         var self = this;
         this.setState({ storeProducts: null });
-        API.storeProducts()
+        API.getStoreProducts()
             .then(function(products) {
                 self.setState({ storeProducts: products });
             });
@@ -52,7 +51,7 @@ class Profile extends React.Component {
 
         return (
             <div id="store" className="container-fluid container-fw">
-                { this.state.stores ? this.renderStoreRows() : <Loading /> }
+                { this.state.storeProducts ? this.renderStoreProducts() : <Loading /> }
             </div>
         );
     }
