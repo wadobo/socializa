@@ -9,7 +9,7 @@ import { translate } from 'react-i18next';
 
 
 class StoreProduct extends React.Component {
-    state = { joined: false, solved: false }
+    //state = { joined: false, solved: false }
 
     //componentWillMount() {
     //  this.setState({ joined: this.props.ev.joined, solved: this.props.ev.solved });
