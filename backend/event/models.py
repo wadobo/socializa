@@ -18,7 +18,7 @@ class Event(models.Model):
     start_date = models.DateTimeField(null=True, blank=True)
     end_date = models.DateTimeField(null=True, blank=True)
     max_players = models.PositiveIntegerField(default=10)
-    price = models.DecimalField(max_digits=5, decimal_places=2, default=Decimal('0.00'))
+    price = models.PositiveIntegerField(default=0)
     game = models.ForeignKey(Game, related_name="events", null=True)
     players = models.ManyToManyField(Player, through="Membership")
     vision_distance = models.PositiveIntegerField(default=settings.DEFAULT_VISION_DISTANCE,

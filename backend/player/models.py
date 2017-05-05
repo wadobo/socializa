@@ -25,6 +25,7 @@ class Player(models.Model):
     confirm_code = models.CharField(max_length=80, blank=True, null=True)
     associate_ai = models.ForeignKey('self', on_delete=models.SET_NULL,
         related_name='associate_player', null=True, blank=True, default=None)
+    coins = models.PositiveIntegerField(default=0)
 
     def regen_confirm_code(self):
         chars = ascii_uppercase + digits
