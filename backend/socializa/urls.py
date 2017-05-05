@@ -35,6 +35,7 @@ urlpatterns = [
     url(r"^api/player/", include("player.urls")),
     url(r"^api/event/", include("event.urls")),
     url(r"^api/clue/", include("clue.urls")),
+    url(r"^api/store/", include("store.urls")),
     url(r'', include("landing.urls")),
 ]
 

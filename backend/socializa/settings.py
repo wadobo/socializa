@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'event',
     'game',
     'clue',
+    'store',
     'editor',
     'landing',
 ]
