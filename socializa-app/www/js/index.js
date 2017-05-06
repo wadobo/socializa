@@ -102,7 +102,7 @@ var app = {
         });
 
         store.ready( function() {
-            alert("STORE READY");
+            log("STORE READY");
         });
 
         store.error(function(error) {
