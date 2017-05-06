@@ -3,6 +3,7 @@ import { withRouter } from 'react-router';
 
 import Loading from './loading';
 import API from './api';
+import StoreProduct from './storeproduct';
 
 import Bucket from './bucket';
 import { translate } from 'react-i18next';
@@ -10,8 +11,7 @@ import { translate } from 'react-i18next';
 
 class Store extends React.Component {
     state = {
-        storeProducts: null,
-        state: 'normal',
+        products: null,
     }
 
     componentDidMount() {
@@ -21,10 +21,10 @@ class Store extends React.Component {
 
     updateStore = () => {
         var self = this;
-        this.setState({ storeProducts: null });
+        this.setState({ products: null });
         API.getStoreProducts()
             .then(function(products) {
-                self.setState({ storeProducts: products });
+                self.setState({ products: products });
             });
     }
 
@@ -33,11 +33,11 @@ class Store extends React.Component {
         const { t } = this.props;
         return (
             <div>
-            { this.state.storeProducts.map(function(product, i) {
+            { this.state.products.map(function(product, i) {
                 return <StoreProduct product={product} />
             }) }
 
-            { this.state.storeProducts.length ? <span></span> : <div className="jumbotron">{t("store::There's no products :(")}</div> }
+            { this.state.products.length ? <span></span> : <div className="jumbotron">{t("store::There's no products :(")}</div> }
             </div>
         )
     }
@@ -45,13 +45,9 @@ class Store extends React.Component {
 
     render() {
         const { t } = this.props;
-        if (!this.state.player || this.state.state == 'loading') {
-            return <Loading />;
-        }
-
         return (
             <div id="store" className="container-fluid container-fw">
-                { this.state.storeProducts ? this.renderStoreProducts() : <Loading /> }
+                { this.state.products ? this.renderStoreProducts() : <Loading /> }
             </div>
         );
     }

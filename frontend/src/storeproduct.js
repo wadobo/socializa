@@ -21,11 +21,11 @@ class StoreProduct extends React.Component {
 
     render() {
         return (
-            <div className={ 'store product' } onClick={ this.buy.bind(this, product) }>
+            <div className={ 'event joined product' } onClick={ this.buy.bind(this, this.props.product) }>
                 <div className="price pull-right">
-                    <i className="fa fa-money"></i> { STORE.get_price(product.product_id) }
+                    <i className="fa fa-money"></i> { STORE.get_price(this.props.product.product_id) }
                 </div>
-                <h2>{ STORE.get_desc(product.product_id) }</h2>
+                <h2>{ STORE.get_desc(this.props.product.product_id) }</h2>
             </div>
         )
     }
