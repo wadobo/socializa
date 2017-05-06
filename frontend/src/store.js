@@ -34,7 +34,7 @@ class Store extends React.Component {
         return (
             <div>
             { this.state.products.map(function(product, i) {
-                return <StoreProduct product={product} />
+                return <StoreProduct key={i} product={product} />
             }) }
 
             { this.state.products.length ? <span></span> : <div className="jumbotron">{t("store::There's no products :(")}</div> }

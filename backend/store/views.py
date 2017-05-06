@@ -13,3 +13,10 @@ class GetProducts(APIView):
         serializer = ProductSerializer(products, many=True)
         data = serializer.data
         return Response(data)
+
+
+class CheckPurchase(APIView):
+
+    def get(self, request):
+        data = {}
+        return Response(data)

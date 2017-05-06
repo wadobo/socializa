@@ -20,4 +20,8 @@
         return product.title + ": " + product.description;
     }
 
+    STORE.refresh = function() {
+        store.refresh();
+    }
+
 }).call(this);

@@ -72,34 +72,31 @@ var app = {
         store.verbosity = store.DEBUG;
         store.register({
             id: "coin_100",
-            alias: "100 monedas",
-            type: store.CONSUMABLE
+            type: store.NON_CONSUMABLE
         });
         store.register({
             id: "coin_200",
-            alias: "200 monedas",
-            type: store.CONSUMABLE
+            type: store.NON_CONSUMABLE
         });
         store.register({
             id: "coin_500",
-            alias: "500 monedas",
-            type: store.CONSUMABLE
+            type: store.NON_CONSUMABLE
         });
         store.register({
             id: "coin_1000",
-            alias: "1000 monedas",
-            type: store.CONSUMABLE
+            type: store.NON_CONSUMABLE
         });
         store.register({
             id: "coin_2000",
-            alias: "2000 monedas",
-            type: store.CONSUMABLE
+            type: store.NON_CONSUMABLE
         });
         store.register({
             id: "coin_5000",
-            alias: "5000 monedas",
-            type: store.CONSUMABLE
+            type: store.NON_CONSUMABLE
         });
+        store.refresh();
+
+        store.validator = "http://devsocializa.wadobo.com/api/store/check-purchase/";
 
         store.ready( function() {
             log("STORE READY");
@@ -116,11 +113,11 @@ var app = {
         });
 
         store.when("product").downloading(function(p) {
-            alter("downloading");
+            alert("downloading");
         });
 
         store.when("product").downloaded(function(p) {
-            alter("downloaded");
+            alert("downloaded");
             p.finish();
         });
 
@@ -129,7 +126,10 @@ var app = {
             p.verify();
         });
 
-        store.refresh();
+        store.when("product").verified(function(p) {
+            alert("finish");
+            p.finish();
+        });
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {

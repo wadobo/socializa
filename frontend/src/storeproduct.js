@@ -17,6 +17,7 @@ class StoreProduct extends React.Component {
 
     buy = (product) => {
         STORE.order(product.id);
+        STORE.refresh();
     }
 
     render() {

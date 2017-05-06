@@ -17,4 +17,7 @@
         return id_product + ': buy for enjoy.';
     }
 
+    STORE.refresh = function() {
+    }
+
 }).call(this);
