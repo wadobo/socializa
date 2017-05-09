@@ -16,4 +16,9 @@ class ClueSerializer(serializers.Serializer):
         if clue.status == 'solved':
             return clue.challenge.solution
 
-        return bool(clue.challenge.solution)
+        if clue.challenge.solution:
+            if clue.challenge.get_extra('options'):
+                return clue.challenge.get_extra('options')
+            return True
+
+        return False

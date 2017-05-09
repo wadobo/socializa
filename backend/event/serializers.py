@@ -36,9 +36,11 @@ class EventSerializer(serializers.Serializer):
     def get_solution(self, event):
         if self.is_solved(event):
             return event.game.solution
-        else:
-            player = self.context.get("player")
-            return possible_solutions(player, event)
+        elif event.game.get_extra('options'):
+            return event.game.get_extra('options')
+
+        player = self.context.get("player")
+        return possible_solutions(player, event)
 
     def is_admin(self, event):
         player = self.context.get("player")

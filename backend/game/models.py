@@ -3,6 +3,8 @@ import re
 from django.contrib.auth.models import User
 from django.db import models
 
+from common.models import ExtraBase
+
 
 CHALLENGES_TYPE = (
     ('p', 'playable player'),
@@ -10,7 +12,7 @@ CHALLENGES_TYPE = (
 )
 
 
-class Challenge(models.Model):
+class Challenge(models.Model, ExtraBase):
     name = models.CharField(max_length=200, blank=True, null=True)
     desc = models.TextField(max_length=1024, blank=True, null=True)
     solution = models.TextField(max_length=1024, blank=True, null=True)
@@ -51,7 +53,7 @@ class Challenge(models.Model):
         return "{} - {}...".format(g, self.name, self.desc[0:10])
 
 
-class Game(models.Model):
+class Game(models.Model, ExtraBase):
     name = models.CharField(max_length=200, blank=True, null=True)
     desc = models.TextField(max_length=1024, blank=True, null=True)
     solution = models.TextField(max_length=1024, blank=True, null=True)
@@ -59,6 +61,7 @@ class Game(models.Model):
     author = models.ForeignKey(User, related_name="games", blank=True, null=True)
     auto_assign_clue = models.BooleanField(default=True)
     visible_players = models.BooleanField(default=True)
+    extra = models.TextField(max_length=1024, blank=True, null=True)
 
     def get_desc_html(self):
         # search #[NUM][type][question] and return [('NUM', 'type', 'question'), ... ]

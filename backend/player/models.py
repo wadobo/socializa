@@ -7,6 +7,8 @@ from django.contrib.gis.db import models
 from django.contrib.gis.geos import GEOSGeometry
 from django.core.exceptions import ValidationError
 
+from common.models import ExtraBase
+
 
 PLAYER_TYPE = (
     ('ai', 'AI'),
@@ -16,7 +18,7 @@ PLAYER_TYPE = (
 )
 
 
-class Player(models.Model):
+class Player(models.Model, ExtraBase):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="player")
     pos = models.PointField(null=True, blank=True)
     ptype = models.CharField(max_length=16, choices=PLAYER_TYPE, default='player')
