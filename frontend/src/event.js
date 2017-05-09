@@ -1,4 +1,5 @@
 import React from 'react';
+import { withRouter } from 'react-router';
 import { Link } from 'react-router-dom';
 
 import { storeUser, user, logout } from './auth';
@@ -45,6 +46,11 @@ class Event extends React.Component {
             });
     }
 
+    goMap = () => {
+        this.props.history.push('/map');
+    }
+
+
     updateEvents = () => {
         var self = this;
         API.EventDetail(self.props.match.params.pk)
@@ -68,20 +74,19 @@ class Event extends React.Component {
 
     renderSolveButton = () => {
         const { t } = this.props;
-        var button = (
-            <button onClick={ this.tryToSolve } className="btn btn-primary btn-fixed-bottom">
-                {t('events::Solve')}
-            </button>
-        );
 
         if (this.state.state == 'solved') {
-            button = (
-                <button className="btn btn-success btn-fixed-bottom">
-                    { this.state.ev.solution }
-                </button>
-            );
+            return [
+                <button key={0} className="btn btn-primary btn-fixed-bottom-left" onClick={this.goMap}> {t('events::Map')} </button>,
+                <button key={1} className="btn btn-success btn-fixed-bottom-right"> { this.state.ev.solution } </button>
+            ];
         }
-        return button;
+
+
+        return [
+            <button key={0} className="btn btn-success btn-fixed-bottom-left" onClick={this.goMap}> {t('events::Map')} </button>,
+            <button key={1} className="btn btn-primary btn-fixed-bottom-right" onClick={ this.tryToSolve }> {t('events::Solve')} </button>
+        ];
     }
 
     solved = () => {
@@ -132,4 +137,4 @@ class Event extends React.Component {
     }
 }
 
-export default Event = translate(['events', 'common'], { wait: true })(Event);
+export default Event = translate(['events', 'common'], { wait: true })(withRouter(Event));
