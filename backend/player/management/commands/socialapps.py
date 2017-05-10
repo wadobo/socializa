@@ -10,10 +10,11 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         apps = ['local', 'facebook', 'google']
 
+        u = User.objects.all()[0]
+
         for app in apps:
-            a, created = Application.objects.get_or_create(name=app)
+            a, created = Application.objects.get_or_create(name=app, user=u)
             if created:
-                a.user = User.objects.all()[0]
                 a.redirect_uris = 'http://wadobo.com'
                 a.client_type = 'public'
                 if app == 'local':
