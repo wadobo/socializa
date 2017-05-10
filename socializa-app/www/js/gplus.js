@@ -13,7 +13,7 @@
                 var token = obj.idToken;
                 var email = obj.email;
 
-                $.get(HOST + '/api/gplusid/' + token + '/',
+                $.post(HOST + '/api/gplusid/', {'token': token},
                     function(response) {
                         if (response.status == 'ok') {
                             success(response.token, email, true);

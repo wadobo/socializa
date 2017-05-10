@@ -96,7 +96,7 @@ var app = {
         });
         store.refresh();
 
-        store.validator = "http://socializa.wadobo.com/api/store/check-purchase/";
+        store.validator = "http://devsocializa.com/api/store/check-purchase/";
 
         store.ready( function() {
             log("STORE READY");
