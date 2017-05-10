@@ -1,3 +1,5 @@
+from oauth2_provider.models import AccessToken
+
 from django.db.models import Q
 from django.conf import settings
 from django.contrib.gis.measure import D
@@ -13,9 +15,10 @@ from django.core.mail import EmailMultiAlternatives
 from rest_framework import status as rf_status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 
 from clue.models import Clue
-from game.serializers import ChallengeSerializer
+from clue.serializers import ClueSerializer
 from .models import Meeting
 from .models import Player
 from .models import PlayerInterests
@@ -31,7 +34,7 @@ def distance(pos1, pos2, unit='m'):
 
 
 def create_meeting(player1, player2, event_id=None):
-    m_status = 'connected' if player2.ptype == 'ai' else 'step1'
+    m_status = 'connected' if player2.ptype in ['ai', 'pos'] else 'step1'
     meeting, created = Meeting.objects.get_or_create(
                                         player1=player1,
                                         player2=player2,
@@ -76,7 +79,7 @@ class PlayersNear(APIView):
                 q &= ~Q(ptype='player')
         else:
             _vision = settings.DEFAULT_VISION_DISTANCE
-            q &= ~Q(ptype='ai')  # ~ not equal not equal
+            q &= ~Q(ptype__in=['ai', 'pos'])  # ~ not equal not equal
             q &= Q(playing_event__event=None)
         q &= Q(pos__distance_lte=(self.player.pos, D(m=_vision)))
         near_players = Player.objects.filter(q).exclude(pk=self.player.pk)
@@ -92,7 +95,7 @@ near = PlayersNear.as_view()
 class MeetingCreate(APIView):
 
     def create_clue(self, challenge):
-        clue = Clue(player=self.player1, event=self.event, challenge=challenge)
+        clue, new = Clue.objects.get_or_create(player=self.player1, event=self.event, challenge=challenge)
         clue.save()
         return clue
 
@@ -154,13 +157,13 @@ class MeetingCreate(APIView):
 
         return {}, None
 
-    def give_clue(self, player, event):
+    def give_clues(self, player, event):
         '''
-        Gives all clues to the player and return the last one
+        Gives all clues to the player and return the list
         '''
         clues = Clue.objects.filter(event=event, player=player, main=True)
 
-        rclue = None
+        rclues = []
 
         # multiple challenges
         for clue in clues:
@@ -174,9 +177,9 @@ class MeetingCreate(APIView):
             # if doesn't have the dependencies clues, we shouldn't give the
             # clue
             if should_give_the_clue:
-                rclue = self.create_clue(clue.challenge)
+                rclues.append(self.create_clue(clue.challenge))
 
-        return rclue
+        return rclues
 
     def check_secret(self, event_id, secret):
         query = Q(event_id__isnull=True) if event_id is None else Q(event_id=event_id)
@@ -191,8 +194,8 @@ class MeetingCreate(APIView):
             response = {}
             status = rf_status.HTTP_200_OK
 
-            clue = self.give_clue(self.player2, self.event)
-            response['clue'] = ChallengeSerializer(clue.challenge).data if clue else {}
+            clues = self.give_clues(self.player2, self.event)
+            response['clues'] = ClueSerializer(clues, many=True).data
 
             # always connected if the secret is ok
             meeting.status = 'connected'
@@ -214,11 +217,11 @@ class MeetingCreate(APIView):
         new_meeting = None
 
         # STEP1: exception player2 is ai
-        if self.player2.ptype == 'ai':
+        if self.player2.ptype in ['ai', 'pos']:
             new_meeting = create_meeting(self.player1, self.player2, event_id)
             status = rf_status.HTTP_201_CREATED
-            clue = self.give_clue(self.player2, self.event)
-            response['clue'] = ChallengeSerializer(clue.challenge).data if clue else {}
+            clues = self.give_clues(self.player2, self.event)
+            response['clues'] = ClueSerializer(clues, many=True).data
 
         # STEP1: player1 not connected with player2 or vice versa
         elif not meeting1 and not meeting2:
@@ -278,9 +281,9 @@ class MeetingCreate(APIView):
             status = rf_status.HTTP_400_BAD_REQUEST
 
         elif meeting.status == 'connected':
-            clue = self.give_clue(self.player2, self.event)
+            clues = self.give_clues(self.player2, self.event)
             response['status'] = meeting.status
-            response['clue'] = ChallengeSerializer(clue.challenge).data if clue else {}
+            response['clues'] = ClueSerializer(clues, many=True).data
 
         elif meeting.status == 'step2':
             response['status'] = 'waiting'
@@ -381,12 +384,11 @@ class Register(APIView):
         except Exception as e:
             return Response({'status': 'nok', 'msg': 'invalid email'})
 
-        url = 'https://socializa.wadobo.com' + reverse('confirm', kwargs={'code':p.confirm_code})
+        url = settings.BASE_URL + reverse('confirm', kwargs={'code':p.confirm_code})
         msg = EmailMultiAlternatives(
             _('Socializa account validation'),
             _('Validate your socializa account: %s') % url,
             to=[email],
-            reply_to=['socializa@wadobo.com'],
         )
         html_message = _('Validate your socializa account: '
                          '<a href="%s">%s</a>') % (url, p.confirm_code)
@@ -408,6 +410,29 @@ class RegisterConfirm(TemplateView):
         p.user.save()
 
         ctx['player'] = p
+        ctx['base_url'] = settings.BASE_URL
 
         return ctx
 confirm = RegisterConfirm.as_view()
+
+
+class ChangePasswd(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        current = request.data.get('current', '')
+        newpwd = request.data.get('new', '')
+        u = request.user
+
+        if not current or not newpwd or not u.check_password(current):
+            return Response("Invalid password",
+                            status=rf_status.HTTP_400_BAD_REQUEST)
+
+        u.set_password(newpwd)
+        u.save()
+
+        AccessToken.objects.filter(user=u).delete()
+
+        return Response({'status': 'ok'})
+passwd = ChangePasswd.as_view()

@@ -56,7 +56,7 @@
                     <div class="col-sm-11">
                         {{ game.name }} /
                         <span class="text-primary">{{ game.challenges.all|length }} {% trans "challenges" %}</span>
-                        <p class="text-muted text-small">{{ game.desc|truncatewords:50 }}</p>
+                        <p class="text-muted text-small">{{ game.get_desc_html|safe|truncatewords:50 }}</p>
                     </div>
                 </label>
             </div>

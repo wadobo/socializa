@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from clue.utils import possible_solutions
 from game.serializers import GameSerializer
 from game.serializers import ChallengeSerializer
 from player.serializers import PlayerSerializer
@@ -14,7 +15,8 @@ class EventSerializer(serializers.Serializer):
     max_players = serializers.IntegerField()
     price = serializers.DecimalField(max_digits=5, decimal_places=2)
     joined = serializers.SerializerMethodField('is_player_joined')
-    solved = serializers.SerializerMethodField('solution')
+    solved = serializers.SerializerMethodField('is_solved')
+    solution = serializers.SerializerMethodField()
     admin = serializers.SerializerMethodField('is_admin')
 
     vision_distance = serializers.IntegerField()
@@ -28,13 +30,17 @@ class EventSerializer(serializers.Serializer):
         player = self.context.get("player")
         return event.membership_set.filter(player=player, status='solved').exists()
 
-    def solution(self, event):
-        if self.is_player_joined(event) and self.is_event_solved(event):
-            return event.game.solution
-        else:
-            return None
+    def is_solved(self, event):
+        return True if (self.is_player_joined(event) and self.is_event_solved(event)) else False
 
-        return None
+    def get_solution(self, event):
+        if self.is_solved(event):
+            return event.game.solution
+        elif event.game.get_extra('options'):
+            return event.game.get_extra('options')
+
+        player = self.context.get("player")
+        return possible_solutions(player, event)
 
     def is_admin(self, event):
         player = self.context.get("player")

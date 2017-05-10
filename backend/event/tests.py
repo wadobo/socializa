@@ -1,3 +1,4 @@
+import re
 from django.test import override_settings
 from django.utils import timezone
 from rest_framework.test import APITestCase
@@ -478,10 +479,18 @@ class EventTasksTestCase(APITestCase):
     fixtures = ['player-test.json', 'event.json']
 
     def setUp(self):
+        self.client = JClient()
         self.event2 = Event.objects.get(pk=2)
         self.event2.start_date = timezone.now() - timezone.timedelta(hours=2)
         self.event2.end_date = timezone.now() + timezone.timedelta(hours=2)
+        self.event3 = Event.objects.get(pk=3)
+        self.event3.start_date = timezone.now() - timezone.timedelta(hours=2)
+        self.event3.end_date = timezone.now() + timezone.timedelta(hours=2)
         self.ini_players = Player.objects.count()
+
+    def authenticate(self, username, pwd='qweqweqwe'):
+        response = self.client.authenticate(username, pwd)
+        self.assertEqual(response.status_code, 200)
 
     def get_member_players(self, event):
         return Membership.objects.filter(event=event).count()
@@ -490,7 +499,7 @@ class EventTasksTestCase(APITestCase):
         return PlayingEvent.objects.filter(event=event).count()
 
     def get_need_players(self, event):
-        return event.max_players - event.players.count()
+        return event.game.challenges.count() - event.players.count()
 
     def test_manage_ais_not_change(self):
         """ test manage_ais fails:
@@ -532,11 +541,24 @@ class EventTasksTestCase(APITestCase):
         self.assertEqual(ini_member_players + need_players, end_member_players)
         self.assertEqual(ini_playing_players + need_players, end_playing_players)
 
+    def test_join_player_sustitute_ia(self):
+        """ Fill event with ai players, and join new player that sustitute onw ai. """
+        available = self.event3.max_players - self.event3.players.count()
+        manage_ais(self.event3, amount=available)
+        self.assertEqual(self.event3.max_players, self.event3.players.count())
+
+        self.authenticate('test1')
+        response = self.client.post('/api/event/join/{0}/'.format(self.event3.pk), {})
+        self.assertEqual(response.status_code, 201)
+
+
     def test_manage_ais_amount(self):
-        """ Check that add players and these are add like member and like playing in event """
+        """ Check that add players and these are add like member and like playing in event.
+            And You can't create more players than max_players in event.
+        """
         ini_member_players = self.get_member_players(self.event2)
         ini_playing_players = self.get_playing_players(self.event2)
-        need_players = 20
+        need_players = 2
 
         manage_ais(self.event2, amount=need_players)
 
@@ -547,6 +569,25 @@ class EventTasksTestCase(APITestCase):
         self.assertEqual(self.ini_players + need_players, end_players)
         self.assertEqual(ini_member_players + need_players, end_member_players)
         self.assertEqual(ini_playing_players + need_players, end_playing_players)
+
+    def test_manage_ais_amount_max_players(self):
+        """ Check that add players and these are add like member and like playing in event """
+        ini_member_players = self.get_member_players(self.event2)
+        ini_playing_players = self.get_playing_players(self.event2)
+        need_players = 20
+
+        available = self.event2.max_players - self.event2.players.count()
+        players_are_created = need_players if available >= need_players else available
+
+        manage_ais(self.event2, amount=need_players)
+
+        end_players = Player.objects.count()
+        end_member_players = self.get_member_players(self.event2)
+        end_playing_players = self.get_playing_players(self.event2)
+
+        self.assertEqual(self.ini_players + players_are_created, end_players)
+        self.assertEqual(ini_member_players + players_are_created, end_member_players)
+        self.assertEqual(ini_playing_players + players_are_created, end_playing_players)
 
 
 class EventAdminTestCase(APITestCase):
@@ -641,3 +682,47 @@ class EventCeleryTestCase(APITestCase):
         event = Event.objects.get(pk=10)
         end_players = event.players.count()
         self.assertEqual(ini_players + event.max_players, end_players)
+
+
+class EventSolveDropdownTestCase(APITestCase):
+    """ New event with descriptions for solve with dropdown. """
+    fixtures = ['event-solve-dropdown.json']
+
+    GAME_PK = 1
+
+    def setUp(self):
+        self.client = JClient()
+
+    def tearDown(self):
+        self.client = None
+
+    def authenticate(self, username, pwd='qweqweqwe'):
+        response = self.client.authenticate(username, pwd)
+        self.assertEqual(response.status_code, 200)
+
+    def test_convert_challengue_description(self):
+        self.authenticate('username@test.com')
+        response = self.client.get('/api/clue/my-clues/{0}/'.format(self.GAME_PK), {})
+        self.assertEqual(response.status_code, 200)
+        qregex = re.compile("#\[[\d]+\]\[([^#]*)\]")
+        for res in response.json():
+            desc = res.get('challenge').get('desc')
+            self.assertFalse(qregex.search(desc))
+
+    def test_convert_game_description(self):
+        self.authenticate('username@test.com')
+        response = self.client.get('/api/event/my-events/', {})
+        self.assertEqual(response.status_code, 200)
+        qregex = re.compile("#\[[\d]+\]\[(?:option|text)\]\[([^#]*)\]")
+        for res in response.json():
+            desc = res.get('game').get('desc')
+            self.assertFalse(qregex.search(desc))
+
+    def test_get_possible_solutions(self):
+        self.authenticate('username@test.com')
+        response = self.client.get('/api/event/{}/'.format(self.GAME_PK), {})
+        self.assertEqual(response.status_code, 200)
+        solution = response.json().get('solution')
+        self.assertTrue(isinstance(solution, list))
+        self.assertTrue(isinstance(solution[0], dict))
+        self.assertEqual(sorted(solution[0].keys()), ["answers", "question", "type"])

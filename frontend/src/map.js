@@ -304,6 +304,10 @@ class Map extends React.Component {
         this.unplay();
     }
 
+    viewEvent = (e) => {
+        this.props.history.push('/event/' + user.activeEvent.pk);
+    }
+
     toggleEventMenu = () => {
         if (this.state.eventMenu) {
             this.setState({ eventMenu: false });
@@ -390,7 +394,7 @@ class Map extends React.Component {
                 <div className="eventMenu">
                     <div className="ev" onClick={ (e) => self.playGlobal(e) }>{t('map::Global event')}</div>
                     { this.state.events.map(function(ev, i) {
-                        return <div className="ev" onClick={ (e) => self.play(e, ev) }> { ev.name } </div>
+                        return <div className="ev" key={ev.pk} onClick={ (e) => self.play(e, ev) }> { ev.name } </div>
                       })}
                 </div>
             )
@@ -401,6 +405,15 @@ class Map extends React.Component {
 
     render() {
         const { t } = this.props;
+
+        var stopbtn = <button key={1} className="btn btn-danger btn-fixed-bottom" onClick={ this.stop }>{t('map::Stop')}</button>;
+        if (user.activeEvent) {
+            stopbtn = [
+                <button key={0} className="btn btn-success btn-fixed-bottom-left" onClick={ this.viewEvent }>{t('map::Clues')}</button>,
+                <button key={1} className="btn btn-danger btn-fixed-bottom-right" onClick={ this.stop }>{t('map::Stop')}</button>
+            ];
+        }
+
         return (
             <div>
                 <div id="socializa-map">
@@ -414,7 +427,7 @@ class Map extends React.Component {
                     () => {
                         switch (this.state.state) {
                             case 'started':
-                                return <button className="btn btn-fixed-bottom btn-danger" onClick={ this.stop }>{t('map::Stop')}</button>
+                                return stopbtn;
                             default:
                                 return this.renderEventMenu();
                         }

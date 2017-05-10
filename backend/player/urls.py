@@ -23,4 +23,6 @@ urlpatterns = [
 
     url(r'^register/$', views.register, name="register"),
     url(r'^register/confirm/(?P<code>\w+)/$', views.confirm, name="confirm"),
+
+    url(r'^passwd/$', views.passwd, name="passwd"),
 ]

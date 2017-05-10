@@ -96,12 +96,16 @@ class ClueTestCase(APITestCase):
 
     def test_unjoin_event_delete_clue(self):
         player = 1
-        start_clues = Clue.objects.count()
+        start_clues_player = Clue.objects.filter(player__pk=player).count()
+        start_clues_main = Clue.objects.filter(main=True).count()
+        self.assertTrue(start_clues_player > 0)
         self.authenticate(self.get_username_by_player(player))
         response = self.client.delete('/api/event/unjoin/{0}/'.format(self.EVENT_PK), {})
         self.assertEqual(response.status_code, 200)
-        end_clues = Clue.objects.count()
-        self.assertEqual(start_clues - 1, end_clues)
+        end_clues_player = Clue.objects.filter(player__pk=player).count()
+        end_clues_main = Clue.objects.filter(main=True).count()
+        self.assertEqual(end_clues_player, 0)
+        self.assertEqual(start_clues_main, end_clues_main)
 
     def test_solve_clue_not_exist(self):
         """ User try solve clue with clue_id not exist. """
@@ -110,7 +114,7 @@ class ClueTestCase(APITestCase):
         data = {'solution': 'solution'}
         self.authenticate(self.get_username_by_player(player))
         response = self.client.post('/api/clue/solve/{0}/'.format(clue_id), data)
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 403)
 
     def test_solve_clue_unauthorized2(self):
         """ User try solve clue with clue_id unauthorized. """
@@ -119,7 +123,7 @@ class ClueTestCase(APITestCase):
         data = {'solution': 'solution'}
         self.authenticate(self.get_username_by_player(player))
         response = self.client.post('/api/clue/solve/{0}/'.format(clue_id), data)
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 403)
 
     def test_solve_clue_invalid(self):
         """ Clue can't solve because clue haven't solution. """
@@ -166,6 +170,6 @@ class ClueTestCase(APITestCase):
         self.authenticate(self.get_username_by_player(player))
         response = self.client.post('/api/clue/solve/{0}/'.format(clue_id), data)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), {'status': "correct"})
+        self.assertEqual(response.json(), {'status': "correct", 'clues': []})
         clue_status = Clue.objects.get(pk=clue_id).status
         self.assertEqual(clue_status, 'solved')

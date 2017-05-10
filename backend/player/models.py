@@ -7,21 +7,27 @@ from django.contrib.gis.db import models
 from django.contrib.gis.geos import GEOSGeometry
 from django.core.exceptions import ValidationError
 
+from common.models import ExtraBase
+
 
 PLAYER_TYPE = (
     ('ai', 'AI'),
     ('actor', 'actor'),
+    ('pos', 'position'),
     ('player', 'player'),
 )
 
 
-class Player(models.Model):
+class Player(models.Model, ExtraBase):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="player")
     pos = models.PointField(null=True, blank=True)
     ptype = models.CharField(max_length=16, choices=PLAYER_TYPE, default='player')
     about = models.TextField(blank=True, null=True)
     extra = models.TextField(max_length=1024, blank=True, null=True)
     confirm_code = models.CharField(max_length=80, blank=True, null=True)
+    associate_ai = models.ForeignKey('self', on_delete=models.SET_NULL,
+        related_name='associate_player', null=True, blank=True, default=None)
+    coins = models.PositiveIntegerField(default=0)
 
     def regen_confirm_code(self):
         chars = ascii_uppercase + digits
@@ -48,6 +54,9 @@ class Player(models.Model):
             max_distance = settings.DEFAULT_MEETING_DISTANCE
 
         return distance(self.pos, p.pos, unit='m') <= max_distance
+
+    def is_ai(self):
+        return self.ptype == 'ai'
 
     def __str__(self):
         return self.user.username

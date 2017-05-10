@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router'
 
 import { user, logout } from './auth';
 import API from './api';
@@ -79,7 +78,7 @@ class Events extends React.Component {
         return (
             <div>
             { this.state.events.map(function(ev, i) {
-                return <EventRow ev={ev} key={i} active={self.state.active} />
+                return <EventRow ev={ev} key={ev.pk} active={self.state.active} />
             }) }
 
             { this.state.events.length ? <span></span> : <div className="jumbotron">{t("events::There's no events :(")}</div> }
@@ -109,13 +108,13 @@ class Events extends React.Component {
                 <div className="filters">
                     <div className="btn-group btn-group-justified" data-toggle="buttons">
                       <label className="btn btn-default active" onClick={ this.filterEvents.bind(this, 'all') }>
-                        <input type="radio" name="options" autocomplete="off" checked/> {t('events::All')}
+                        <input type="radio" name="options" autoComplete="off" defaultChecked/> {t('events::All')}
                       </label>
                       <label className="btn btn-default" onClick={ this.filterEvents.bind(this, 'mine') }>
-                        <input type="radio" name="options" autocomplete="off"/> {t('events::Mine')}
+                        <input type="radio" name="options" autoComplete="off"/> {t('events::Mine')}
                       </label>
                       <label className="btn btn-default" onClick={ this.filterEvents.bind(this, 'admin') }>
-                        <input type="radio" name="options" autocomplete="off"/> {t('events::Admin')}
+                        <input type="radio" name="options" autoComplete="off"/> {t('events::Admin')}
                       </label>
                     </div>
                 </div>

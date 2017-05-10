@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'event',
     'game',
     'clue',
+    'store',
     'editor',
     'landing',
 ]
@@ -201,6 +202,8 @@ if DEV:
 if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+BASE_URL = 'https://socializa.wadobo.com'
+DEFAULT_FROM_EMAIL = 'socializa@wadobo.com'
 
 # SOCIAL AUTHENTICATION
 
@@ -261,11 +264,17 @@ SOCIAL_AUTH_PIPELINE = (
 
 PROPRIETARY_BACKEND_NAME = 'Django'
 
+SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL = True
+OAUTH2_PROVIDER = {
+    'ACCESS_TOKEN_EXPIRE_SECONDS': 24 * 60 * 60 * 365, # a whole year
+}
+
 # DEBUG SOCIAL_AUTH
 SOCIAL_AUTH_RAISE_EXCEPTIONS = False
 # GOOGLE
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = 'update me'
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'update me'
+GOOGLE_APIKEY = 'update me'
 # FACEBOOK
 SOCIAL_AUTH_FACEBOOK_KEY = 'update me'
 SOCIAL_AUTH_FACEBOOK_SECRET = 'update me'

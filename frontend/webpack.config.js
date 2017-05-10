@@ -8,6 +8,7 @@ var dependencies = [
   'bootstrap',
   'openlayers',
   'moment',
+  'alertifyjs',
   'fetch'
 ];
 
@@ -26,7 +27,8 @@ module.exports = {
       }),
       new webpack.ProvidePlugin({
           $: "jquery",
-          jQuery: "jquery"
+          jQuery: "jquery",
+          alertify: "alertifyjs",
       })
   ],
   module: {
