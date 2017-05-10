@@ -92,6 +92,6 @@ def update_event_task(sender, instance, **kwargs):
         app.control.revoke(instance.task_id)
     if not instance.start_date or instance.start_date < timezone.now():
         return
-    task = manage_ais_task.apply_async((instance, ), eta=instance.start_date)
+    task = manage_ais_task.apply_async((instance.pk, ), eta=instance.start_date)
     # for avoid recursion, save with update instead save()
     Event.objects.filter(pk=instance.pk).update(task_id=task.id)
