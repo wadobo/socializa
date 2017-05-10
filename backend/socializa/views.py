@@ -28,7 +28,8 @@ def oauth2apps(request):
     return JsonResponse(data)
 
 
-def gplusid(request, token):
+def gplusid(request):
+    token = request.POST.get('token', '')
     try:
         idinfo = client.verify_id_token(token, None)
 

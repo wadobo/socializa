@@ -29,7 +29,7 @@ urlpatterns = [
     url(r'^docs/', schema_view),
     url(r"^editor/", include("editor.urls")),
     url(r'^api/oauth2apps/$', oauth2apps),
-    url(r'^api/gplusid/([\w.]+)/$', gplusid),
+    url(r'^api/gplusid/$', gplusid),
     url(r'^api/token/', views.obtain_auth_token),
     url(r"^api/social/", include("rest_framework_social_oauth2.urls")),
     url(r"^api/player/", include("player.urls")),
