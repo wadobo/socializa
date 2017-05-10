@@ -11,6 +11,7 @@ from player.models import Player
 
 from oauth2_provider.models import Application, AccessToken
 from oauth2client import client, crypt
+from django.views.decorators.csrf import csrf_exempt
 
 
 def oauth2apps(request):
@@ -28,6 +29,7 @@ def oauth2apps(request):
     return JsonResponse(data)
 
 
+@csrf_exempt
 def gplusid(request):
     token = request.POST.get('token', '')
     try:
