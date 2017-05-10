@@ -107,7 +107,7 @@ var app = {
         });
 
         store.when("product").updated(function(p) {
-            alert("update");
+            //alert("update");
             //navigator.notification.confirm(message, confirmCallback, [title], [buttonLabels]);
             //store.order(p.id);
         });
