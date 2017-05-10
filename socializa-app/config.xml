@@ -72,7 +72,7 @@
     <engine name="android" spec="~6.0.0" />
     <plugin name="cordova-plugin-x-toast" spec="~2.6.0" />
     <plugin name="cc.fovea.cordova.purchase" spec="~6.1.2">
-        <variable name="BILLING_KEY" value="MII...AB" />
+        <variable name="BILLING_KEY" value="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3wCaA/v3Iyc20AHD3Nfl+sXC15xvwqEiDuDq4xaVVBq4lvNGWQrbZ07IxCidFWoHkBEo6aC+h8BKZNlAAcfqo8ATXoIfXzWb9C7nlUkuAmIQvBFX7kyRN2trJRlllEFNNAqZgtTS8yHszRoKO76gdhaVMA8Gywz47psK5sOmExKCG53elOXiOgb9StDvViEfaamokgfxzrtGOf1k1aawzNPPnLlomM0bR2mhp/feGh7GTIuazyauktA4aTdi5X2o6Ewt5TgEao9kO53Y2phGoGmDzGwX/eJY49TzLKAqCqBdmLUnscgdqXWa2k1TmKjrgk/sI3Sn8hgVhETIt8kVnwIDAQAB" />
     </plugin>
     <plugin name="es6-promise-plugin" spec="~4.1.0" />
 </widget>
