@@ -341,10 +341,12 @@ class EventChallenges(TemplateView):
         username = options['challenge_player']
 
         clue = c.mainclues().first()
+        player = True
         if not clue:
             clue = Clue(event=event, challenge=c, main=True)
+            player = False
 
-        if username != clue.player:
+        if not player or username != clue.player:
             newu, created = User.objects.get_or_create(username=username)
             if created:
                 pw = User.objects.make_random_password(length=8)
