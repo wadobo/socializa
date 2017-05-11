@@ -1,4 +1,5 @@
 import React from 'react';
+import Purifier from 'html-purify';
 import { withRouter } from 'react-router';
 
 import API from './api';
@@ -34,12 +35,18 @@ class EventRow extends React.Component {
 
     leave = (ev) => {
         var self = this;
-        API.leaveEvent(this.props.ev.pk)
-            .then(function() {
-                self.setState({joined: false});
-            }).catch(function(error) {
-                alert(error);
-            });
+        const { t } = this.props;
+
+        confirm(t("events::You'll lost all your clues in this event. Are you sure?"),
+            function() {
+                API.leaveEvent(self.props.ev.pk)
+                    .then(function() {
+                        self.setState({joined: false});
+                    }).catch(function(error) {
+                        alert(error);
+                    });
+            }
+        ).set('labels', {ok: t("common::Ok"), cancel: t("common::Cancel")});
     }
 
     play = (ev) => {
@@ -90,10 +97,10 @@ class EventRow extends React.Component {
             <div className="btn-group btn-group-justified" role="group" aria-label="...">
                 { this.state.joined ?
                     [
-                    <a onClick={ this.play.bind(this, ev) } className="btn btn-success">
+                    <a key="0" onClick={ this.play.bind(this, ev) } className="btn btn-success">
                         <i className="fa fa-gamepad"></i> {t('events::Play')}
                     </a>,
-                    <a onClick={ this.leave.bind(this, ev) } className="btn btn-danger">
+                    <a key="1" onClick={ this.leave.bind(this, ev) } className="btn btn-danger">
                         <i className="fa fa-sign-out"></i> {t('events::Leave')}
                     </a>
                     ]
@@ -125,12 +132,18 @@ class EventRow extends React.Component {
         if (!this.props.expand && !this.state.expand) {
             return (<div></div>);
         }
+        function createMarkup(desc) {
+            var purifier = new Purifier();
+            var input = desc;
+            var result = purifier.purify(input);
+            return {__html: result };
+        }
 
         return (
             <div className="eventdesc">
                 <div className="jumbotron">
                     <h2>{ this.props.ev.game.name }</h2>
-                    <p>{ this.props.ev.game.desc }</p>
+                    <p dangerouslySetInnerHTML={ createMarkup(this.props.ev.game.desc) } />
                 </div>
 
                 <div className="dates">
@@ -159,11 +172,11 @@ class EventRow extends React.Component {
                 { this.maxp(this.props.ev) }
 
                 <h2>{ this.props.ev.name }</h2>
-                <p className="desc"> { this.shortDesc() } </p>
+                <div className="desc"> { this.shortDesc() } </div>
 
                 { this.renderDesc() }
             </div>
         )
     }
 }
-export default EventRow = translate(['events'], { wait: true })(withRouter(EventRow));
+export default EventRow = translate(['common', 'events'], { wait: true })(withRouter(EventRow));

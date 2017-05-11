@@ -24,7 +24,7 @@
             <div class="row">
                 <div class="col-sm-5">
                     {{ c.name }}
-                    <p class="text-muted">{{ c.desc }}</p>
+                    <p class="text-muted">{{ c.get_desc_html|safe }}</p>
                 </div>
 
                 <!-- TODO fill the values with the previous assignation if
@@ -32,8 +32,8 @@
                 <div class="col-sm-2 text-right">
                     <div class="form-group">
                         <select class="from-control ctype" data-id="{{ c.id }}" name="challenge_type_{{ c.id }}">
-                            <option value="ai" {% if c.ptype == 'ai' %}selected{% endif %}>{% trans "AI" %}</option>
-                            <option value="actor" {% if c.ptype and c.ptype != 'ai' %}selected{% endif %}>{% trans "Actor" %}</option>
+                            <option value="ai" {% if c.ptype == 'pos' %}selected{% endif %}>{% trans "AI" %}</option>
+                            <option value="actor" {% if c.ptype and c.ptype != 'pos' %}selected{% endif %}>{% trans "Actor" %}</option>
                         </select>
                     </div>
                 </div>

@@ -1,0 +1,165 @@
+[
+{
+  "model": "auth.user",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$30000$mQYHRclkzme4$7VK0hKz2iUr1dC/2S9cN4vYl0Gjj4COp9GkDMy+qhSk=",
+    "last_login": "2016-09-24T16:02:25.774Z",
+    "is_superuser": true,
+    "username": "admin",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2016-09-17T13:59:10.267Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 2,
+  "fields": {
+    "password": "pbkdf2_sha256$30000$mQYHRclkzme4$7VK0hKz2iUr1dC/2S9cN4vYl0Gjj4COp9GkDMy+qhSk=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "username@test.com",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2016-09-20T14:36:23.947Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "oauth2_provider.application",
+  "pk": 1,
+  "fields": {
+    "client_id": "xKwVuUYr7BCVNrnSN5flaynFQ",
+    "user": 1,
+    "redirect_uris": "",
+    "client_type": "public",
+    "authorization_grant_type": "password",
+    "client_secret": "gQVsC2wMMx0Wkp1pxHXHnhiRMFBXHqYcah3ABjqeHNXwoo2Ndl",
+    "name": "local",
+    "skip_authorization": false
+  }
+},
+{
+  "model": "player.player",
+  "pk": 1,
+  "fields": {
+    "user": 2,
+    "pos": "SRID=4326;POINT (-6.92889825034087 37.25734310640036)",
+    "ptype": "player"
+  }
+},
+{
+  "model": "event.membership",
+  "pk": 1,
+  "fields": {
+    "player": 1,
+    "event": 1,
+    "status": "payed"
+  }
+},
+{
+  "model": "event.playingevent",
+  "pk": 1,
+  "fields": {
+    "player": 1,
+    "event": 1
+  }
+},
+{
+  "model": "game.game",
+  "pk": 1,
+  "fields": {
+    "name": "Example with new syntax for dropdown select option",
+    "desc": "Solve #[1][option][q1?] #[2][option][q2?] and #[3][text][q3?]",
+    "solution": "[s1][s2][s3]",
+    "challenges": [
+     1, 2, 3, 4
+    ]
+  }
+},
+{
+  "model": "event.event",
+  "pk": 1,
+  "fields": {
+    "name": "event 1",
+    "place": "SRID=4326;MULTIPOLYGON (((-6.923994063924101 37.28021729940721, -6.935495376178283 37.28431482731861, -6.947340011186437 37.28458798791365, -6.963390349929345 37.26867473003256, -6.96107292134077 37.2560373441043, -6.957124709671384 37.24934208594118, -6.948541640824939 37.21736060804906, -6.938413619586019 37.21312272798089, -6.943563460893905 37.24565260781122, -6.926740645954895 37.25521754854166, -6.918672561239184 37.26109255293424, -6.916612624716064 37.27147516093593, -6.923994063924101 37.28021729940721)))",
+    "start_date": "2016-10-05T12:00:00Z",
+    "end_date": "3016-10-05T20:00:00Z",
+    "max_players": 10,
+    "price": "0",
+    "game": 1,
+    "vision_distance": 1000,
+    "meeting_distance": 10
+  }
+},
+{
+  "model": "game.challenge",
+  "pk": 1,
+  "fields": {
+    "name": "challenge",
+    "desc": "The question1 can be #[1][sss1] #[1][ss1] #[1][s1] and the question2 can be #[2][sss2] #[2][s2]",
+    "solution": ""
+  }
+},
+{
+  "model": "game.challenge",
+  "pk": 2,
+  "fields": {
+    "name": "challenge",
+    "desc": "The question1 can be #[1][ddd1] #[1][dd1] #[1][d1] and the question2 can be #[2][ddd2]",
+    "solution": ""
+  }
+},
+{
+  "model": "game.challenge",
+  "pk": 3,
+  "fields": {
+    "name": "challenge",
+    "desc": "The question3: without information.",
+    "solution": ""
+  }
+},
+{
+  "model": "game.challenge",
+  "pk": 4,
+  "fields": {
+    "name": "pista 1",
+    "desc": "The question3 can be #[3][s3] or #[3][s4]",
+    "solution": ""
+  }
+},
+{
+  "model": "clue.clue",
+  "pk": 1,
+  "fields": {
+    "player": 1,
+    "challenge": 1,
+    "main": true,
+    "status": "acquired",
+    "event": 1,
+    "created": "2016-10-05T09:00:00Z"
+  }
+},
+{
+  "model": "clue.clue",
+  "pk": 2,
+  "fields": {
+    "player": 1,
+    "challenge": 2,
+    "main": false,
+    "status": "acquired",
+    "event": 1,
+    "created": "2016-10-05T10:00:00Z"
+  }
+}
+]

@@ -9,7 +9,7 @@ from .models import Player
 
 
 def create_player(backend, user, *args, **kwargs):
-    if backend.name == "google-oauth2":
+    if backend.name in ["google-oauth2", "facebook"]:
         player, new = Player.objects.get_or_create(user=user)
         if new and player:
             player.save()
@@ -50,12 +50,15 @@ def get_random_pos(event):
         return get_random_pos(event)
 
 
-def create_random_player(event):
+def create_random_player(event, position='random'):
     user = User.objects.create_user(
         username=get_random_username(),
         password=get_random_string())
     player = Player(user=user, ptype='ai')
-    pos = get_random_pos(event)
-    player.set_position(pos[0], pos[1])
+    if isinstance(position, Point):
+        player.pos = position
+    elif position == 'random':
+        pos = get_random_pos(event)
+        player.set_position(pos[0], pos[1])
     player.save()
     return player

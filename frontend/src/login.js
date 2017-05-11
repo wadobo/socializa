@@ -1,56 +1,28 @@
 import React from 'react';
 import { withRouter } from 'react-router';
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
 import $ from 'jquery';
 
 import API from './api';
-import { login } from './auth';
+import { login, logout } from './auth';
 
 import { translate, Interpolate } from 'react-i18next';
 
 
 class Login extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
     componentDidMount() {
         var self = this;
 
-        var q = this.getQueryParams();
+        API.oauth2apps()
+            .then(function(resp) {
+                self.setState({ social: resp });
 
-        if (q.token) {
-            self.authWithToken(q.token, q.email);
-        } else {
-            API.oauth2apps()
-                .then(function(resp) {
-                    self.setState({
-                        gapp: resp.google,
-                        fapp: resp.facebook,
-                    });
-                });
-        }
-    }
+                if (resp.google) {
+                    GPLUS.init(resp.google.apikey, resp.google.oauth);
+                }
+            });
 
-    getQueryParams = () => {
-        var qs = document.location.search;
-        qs = qs.split('+').join(' ');
-
-        var params = {},
-            tokens,
-            re = /[?&]?([^=]+)=([^&]*)/g;
-
-        while (tokens = re.exec(qs)) {
-            params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
-        }
-
-        return params;
-    }
-
-    authWithToken(token, email) {
-        login(email, token, 'token');
-        this.props.history.push('/map');
-        document.location.search = '';
+        logout();
     }
 
     emailChange = (e) => {
@@ -63,73 +35,71 @@ class Login extends React.Component {
 
     state = {
         email: '', password: '',
-        gapp: null, fapp: null
+        social: {}
     }
 
     login = (e) => {
         var email = this.state.email;
         var password = this.state.password;
         var self = this;
+        const { t } = this.props;
 
-        return API.login(email, password)
+        return API.login(self.state.social.local.id, email, password)
             .then(function(resp) {
-                login(email, resp.token, 'token');
+                login(email, resp.access_token, 'token');
                 self.props.history.push('/map');
             }).catch(function(error) {
-                alert(error);
+                alert(t("login::Invalid credentials, try again"));
             });
     }
 
-    socialAuth(backend) {
+    facebookAuth() {
+        const { t } = this.props;
         var self = this;
-        var redirect = encodeURIComponent('https://socializa.wadobo.com/oauth2callback');
+        var appid = self.state.social.facebook.oauth;
 
-        var app = '';
-        var uri = '';
-        switch (backend) {
-            case 'google':
-                uri = 'https://accounts.google.com/o/oauth2/v2/auth?response_type=token&scope=email&client_id=';
-                app = this.state.gapp;
-                break;
-            case 'facebook':
-                app = this.state.fapp;
-                uri = 'https://www.facebook.com/v2.8/dialog/oauth?response_type=token&scope=email&client_id=';
-                break;
+        function success(tk, email) {
+            API.convert_token(self.state.social.facebook.id, 'facebook', tk)
+                .then(function(resp) {
+                    login(email, resp.access_token, 'token');
+                    self.props.history.push('/map');
+                }).catch(function(error) {
+                    alert(error);
+                });
         }
 
-        uri += app;
-        uri += '&redirect_uri='+redirect;
-        uri += '&state='+btoa(JSON.stringify({app: backend, url: location.href}));
-
-        if (window.HOST != '') {
-            this.win = window.open(uri, '_blank', 'location=no');
-        } else {
-            location.href = uri;
+        function error(error) {
+            alert(t("login::Unauthorized"));
         }
 
-        function loadCallBack(ev) {
-            var qs = ev.url;
-            qs = qs.split('+').join(' ');
-            if (!qs.includes('oauth2redirect')) {
-                return;
+        FACEBOOK.login(appid, success, error);
+    }
+
+    googleAuth() {
+        const { t } = this.props;
+        var self = this;
+        var appid = self.state.social.google.oauth;
+
+        function success(tk, email, converted) {
+            if (converted) {
+                login(email, tk, 'token');
+                self.props.history.push('/map');
+            } else {
+                API.convert_token(self.state.social.google.id, 'google-oauth2', tk)
+                    .then(function(resp) {
+                        login(email, resp.access_token, 'token');
+                        self.props.history.push('/map');
+                    }).catch(function(error) {
+                        alert(error);
+                    });
             }
-
-            var params = {},
-                tokens,
-                re = /[?&]?([^=]+)=([^&]*)/g;
-
-            while (tokens = re.exec(qs)) {
-                params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
-            }
-            if (params.token) {
-                self.authWithToken(params.token, params.email);
-            }
-            self.win.close();
         }
 
-        if (this.win) {
-            this.win.addEventListener('loadstart', loadCallBack);
+        function error(error) {
+            alert(t("login::Unauthorized"));
         }
+
+        GPLUS.login(appid, success, error);
     }
 
     render() {
@@ -149,21 +119,22 @@ class Login extends React.Component {
 
                 <br/>
                 <Link to="/register" className="pull-right btn btn-primary">{t('login::New account')}</Link>
+                <div className="clearfix"></div>
 
                 <hr/>
 
                 <center><h3>{t('login::Login using Facebook or Google')}</h3></center>
                 <div className="social row text-center">
                     <div className="col-xs-6">
-                        { this.state.fapp ? (
-                            <a onClick={ this.socialAuth.bind(this, 'facebook') } className="btn btn-primary btn-circle">
+                        { this.state.social.facebook ? (
+                            <a onClick={ this.facebookAuth.bind(this) } className="btn btn-primary btn-circle">
                                 <i className="fa fa-facebook" aria-hidden="true"></i>
                             </a> )
                         : (<span></span>) }
                     </div>
                     <div className="col-xs-6">
-                        { this.state.gapp ? (
-                            <a onClick={ this.socialAuth.bind(this, 'google') } className="btn btn-danger btn-circle">
+                        { this.state.social.google ? (
+                            <a onClick={ this.googleAuth.bind(this) } className="btn btn-danger btn-circle">
                                 <i className="fa fa-google-plus" aria-hidden="true"></i>
                             </a> )
                          : (<span></span>) }

@@ -3,7 +3,7 @@ from django.contrib.gis.geos import GEOSGeometry
 from rest_framework.test import APITestCase
 
 from clue.models import Clue
-from game.serializers import ChallengeSerializer
+from clue.serializers import ClueSerializer
 from player.test_client import JClient
 from player.models import Meeting
 from player.models import Player
@@ -123,7 +123,7 @@ class MeetingTestCase(APITestCase):
     @classmethod
     def get_challenge_from_player(cls, pk, event=1):
         clue = Clue.objects.get(player=pk, main=True, event=event)
-        return ChallengeSerializer(clue.challenge).data
+        return ClueSerializer(clue).data
 
     def test_meeting_player1_not_in_event(self):
         """ player1 not in event """
@@ -154,9 +154,8 @@ class MeetingTestCase(APITestCase):
         self.authenticate(self.get_username(player1), self.pwd)
         response = self.client.post('/api/player/meeting/{0}/{1}/'.format(player2, event), {})
         self.assertEqual(response.status_code, 201)
-        res = {'clue': self.get_challenge_from_player(player2)}
-        res.update({'status': 'connected'})
-        self.assertEqual(response.json(), res)
+        res = self.get_challenge_from_player(player2)
+        self.assertEqual(response.json()['clues'][0]['challenge']['name'], res['challenge']['name'])
 
     def test_meeting_near_step1_no_ai(self):
         """ no meeting between player1 and player3. player1 near player3. """
@@ -201,9 +200,8 @@ class MeetingTestCase(APITestCase):
         self.authenticate(self.get_username(player1), self.pwd)
         response = self.client.post('/api/player/meeting/{0}/{1}/captured/{2}/'.format(player2, event, secret), {})
         self.assertEqual(response.status_code, 200)
-        res = {'clue': self.get_challenge_from_player(player2)}
-        res.update({'status': 'connected'})
-        self.assertEqual(response.json(), res)
+        res = self.get_challenge_from_player(player2)
+        self.assertEqual(response.json()['clues'][0]['challenge']['name'], res['challenge']['name'])
 
     def test_meeting_near_polling_waiting(self):
         """ meeting between player4 and player5 with status step2. player4 near player5. """
@@ -227,9 +225,8 @@ class MeetingTestCase(APITestCase):
         self.authenticate(self.get_username(player1), self.pwd)
         response = self.client.get('/api/player/meeting/{0}/{1}/qrclue/'.format(player2, event), {})
         self.assertEqual(response.status_code, 200)
-        res = {'clue': self.get_challenge_from_player(player2)}
-        res.update({'status': 'connected'})
-        self.assertEqual(response.json(), res)
+        res = self.get_challenge_from_player(player2)
+        self.assertEqual(response.json()['clues'][0]['challenge']['name'], res['challenge']['name'])
         meeting.status = prev_status
         meeting.save()
 
@@ -273,14 +270,14 @@ class MeetingTestCase(APITestCase):
         self.authenticate(self.get_username(player1), self.pwd)
         response = self.client.post('/api/player/meeting/{0}/{1}/'.format(player2, event), {})
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.json(), {'clue': {}, 'status': 'connected'})
+        self.assertEqual(response.json(), {'clues': [], 'status': 'connected'})
 
         # with one of the depends, but without the other
         player1 = 5
         self.authenticate(self.get_username(player1), self.pwd)
         response = self.client.post('/api/player/meeting/{0}/{1}/'.format(player2, event), {})
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.json(), {'clue': {}, 'status': 'connected'})
+        self.assertEqual(response.json(), {'clues': [], 'status': 'connected'})
 
         # getting the second depends
         player2 = 2
@@ -292,5 +289,5 @@ class MeetingTestCase(APITestCase):
         self.authenticate(self.get_username(player1), self.pwd)
         response = self.client.post('/api/player/meeting/{0}/{1}/'.format(player2, event), {})
         self.assertEqual(response.status_code, 201)
-        res = {'status': 'connected', 'clue': self.get_challenge_from_player(player2)}
-        self.assertEqual(response.json(), res)
+        res = self.get_challenge_from_player(player2)
+        self.assertEqual(response.json()['clues'][0]['challenge']['name'], res['challenge']['name'])

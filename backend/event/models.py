@@ -18,7 +18,7 @@ class Event(models.Model):
     start_date = models.DateTimeField(null=True, blank=True)
     end_date = models.DateTimeField(null=True, blank=True)
     max_players = models.PositiveIntegerField(default=10)
-    price = models.DecimalField(max_digits=5, decimal_places=2, default=Decimal('0.00'))
+    price = models.PositiveIntegerField(default=0)
     game = models.ForeignKey(Game, related_name="events", null=True)
     players = models.ManyToManyField(Player, through="Membership")
     vision_distance = models.PositiveIntegerField(default=settings.DEFAULT_VISION_DISTANCE,
@@ -51,6 +51,12 @@ class Event(models.Model):
 
     def get_meeting_distance(self):
         return self.meeting_distance or settings.DEFAULT_MEETING_DISTANCE
+
+    def set_playing(self, player):
+        m, new = Membership.objects.get_or_create(player=player, event=self)
+        m.save()
+        p, new = PlayingEvent.objects.get_or_create(player=player, event=self)
+        p.save()
 
     def __str__(self):
         return self.name
@@ -86,6 +92,6 @@ def update_event_task(sender, instance, **kwargs):
         app.control.revoke(instance.task_id)
     if not instance.start_date or instance.start_date < timezone.now():
         return
-    task = manage_ais_task.apply_async((instance, ), eta=instance.start_date)
+    task = manage_ais_task.apply_async((instance.pk, ), eta=instance.start_date)
     # for avoid recursion, save with update instead save()
     Event.objects.filter(pk=instance.pk).update(task_id=task.id)

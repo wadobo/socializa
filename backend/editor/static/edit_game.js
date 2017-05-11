@@ -11,7 +11,7 @@ function addchallenge() {
     ch.find(".name").attr("name", "challenge_name_"+n);
     ch.find(".desc").attr("name", "challenge_desc_"+n);
     ch.find(".type").attr("name", "challenge_type_"+n);
-    ch.find(".pos").attr("name", "challenge_pos_"+n);
+    ch.find(".depend").attr("name", "challenge_depends_on_"+n);
 
     $("#challenges").append(ch);
 

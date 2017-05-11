@@ -1,4 +1,6 @@
 import $ from 'jquery';
+import GEO from './geo';
+import API from './api';
 
 
 let defuser = {
@@ -65,10 +67,20 @@ export function storeUser() {
 
 
 export function logout() {
+    // normal logout
+    if (user.isAuthenticated) {
+        API.setPlayingEvent(null);
+        GEO.stop();
+    }
+
     localStorage['socializa-user'] = ''
     user = $.extend({}, defuser);
-};
 
+    // facebook logout
+    window.FACEBOOK.logout();
+    // googleplus logout
+    window.GPLUS.logout();
+};
 
 export function getIcon(p) {
     // returns an icon based on the player id

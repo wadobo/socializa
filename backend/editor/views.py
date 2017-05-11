@@ -1,4 +1,5 @@
 import json
+from django.utils.timezone import make_aware
 from django.utils.dateparse import parse_datetime
 from django.utils.translation import ugettext as _
 from django.views.generic.base import TemplateView, View
@@ -134,9 +135,10 @@ class EditGame(TemplateView):
         if not challenge.games.count():
             challenge.delete()
 
-    def update_game(self, game, data):
+    def update_game(self, game, data, author):
         if not game:
             game = Game()
+            game.author = author
 
         game.name = data['name']
         game.desc = data['desc']
@@ -162,7 +164,7 @@ class EditGame(TemplateView):
             return redirect('edit_game', gameid=game.id)
 
         data = self.parse_input(request)
-        game = self.update_game(game, data)
+        game = self.update_game(game, data, request.user)
         self.update_challenges(game, data['challenges'])
 
         if gameid:
@@ -222,6 +224,12 @@ class EditEvent(TemplateView):
         _start_date = parse_datetime(_start_date)
         _end_date = data.get('ev_end_date', None)
         _end_date = parse_datetime(_end_date)
+
+        if _start_date:
+            _start_date = make_aware(_start_date)
+        if _end_date:
+            _end_date = make_aware(_end_date)
+
         _place = data.get('ev_place', None)
         if _place:
             _place = json.loads(_place)
@@ -320,8 +328,9 @@ class EventChallenges(TemplateView):
             username = 'ai_' + User.objects.make_random_password(length=8)
             newu = User(username=username)
             newu.save()
-            p = Player(user=newu, ptype='ai')
+            p = Player(user=newu, ptype='pos')
             p.save()
+            event.set_playing(p)
 
             clue = Clue(player=p, event=event, challenge=c, main=True)
             clue.save()
@@ -332,10 +341,12 @@ class EventChallenges(TemplateView):
         username = options['challenge_player']
 
         clue = c.mainclues().first()
+        player = True
         if not clue:
             clue = Clue(event=event, challenge=c, main=True)
+            player = False
 
-        if username != clue.player:
+        if not player or username != clue.player:
             newu, created = User.objects.get_or_create(username=username)
             if created:
                 pw = User.objects.make_random_password(length=8)
@@ -344,6 +355,7 @@ class EventChallenges(TemplateView):
                 p = Player(user=newu, ptype='actor')
                 p.extra = pw
                 p.save()
+                event.set_playing(p)
 
             clue.player = newu.player
             clue.save()

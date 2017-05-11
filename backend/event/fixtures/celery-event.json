@@ -8,7 +8,7 @@
     "start_date": "2016-10-05T09:00:00Z",
     "end_date": "2016-10-05T12:00:00Z",
     "max_players": 7,
-    "price": "0.00",
+    "price": "0",
     "game": 2,
     "vision_distance": 1000,
     "meeting_distance": 10

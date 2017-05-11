@@ -12,6 +12,7 @@ import Connect from './connect';
 import QRView from './qrview';
 import QRCapt from './qrcapt';
 import Clue from './clue';
+import Store from './store';
 import Admin from './admin';
 
 import Bucket from './bucket';
@@ -29,9 +30,7 @@ class App extends React.Component {
             if (this.props.history.location.pathname != '/login') {
                 this.props.history.push('/login');
             }
-        }
-
-        if (!this.props.children) {
+        } else if (!this.props.children) {
             this.props.history.push('/map');
         }
         Bucket.setAppState = this.setAppState;
@@ -60,6 +59,7 @@ class App extends React.Component {
                         <Route exact path="/qrcode/:user/:ev/:secret" component={QRView} />
                         <Route exact path="/qrcapt/:user/:ev" component={QRCapt} />
                         <Route exact path="/clue" component={Clue} />
+                        <Route exact path="/store" component={Store} />
                     </Switch>
                 </div>
             </Router>

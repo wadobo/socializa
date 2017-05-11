@@ -124,7 +124,7 @@ class Admin extends React.Component {
                     { this.state.cs ?
                         <div>
                         {self.state.cs.map(function(c, i) {
-                            return <Challenge c={c} />
+                            return <Challenge key={c.pk} c={c} />
                         })}
                         </div>
                       :

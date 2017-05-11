@@ -1,0 +1,50 @@
+[
+{
+  "model": "store.product",
+  "pk": 1,
+  "fields": {
+    "product_id": "coin_100",
+    "coins": 100
+  }
+},
+{
+  "model": "store.product",
+  "pk": 2,
+  "fields": {
+    "product_id": "coin_200",
+    "coins": 200
+  }
+},
+{
+  "model": "store.product",
+  "pk": 3,
+  "fields": {
+    "product_id": "coin_500",
+    "coins": 500
+  }
+},
+{
+  "model": "store.product",
+  "pk": 4,
+  "fields": {
+    "product_id": "coin_1000",
+    "coins": 1000
+  }
+},
+{
+  "model": "store.product",
+  "pk": 5,
+  "fields": {
+    "product_id": "coin_2000",
+    "coins": 2000
+  }
+},
+{
+  "model": "store.product",
+  "pk": 6,
+  "fields": {
+    "product_id": "coin_5000",
+    "coins": 5000
+  }
+}
+]
