@@ -139,7 +139,9 @@ export default class API {
     static qrclue(id, ev) {
         var data = JSONGet();
         var url = '/api/player/meeting/'+id+'/';
-        if (ev) url += ev + '/';
+        if (ev && ev != 'null') {
+            url += ev + '/';
+        }
         url += 'qrclue/';
         return customFetch(url, data);
     }
