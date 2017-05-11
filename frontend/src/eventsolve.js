@@ -1,4 +1,5 @@
 import React from 'react';
+import Purifier from 'html-purify';
 
 import API from './api';
 import Loading from './loading';
@@ -193,13 +194,21 @@ class EventSolve extends ResolvableComponent {
 
     render() {
         const { t } = this.props;
+        var self = this;
+
+        function createMarkup() {
+            var purifier = new Purifier();
+            var input = self.state.ev.game.desc;
+            var result = purifier.purify(input);
+            return {__html: result };
+        }
 
         return (
             <div className="event-solving">
             { this.state.ev ?
                 <div>
                     <h2>{this.state.ev.game.name}</h2>
-                    <p>{this.state.ev.game.desc}</p>
+                    <div dangerouslySetInnerHTML={ createMarkup() } />
 
                     { this.state.state == 'solving-loading' ?
                         <Loading />
