@@ -1,10 +1,12 @@
 export default class GEO {
     static watchID = null;
+    static cwatchID = null;
     static options = { maximumAge: 5000, timeout: 5000, enableHighAccuracy: true };
     static status = 'stopped';
 
     static successCB = null;
     static errorCB = null;
+    static compassCB = null;
 
     static start() {
         if (this.watchID == null) {
@@ -13,7 +15,17 @@ export default class GEO {
 
         navigator.geolocation.getCurrentPosition(this.success.bind(this), this.error.bind(this), this.options);
 
+        if (navigator.compass && this.cwatchID == null) {
+            this.cwatchID = navigator.compass.watchHeading(this.compassSuccess.bind(this), this.error.bind(this), {frequency: 500});
+        }
+
         this.status = 'started';
+    }
+
+    static compassSuccess(heading) {
+        if(this.compassCB) {
+            this.compassCB(heading.magneticHeading);
+        }
     }
 
     static success(p) {
@@ -28,6 +40,11 @@ export default class GEO {
         if (this.watchID != null) {
             navigator.geolocation.clearWatch(this.watchID);
             this.watchID = null;
+        }
+
+        if (this.cwatchID != null) {
+            navigator.compass.clearWatch(this.cwatchID);
+            this.cwatchID = null;
         }
 
         if (!pause) {

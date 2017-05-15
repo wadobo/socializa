@@ -16,7 +16,6 @@
     <plugin name="cordova-plugin-console" source="npm" spec="~1.0.2" />
     <plugin name="cordova-plugin-device" source="npm" spec="~1.1.1" />
     <plugin name="cordova-plugin-device-motion" source="npm" spec="~1.2.0" />
-    <plugin name="cordova-plugin-device-orientation" source="npm" spec="~1.0.2" />
     <plugin name="cordova-plugin-dialogs" source="npm" spec="~1.2.0" />
     <plugin name="cordova-plugin-file" source="npm" spec="~4.1.1" />
     <plugin name="cordova-plugin-file-transfer" source="npm" spec="~1.5.0" />
@@ -75,4 +74,5 @@
         <variable name="BILLING_KEY" value="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3wCaA/v3Iyc20AHD3Nfl+sXC15xvwqEiDuDq4xaVVBq4lvNGWQrbZ07IxCidFWoHkBEo6aC+h8BKZNlAAcfqo8ATXoIfXzWb9C7nlUkuAmIQvBFX7kyRN2trJRlllEFNNAqZgtTS8yHszRoKO76gdhaVMA8Gywz47psK5sOmExKCG53elOXiOgb9StDvViEfaamokgfxzrtGOf1k1aawzNPPnLlomM0bR2mhp/feGh7GTIuazyauktA4aTdi5X2o6Ewt5TgEao9kO53Y2phGoGmDzGwX/eJY49TzLKAqCqBdmLUnscgdqXWa2k1TmKjrgk/sI3Sn8hgVhETIt8kVnwIDAQAB" />
     </plugin>
     <plugin name="es6-promise-plugin" spec="~4.1.0" />
+    <plugin name="cordova-plugin-device-orientation" spec="~1.0.6" />
 </widget>

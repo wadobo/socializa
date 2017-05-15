@@ -90,6 +90,12 @@ class Map extends React.Component {
         });
     }
 
+    onCompass(heading) {
+        // degress to radians
+        var h = heading * Math.PI / 180;
+        this.map.getView().setRotation(-h);
+    }
+
     onPosSuccess(position) {
         var lat = position.coords.latitude;
         var lon = position.coords.longitude;
@@ -180,6 +186,7 @@ class Map extends React.Component {
       if (this.state.state == 'started') {
         GEO.successCB = this.onPosSuccess.bind(this);
         GEO.errorCB = this.onPosError.bind(this);
+        GEO.compassCB = this.onCompass.bind(this);
         GEO.start();
 
         this.view.setZoom(18);
