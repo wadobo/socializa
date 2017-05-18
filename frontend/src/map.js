@@ -46,6 +46,11 @@ class Map extends React.Component {
         zoom: 12
       });
 
+      var self = this;
+      this.view.on('change:rotation', function() {
+        self.rotationChanged();
+      });
+
       if (this.map) {
         this.map.setTarget(null);
       }
@@ -90,10 +95,17 @@ class Map extends React.Component {
         });
     }
 
+    rotationChanged() {
+        var viewRot = this.map.getView().getRotation();
+        var newrot = (this.heading || 0) + viewRot;
+        this.direction.setRotation(newrot);
+    }
+
     onCompass(heading) {
         // degress to radians
         var h = heading * Math.PI / 180;
-        this.map.getView().setRotation(-h);
+        this.heading = h;
+        this.rotationChanged();
     }
 
     onPosSuccess(position) {
@@ -112,6 +124,7 @@ class Map extends React.Component {
             this.firstCentre = false;
         }
         this.positionFeature.setGeometry(coordinates);
+        this.headingFeature.setGeometry(coordinates);
 
         var vd = user.activeEvent ? user.activeEvent.vision_distance : 0;
         var md = user.activeEvent ? user.activeEvent.meeting_distance : 0;
@@ -128,14 +141,25 @@ class Map extends React.Component {
       var self = this;
 
       this.positionFeature = new ol.Feature();
+      this.icon = new ol.style.Icon({ src: 'app/images/geo1.svg' });
       this.positionFeature.setStyle(new ol.style.Style({
-        image: new ol.style.Icon({ src: 'app/images/geo1.svg' }),
+        image: self.icon,
         zIndex: 10
       }));
       this.positionFeature.customData = {name: 'me'};
 
       this.visionFeature = new ol.Feature();
       this.meetingFeature = new ol.Feature();
+
+      this.headingFeature = new ol.Feature();
+      this.direction = new ol.style.Icon({
+          src: 'app/images/heading.svg',
+          anchor: [0.5, 0.6]
+      });
+      this.headingFeature.setStyle(new ol.style.Style({
+          image: self.direction,
+          zIndex: 11
+      }));
 
       // vision layer
       new ol.layer.Vector({
@@ -164,6 +188,15 @@ class Map extends React.Component {
             fill: new ol.style.Fill({ color: 'rgba(92, 184, 92, 0.1)' }),
             stroke: new ol.style.Stroke({ width: 0.5, color: '#5cb85c' })
         })
+      });
+
+      // heading layer
+      new ol.layer.Vector({
+        map: map,
+
+        source: new ol.source.Vector({
+          features: [this.headingFeature]
+        }),
       });
 
       // my position layer
@@ -202,6 +235,9 @@ class Map extends React.Component {
                 return false;
             }
             if (f == self.positionFeature) {
+                return false;
+            }
+            if (f == self.headingFeature) {
                 return false;
             }
             return true;
