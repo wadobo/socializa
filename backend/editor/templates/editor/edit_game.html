@@ -31,77 +31,14 @@
 {% endblock %}
 
 {% block content %}
-    <form method="POST" action="">
-        {% csrf_token %}
-
-        {% if game and not data %}
-            {% include "editor/forms/game.html" with data=game %}
-        {% else %}
-            {% include "editor/forms/game.html" %}
-        {% endif %}
-
-        {% for challenge in game.challenges.all %}
-        <div class="well">
-        <fieldset>
-            <legend>
-                {{ challenge.name }}
-                <button name="rmchallenge" class="btn btn-danger pull-right" value={{ challenge.pk }}>
-                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                </button>
-            </legend>
-            {% include "editor/forms/challenge.html" with n=forloop.counter0 %}
-        </fieldset>
-        </div>
-        {% endfor %}
-
-        <!-- one more to add -->
-        {% for challenge in data.challenges %}
-            <div id="challenge_{{ n|add:forloop.counter0 }}" n="{{ n|add:forloop.counter0 }}" class="orig_challenge well">
-            <fieldset>
-                <legend>
-                    {% trans "New challenge" %} (<span class="n">{{ n|add:forloop.counter0 }}</span>)
-                    <button class="btn btn-danger rmchallenge pull-right" n="{{ n|add:forloop.counter0 }}">
-                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                    </button>
-                </legend>
-                {% include "editor/forms/challenge.html" with n=n|add:forloop.counter0 %}
-            </fieldset>
-            </div>
-        {% endfor %}
-
-        {% with nl=data.challenges|length %}
-        <div id="challenge_{{ n|add:nl }}" n="{{ n|add:nl }}" class="orig_challenge well">
-        <fieldset>
-            <legend>
-                {% trans "New challenge" %} (<span class="n">{{ n|add:nl }}</span>)
-                <button class="btn btn-danger rmchallenge hidden pull-right" n="{{ n|add:nl }}">
-                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                </button>
-            </legend>
-            {% include "editor/forms/challenge.html" with n=n|add:nl %}
-        </fieldset>
-        </div>
-        {% endwith %}
-
-        <div id="challenges">
-        </div>
-
-        <button id="addchallenge" class="btn btn-success">
-            {% trans "Add challenge" %}
-        </button>
-
-        <hr/>
-
-        <button class="btn btn-block btn-primary">
-            {% trans "Save" %}
-        </button>
-    </form>
-
-    <hr/>
+    <div id="content">
+    </div>
 {% endblock %}
 
 {% block extrabody %}
     <script src="{% static "vendors/ol/ol.js" %}"></script>
     <script src="//cdn.jsdelivr.net/openlayers.geocoder/latest/ol3-geocoder.js"></script>
-    <script src="{% static "edit_game.js" %}"></script>
+    <script src="https://cloud.tinymce.com/stable/tinymce.min.js"></script>
+    <script src="{% static "vendors.js" %}"></script>
+    <script src="{% static "gameeditor.js" %}"></script>
 {% endblock %}
