@@ -19,6 +19,16 @@ class Challenge(models.Model, ExtraBase):
     ctype = models.CharField(max_length=8, choices=CHALLENGES_TYPE, default='p')
     extra = models.TextField(max_length=1024, blank=True, null=True)
 
+    # options in extra:
+    # {"options":
+    #  [
+    #   {"type": "text", "question": "who is the killer?"},
+    #   {"type": "option", "question": "with which weapon?",
+    #    "answers": ["knife", "rope", "gun", "bare hands", "venom"]},
+    #   ...
+    #  ]
+    # }
+
     depends = models.ManyToManyField('Challenge', related_name="requiedby",
                                      blank=True)
 
@@ -62,6 +72,16 @@ class Game(models.Model, ExtraBase):
     auto_assign_clue = models.BooleanField(default=True)
     visible_players = models.BooleanField(default=True)
     extra = models.TextField(max_length=1024, blank=True, null=True)
+
+    # options in extra:
+    # {"options":
+    #  [
+    #   {"type": "text", "question": "who is the killer?"},
+    #   {"type": "option", "question": "with which weapon?",
+    #    "answers": ["knife", "rope", "gun", "bare hands", "venom"]},
+    #   ...
+    #  ]
+    # }
 
     def get_desc_html(self):
         # search #[NUM][type][question] and return [('NUM', 'type', 'question'), ... ]
