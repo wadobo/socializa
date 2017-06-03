@@ -82,6 +82,14 @@ export default class GameEditor extends Component {
         idx: 1,
     }
 
+    componentDidMount() {
+        this.initDepGraph();
+    }
+
+    componentDidUpdate() {
+        this.initDepGraph();
+    }
+
     addChallenge = (e) => {
         var chs = this.state.challenges;
         var idx = this.state.idx;
@@ -127,6 +135,64 @@ export default class GameEditor extends Component {
         window.$(id).collapse("show");
     }
 
+    initDepGraph = () => {
+        var game = this.state;
+
+        var opts = {
+          container: document.getElementById('cy'),
+          elements: [],
+
+          style: [
+            {
+              selector: 'node',
+              style: {
+                'background-color': '#666',
+                'content': 'data(id)',
+                'text-valign': 'center',
+                'text-halign': 'center',
+                'color': 'white',
+              }
+            },
+
+            {
+              selector: 'edge',
+              style: {
+                'curve-style': 'bezier',
+                'target-arrow-shape': 'triangle',
+                'width': 4,
+                'line-color': 'red',
+                'target-arrow-color': 'red'
+              }
+            }
+          ],
+
+          layout: {
+            name: 'breadthfirst',
+            directed: true,
+          }
+
+        };
+
+        // drawing nodes
+        game.challenges.map((ch) => {
+            opts.elements.push({data: {id: ch.id}});
+        });
+
+        // drawing edges
+        game.challenges.map((ch) => {
+            var deps = ch.depends || [];
+            deps.map((d) => {
+                var e = {
+                    id: `${ch.id}.${d.id}`,
+                    target: ch.id,
+                    source: d.id,
+                };
+                opts.elements.push({data: e});
+            });
+        });
+        var cy = cytoscape(opts);
+    }
+
     render() {
         var game = this.state;
         var actions = {
@@ -159,6 +225,9 @@ export default class GameEditor extends Component {
                               <span className="glyphicon glyphicon-plus" aria-hidden="true"></span>
                               Add new challenge
                           </button>
+
+                          <div id="cy">
+                          </div>
                       </div>
                   </div>
                 </div>

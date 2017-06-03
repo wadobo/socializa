@@ -11,3 +11,9 @@
 #game-editor .depends {
     padding-left: 20px;
 }
+
+#cy {
+  width: 100%;
+  height: 500px;
+  display: block;
+}
