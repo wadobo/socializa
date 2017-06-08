@@ -25,6 +25,7 @@ class FullChallengeSerializer(ChallengeSerializer):
     solution = serializers.CharField()
     options = serializers.SerializerMethodField()
     depends = ChallengeSerializer(many=True)
+    child_challenges = ChallengeSerializer(many=True)
 
     def get_options(self, ch):
         return ch.get_extra('options')

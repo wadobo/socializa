@@ -159,7 +159,6 @@ export default class GameEditor extends Component {
                 'color': 'white',
               }
             },
-
             {
               selector: 'edge',
               style: {
@@ -168,6 +167,16 @@ export default class GameEditor extends Component {
                 'width': 4,
                 'line-color': 'red',
                 'target-arrow-color': 'red'
+              }
+            },
+            {
+              selector: '.childs',
+              style: {
+                'curve-style': 'bezier',
+                'target-arrow-shape': 'triangle',
+                'width': 4,
+                'line-color': 'blue',
+                'target-arrow-color': 'blue'
               }
             }
           ],
@@ -186,6 +195,7 @@ export default class GameEditor extends Component {
 
         // drawing edges
         game.challenges.map((ch) => {
+            // drawing deps
             var deps = ch.depends || [];
             deps.map((d) => {
                 var e = {
@@ -195,8 +205,21 @@ export default class GameEditor extends Component {
                 };
                 opts.elements.push({data: e});
             });
+
+            // drawing child challenges
+            var childs = ch.child_challenges || [];
+            childs.map((d) => {
+                var e = {
+                    id: `${ch.pk}.${d.pk}`,
+                    target: d.pk,
+                    source: ch.pk,
+                };
+                opts.elements.push({data: e, classes: 'childs'});
+            });
         });
+
         var cy = cytoscape(opts);
+
     }
 
     render() {
