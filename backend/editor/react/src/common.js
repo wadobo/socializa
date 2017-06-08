@@ -67,8 +67,10 @@ export class GameSolQuestion extends Component {
                                 <option value="option">option</option>
                             </select>
                         </div>
-                        <div className="col-sm-2">
-                            <button className="btn btn-default" onClick={this.props.remove}>&times;</button>
+                        <div className="col-sm-2 text-right">
+                            <button className="btn btn-danger" onClick={this.props.remove}>
+                                <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -135,7 +137,7 @@ export class GameSolModal extends Component {
                     id: nqid++,
                     question: opt.question,
                     type: opt.type,
-                    solution: solution[i]
+                    solution: solutions[i]
                 };
                 if (opt.type == 'option') {
                     no.answers = opt.answers;

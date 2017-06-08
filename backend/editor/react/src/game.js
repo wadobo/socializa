@@ -37,7 +37,7 @@ class GameEditorForm extends Component {
                     <label htmlFor="game-desc">Description</label>
                     <TinyMCE content={game.desc}
                         config={tinyMCEConfig}
-                        id="game-desc" placeholder="Game Description"
+                        placeholder="Game Description"
                         onChange={this.tinyChange.bind(this, 'desc')}
                     />
                 </div>
@@ -79,10 +79,16 @@ export default class GameEditor extends Component {
         options: [],
         solution: '',
         challenges: [],
+        init: false,
         idx: 1,
     }
 
     componentDidMount() {
+        if (gameid) {
+            $.get(`/api/game/${gameid}/`)
+                .then((r) => this.setState(Object.assign({}, {init: true}, r)))
+                .catch((e) => alert(e));
+        }
         this.initDepGraph();
     }
 
@@ -94,7 +100,7 @@ export default class GameEditor extends Component {
         var chs = this.state.challenges;
         var idx = this.state.idx;
         chs.push({
-            id: -idx,
+            pk: -idx,
             name: 'New Challenge',
             desc: '',
             options: [],
@@ -175,7 +181,7 @@ export default class GameEditor extends Component {
 
         // drawing nodes
         game.challenges.map((ch) => {
-            opts.elements.push({data: {id: ch.id}});
+            opts.elements.push({data: {id: ch.pk}});
         });
 
         // drawing edges
@@ -183,9 +189,9 @@ export default class GameEditor extends Component {
             var deps = ch.depends || [];
             deps.map((d) => {
                 var e = {
-                    id: `${ch.id}.${d.id}`,
-                    target: ch.id,
-                    source: d.id,
+                    id: `${ch.pk}.${d.pk}`,
+                    target: ch.pk,
+                    source: d.pk,
                 };
                 opts.elements.push({data: e});
             });
@@ -202,7 +208,10 @@ export default class GameEditor extends Component {
             setChallengeProp: this.setChallengeProp.bind(this),
             expandChallenge: this.expandChallenge.bind(this),
         };
-        console.log(this.state);
+
+        if (gameid && !this.state.init) {
+            return <h2 className="text-center">Loading...</h2>
+        }
 
         return (
             <div id="game-editor">
@@ -217,7 +226,7 @@ export default class GameEditor extends Component {
                   <div className="row">
                       <div className="col-md-7">
                           {game.challenges.map((c, i) =>
-                              <GameChallenge key={c.id} idx={i} challenge={c} actions={actions} game={game} />
+                              <GameChallenge key={c.pk} idx={i} challenge={c} actions={actions} game={game} />
                           )}
                       </div>
                       <div className="col-md-5">

@@ -19,3 +19,21 @@ class ChallengeSerializer(serializers.Serializer):
 
     def get_desc_html(self, challenge):
         return challenge.get_desc_html()
+
+
+class FullChallengeSerializer(ChallengeSerializer):
+    solution = serializers.CharField()
+    options = serializers.SerializerMethodField()
+    depends = ChallengeSerializer(many=True)
+
+    def get_options(self, ch):
+        return ch.get_extra('options')
+
+
+class FullGameSerializer(GameSerializer):
+    challenges = FullChallengeSerializer(many=True)
+    solution = serializers.CharField()
+    options = serializers.SerializerMethodField()
+
+    def get_options(self, game):
+        return game.get_extra('options')

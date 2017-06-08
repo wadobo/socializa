@@ -25,7 +25,7 @@ export class GameChallenge extends Component {
             <div className="panel panel-default">
               <div className="panel-heading" onClick={actions.expandChallenge.bind(this, idx)}>
                 <h4 className="panel-title">
-                  {challenge.id} - {challenge.name}
+                  {challenge.pk} - {challenge.name}
                   { depends && <span className="text-muted"> ({ depends }) </span> }
                   <button onClick={actions.removeChallenge.bind(this, idx)} className="btn btn-link">remove</button>
                 </h4>
@@ -74,7 +74,7 @@ class ChallengeForm extends Component {
     render() {
         const { game, challenge, idx, actions } = this.props;
 
-        var id = `challenge-${challenge.id}`
+        var id = `challenge-${challenge.pk}`
         var modalid = `${id}-sol-modal`;
         var modaltarget = `#${modalid}`;
 
@@ -125,7 +125,7 @@ class ChallengeForm extends Component {
                         <ul className="dropdown-menu">
                             { game.challenges.map((c, i) =>
                                 <li key={i}>
-                                    <a href="#" onClick={this.addDep.bind(this, c)}>{c.id} - {c.name}</a>
+                                    <a href="#" onClick={this.addDep.bind(this, c)}>{c.pk} - {c.name}</a>
                                 </li>
                             )}
                         </ul>

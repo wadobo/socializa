@@ -37,6 +37,12 @@
 {% endblock %}
 
 {% block extrabody %}
+    <script>
+        {% if game %}
+        window.gameid = {{ game.pk }};
+        {% endif %}
+    </script>
+
     <script src="{% static "vendors/ol/ol.js" %}"></script>
     <script src="{% static "vendors/tinymce/tinymce.min.js" %}"></script>
     <script src="//cdn.jsdelivr.net/openlayers.geocoder/latest/ol3-geocoder.js"></script>
