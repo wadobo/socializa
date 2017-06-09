@@ -84,6 +84,10 @@ export default class GameEditor extends Component {
     }
 
     componentDidMount() {
+        $.ajaxSetup({
+             headers: { 'X-CSRFToken': $('meta[name="csrf-token"]').attr('content') }
+        });
+
         if (gameid) {
             $.get(`/api/game/${gameid}/`)
                 .then((r) => this.setState(Object.assign({}, {init: true}, r)))
@@ -219,7 +223,24 @@ export default class GameEditor extends Component {
         });
 
         var cy = cytoscape(opts);
+    }
 
+    saveGame = (e) => {
+        console.log(this.state);
+        var url = '/api/game/';
+        if (gameid) {
+            url = `${url}${gameid}/`;
+        }
+
+        var data = this.state;
+        $.ajax({
+          type: "POST",
+          url: url,
+          contentType: "application/json",
+          data: JSON.stringify(data),
+          success: (r) => console.log(r),
+          dataType: "json"
+        });
     }
 
     render() {
@@ -264,6 +285,7 @@ export default class GameEditor extends Component {
                   </div>
                 </div>
 
+                <button onClick={this.saveGame} className="btn btn-primary btn-block btn-lg">Save</button>
                 <hr/>
             </div>
         );
