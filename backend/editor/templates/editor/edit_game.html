@@ -38,6 +38,7 @@
 
 {% block extrabody %}
     <script>
+        window.gameid = null;
         {% if game %}
         window.gameid = {{ game.pk }};
         {% endif %}
