@@ -2,8 +2,7 @@ import React from 'react';
 import { withRouter } from 'react-router';
 import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 
-import NavBar from './navbar';
-
+import Menu from './menu';
 import Map from './map';
 import Profile from './profile';
 import Events from './events';
@@ -31,7 +30,7 @@ class App extends React.Component {
                 this.props.history.push('/login');
             }
         } else if (!this.props.children) {
-            this.props.history.push('/map');
+            this.props.history.push('/menu');
         }
         Bucket.setAppState = this.setAppState;
     }
@@ -44,11 +43,11 @@ class App extends React.Component {
         return (
             <Router>
                 <div id="socializa-app">
-                    <NavBar title={this.state.title} active={this.state.active}/>
                     <div>{this.props.children}</div>
                     <div id="overlay"></div>
 
                     <Switch>
+                        <Route exact path="/menu" component={Menu} />
                         <Route exact path="/map" component={Map} />
                         <Route exact path="/map/:ev" component={Map} />
                         <Route exact path="/profile" component={Profile} />

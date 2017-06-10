@@ -6,6 +6,7 @@ import $ from 'jquery';
 import API from './api';
 import EmailLogin from './email-login';
 import { login, logout } from './auth';
+import Logo from './logo';
 
 
 class Login extends React.Component {
@@ -87,10 +88,7 @@ class Login extends React.Component {
 
         return (
             <div id="login" className="container mbottom">
-                <div className="header text-center">
-                    <img src="app/images/icon.png" className="logo" alt="logo"/><br/>
-                    <h1>Socializa</h1>
-                </div>
+                <Logo />
 
                 { this.state.email_login ? (
                         <EmailLogin social={ this.state.social } history={ this.props.history } />
