@@ -6,7 +6,6 @@ import { I18nextProvider } from 'react-i18next';
 
 import App from './app';
 import Login from './login';
-import Register from './register';
 import i18n from './i18n';
 
 
@@ -26,7 +25,6 @@ ReactDOM.render((
   <Router>
     <Switch>
         <Route path="/login" component={Login}/>
-        <Route path="/register" component={Register}/>
         <App />
     </Switch>
   </Router>

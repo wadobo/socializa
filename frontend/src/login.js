@@ -1,12 +1,11 @@
 import React from 'react';
 import { withRouter } from 'react-router';
-import { Link } from 'react-router-dom';
+import { translate, Interpolate } from 'react-i18next';
 import $ from 'jquery';
 
 import API from './api';
+import EmailLogin from './email-login';
 import { login, logout } from './auth';
-
-import { translate, Interpolate } from 'react-i18next';
 
 
 class Login extends React.Component {
@@ -25,32 +24,13 @@ class Login extends React.Component {
         logout();
     }
 
-    emailChange = (e) => {
-        this.setState({email: e.target.value});
-    }
-
-    passChange = (e) => {
-        this.setState({password: e.target.value});
-    }
-
     state = {
-        email: '', password: '',
+        email_login: false,
         social: {}
     }
 
-    login = (e) => {
-        var email = this.state.email;
-        var password = this.state.password;
-        var self = this;
-        const { t } = this.props;
-
-        return API.login(self.state.social.local.id, email, password)
-            .then(function(resp) {
-                login(email, resp.access_token, 'token');
-                self.props.history.push('/map');
-            }).catch(function(error) {
-                alert(t("login::Invalid credentials, try again"));
-            });
+    activeEmail() {
+        this.setState({ email_login: !this.state.email_login });
     }
 
     facebookAuth() {
@@ -112,27 +92,27 @@ class Login extends React.Component {
                     <h1>Socializa</h1>
                 </div>
 
-                <form className="form">
-                        <input className="form-control" type="email" id="email" name="email" placeholder={t('login::email')} value={ this.state.email } onChange={ this.emailChange }/>
-                        <input className="form-control" type="password" id="password" name="password" placeholder={t('login::password')} value={ this.state.password } onChange={ this.passChange }/>
-                </form>
-
-                <br/>
-                <Link to="/register" className="pull-right btn btn-primary">{t('login::New account')}</Link>
-                <div className="clearfix"></div>
+                { this.state.email_login ? (
+                        <EmailLogin social={ this.state.social } history={ this.props.history } />
+                    ) : (<span></span>)
+                }
 
                 <hr/>
 
-                <center><h3>{t('login::Login using Facebook or Google')}</h3></center>
                 <div className="social row text-center">
-                    <div className="col-xs-6">
+                    <div className="col-xs-4">
                         { this.state.social.facebook ? (
                             <a onClick={ this.facebookAuth.bind(this) } className="btn btn-primary btn-circle">
                                 <i className="fa fa-facebook" aria-hidden="true"></i>
                             </a> )
                         : (<span></span>) }
                     </div>
-                    <div className="col-xs-6">
+                    <div className="col-xs-4">
+                        <a onClick={ this.activeEmail.bind(this) } className="btn btn-default btn-circle">
+                            <i className="fa fa-envelope-o" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                    <div className="col-xs-4">
                         { this.state.social.google ? (
                             <a onClick={ this.googleAuth.bind(this) } className="btn btn-danger btn-circle">
                                 <i className="fa fa-google-plus" aria-hidden="true"></i>
@@ -141,10 +121,11 @@ class Login extends React.Component {
 
                     </div>
                 </div>
+                <center><span>{t('login::Login using Facebook or Google')}</span></center>
 
-                <hr/>
-
-                <button className="btn btn-fixed-bottom btn-success" onClick={ this.login }>{t('login::Login')}</button>
+                <nav className="navbar navbar-default navbar-fixed-bottom" role="navigation">
+                    <a className="pull-right" href="https://wadobo.com" target="_blank">powered by Wadobo</a>
+                </nav>
             </div>
         );
     }
