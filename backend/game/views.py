@@ -35,9 +35,56 @@ class GameView(APIView):
 
     @classmethod
     def post(cls, request, game_id):
-        game = request.data;
+        game = request.data
         challenges = request.data['challenges']
-        return Response({'status': 'ok'})
 
+        if game_id:
+            g = get_object_or_404(Game, pk=game_id)
+        else:
+            g = Game()
+
+        for k, v in game.items():
+            if k in ['pk', 'challenges', 'author', 'options']:
+                continue
+            setattr(g, k, v)
+
+        g.author = request.user
+        g.add_extra('options', game.get('options', []))
+        g.save()
+
+        pkch = {}
+        for ch in challenges:
+            pk = ch['pk']
+            if pk < 0:
+                # negative pk will create the challenge
+                c = Challenge()
+            else:
+                c = Challenge.objects.get(pk=pk)
+
+            for k, v in ch.items():
+                if k in ['pk', 'game', 'options', 'child_challenges', 'depends']:
+                    continue
+                setattr(c, k, v)
+
+            c.add_extra('options', ch.get('options', []))
+            c.save()
+            pkch[pk] = c
+
+        for ch in challenges:
+            c = pkch[ch['pk']]
+
+            # child challenges
+            c.child_challenges.clear()
+            for cc in ch.get('child_challenges', []):
+                c.child_challenges.add(pkch[cc['pk']])
+
+            # depends
+            c.depends.clear()
+            for dep in ch.get('depends', []):
+                c.depends.add(pkch[dep['pk']])
+
+            c.save()
+
+        return Response({'status': 'ok'})
 
 game = GameView.as_view()

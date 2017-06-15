@@ -62,6 +62,9 @@ class Challenge(models.Model, ExtraBase):
             return "{} - {} - {}...".format(g, self.name, self.desc[0:10])
         return "{} - {}...".format(g, self.name, self.desc[0:10])
 
+    class Meta:
+        ordering = ['pk']
+
 
 class Game(models.Model, ExtraBase):
     name = models.CharField(max_length=200, blank=True, null=True)

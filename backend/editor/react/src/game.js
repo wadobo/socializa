@@ -328,7 +328,7 @@ export default class GameEditor extends Component {
           url: url,
           contentType: "application/json",
           data: JSON.stringify(data),
-          success: (r) => console.log(r),
+          success: (r) => alert("Saved!"),
           dataType: "json"
         });
     }
