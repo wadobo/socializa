@@ -96,3 +96,7 @@
 # URL socializa-app
 
     http://ip_server:8000/static/socializa/index.html
+
+# Using <img src="https://www.browserstack.com/images/layout/browserstack-logo-600x315.png" width="300">
+
+Test websites for cross browser compatibility on real browsers. Instant access to multiple desktop and mobile browsers. They love open source projects like this.
