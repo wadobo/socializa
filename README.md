@@ -97,6 +97,6 @@
 
     http://ip_server:8000/static/socializa/index.html
 
-# Using <img src="https://digitalscientists.com/system/images/1448/original/logo-browserstack.png" width="300">
+# <img src="https://digitalscientists.com/system/images/1448/original/logo-browserstack.png" width="300">
 
 Test websites for cross browser compatibility on real browsers. Instant access to multiple desktop and mobile browsers. They love open source projects like this.
