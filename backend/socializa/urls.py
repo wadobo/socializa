@@ -34,7 +34,6 @@ urlpatterns = [
     url(r"^api/social/", include("rest_framework_social_oauth2.urls")),
     url(r"^api/player/", include("player.urls")),
     url(r"^api/event/", include("event.urls")),
-    url(r"^api/game/", include("game.urls")),
     url(r"^api/clue/", include("clue.urls")),
     url(r"^api/store/", include("store.urls")),
     url(r'', include("landing.urls")),

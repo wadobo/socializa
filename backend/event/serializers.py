@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from clue.utils import possible_solutions
 from game.serializers import GameSerializer
+from game.serializers import FullGameSerializer
 from game.serializers import ChallengeSerializer
 from player.serializers import PlayerSerializer
 
@@ -47,6 +48,11 @@ class EventSerializer(serializers.Serializer):
         if not player:
             return False
         return bool(event.owners.filter(pk=player.user.pk).exists())
+
+
+class FullEventSerializer(EventSerializer):
+    players = PlayerSerializer(many=True)
+    game = FullGameSerializer()
 
 
 class AdminChallengeSerializer(ChallengeSerializer):

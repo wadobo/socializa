@@ -26,6 +26,7 @@
     "react-dom": "^15.5.4",
     "react-i18next": "^4.1.0",
     "react-tinymce": "^0.5.1",
+    "react-truncate-html": "^0.1.4",
     "webpack": "^2.5.1"
   }
 }

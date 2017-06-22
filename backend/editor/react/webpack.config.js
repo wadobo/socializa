@@ -12,6 +12,7 @@ module.exports = {
   entry: {
     vendors: dependencies,
     gameeditor: './src/game-editor.js',
+    eventeditor: './src/event-editor.js',
   },
   output: {
     path: path.resolve(__dirname, '..', 'static'),

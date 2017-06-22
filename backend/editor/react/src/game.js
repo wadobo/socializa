@@ -89,7 +89,7 @@ export default class GameEditor extends Component {
         });
 
         if (gameid) {
-            $.get(`/api/game/${gameid}/`)
+            $.get(`/editor/api/game/${gameid}/`)
                 .then((r) => this.setState(Object.assign({}, {init: true}, r)))
                 .catch((e) => alert(e));
         }
@@ -317,7 +317,7 @@ export default class GameEditor extends Component {
 
     saveGame = (e) => {
         console.log(this.state);
-        var url = '/api/game/';
+        var url = '/editor/api/game/';
         if (gameid) {
             url = `${url}${gameid}/`;
         }
