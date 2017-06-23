@@ -223,19 +223,20 @@ export class EventMap extends Component {
     }
 
     dragEnter = (e) => {
-        e.target.classList.add('over');
+        let target = $(e.target).hasClass("drops") ? $(e.target) : $(e.target).parent(".drops");
+        target.addClass("over");
     }
 
     dragLeave = (e) => {
-        e.target.classList.remove('over');
+        let target = $(e.target).hasClass("drops") ? $(e.target) : $(e.target).parent(".drops");
+        target.removeClass("over");
     }
 
-    drop = (e) => {
-        console.log(e);
-        let target = e.target;
-        let player = target.getAttribute('data-index');
+    drop = (e, el) => {
+        let target = $(e.target).hasClass("drops") ? $(e.target) : $(e.target).parent(".drops");
+        let player = target.data('index');
         let challenge = this.idx;
-        target.classList.remove('over');
+        target.removeClass("over");
 
         if (e.stopPropagation) { e.stopPropagation(); }
         if(e.preventDefault) { e.preventDefault(); }
@@ -266,6 +267,10 @@ export class EventMap extends Component {
             c.addEventListener('dragleave', this.dragLeave, false);
             c.addEventListener('drop', this.drop, false);
         });
+    }
+
+    rmPlayerChallenge = (p, c) => {
+        this.props.actions.rmPlayerChallenge(p, c);
     }
 
     render() {
@@ -305,8 +310,11 @@ export class EventMap extends Component {
                                         </div>
                                     </div>
                                     <ul className="list-group well drops" data-index={i}>
-                                        { p.challenges && p.challenges.map((c) =>
-                                            <li key={c.pk} className="list-group-item"> {c.name} </li>
+                                        { p.challenges && p.challenges.map((c, j) =>
+                                            <li key={c.pk} className="list-group-item">
+                                                <span className="badge pointer" onClick={this.rmPlayerChallenge.bind(this, i, j)}>&times;</span>
+                                                {c.name}
+                                            </li>
                                         )}
                                     </ul>
                                 </li>
@@ -387,10 +395,19 @@ export default class EventEditor extends Component {
     addPlayerChallenge = (p, c) => {
         let ps = this.state.players;
         let chs = this.state.game.challenges;
-        if (ps[p].challenges) {
-            ps[p].challenges.push(chs[c]);
+        if (ps[p] && ps[p].challenges) {
+            if (!ps[p].challenges.find((i) => i.pk == chs[c].pk))
+                ps[p].challenges.push(chs[c]);
         } else {
             ps[p].challenges = [chs[c]];
+        }
+        this.setState({players: ps});
+    }
+
+    rmPlayerChallenge = (p, c) => {
+        let ps = this.state.players;
+        if (ps[p] && ps[p].challenges) {
+            ps[p].challenges.splice(c, 1);
         }
         this.setState({players: ps});
     }
@@ -421,6 +438,7 @@ export default class EventEditor extends Component {
             rmPlayer: this.rmPlayer.bind(this),
             upPlayer: this.upPlayer.bind(this),
             addPlayerChallenge: this.addPlayerChallenge.bind(this),
+            rmPlayerChallenge: this.rmPlayerChallenge.bind(this),
         };
 
         if (evid && !this.state.init) {

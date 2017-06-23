@@ -35,3 +35,7 @@
 .over {
     border: 2px dashed #aaa;
 }
+
+.pointer {
+    cursor: pointer;
+}
