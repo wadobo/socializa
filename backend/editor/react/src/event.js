@@ -192,10 +192,12 @@ export class EventMap extends Component {
 
     componentDidMount() {
         this.initDrag();
+        this.initMap();
     }
 
     componentDidUpdate() {
         this.initDrag();
+        this.initMap();
     }
 
     dragStart = (e) => {
@@ -271,6 +273,64 @@ export class EventMap extends Component {
 
     rmPlayerChallenge = (p, c) => {
         this.props.actions.rmPlayerChallenge(p, c);
+    }
+
+    initMap = () => {
+        if (this.map) {
+            this.drawPlayers();
+            return;
+        }
+
+        let select = new ol.interaction.Select();
+        let translate = new ol.interaction.Translate({ features: select.getFeatures() });
+
+        this.map = new ol.Map({
+          interactions: ol.interaction.defaults().extend([select, translate]),
+          target: 'map',
+          layers: [
+            new ol.layer.Tile({
+              source: new ol.source.OSM()
+            })
+          ],
+          view: new ol.View({
+            center: ol.proj.fromLonLat([-5.9866369, 37.3580539]),
+            zoom: 14
+          })
+        });
+
+        this.geocoder = new Geocoder('nominatim', {
+          provider: 'osm',
+          //key: '__some_key__',
+          lang: 'es-ES',
+          placeholder: 'Search for ...',
+          targetType: 'text-input',
+          limit: 5,
+          keepOpen: true
+        });
+        this.map.addControl(this.geocoder);
+        window.map = this.map;
+
+        // player layer
+        this.playerList = new ol.source.Vector();
+        new ol.layer.Vector({
+          map: this.map,
+          source: this.playerList
+        });
+
+        this.drawPlayers();
+    }
+
+    drawPlayers = () => {
+        let playerFeature = new ol.Feature();
+        playerFeature.setStyle(new ol.style.Style({
+          image: new ol.style.Icon({ src: '/static/img/geo1.svg' }),
+          zIndex: 100
+        }));
+        this.playerList.addFeature(playerFeature);
+
+        playerFeature.setGeometry(
+            new ol.geom.Point(ol.proj.fromLonLat([-5.9866369, 37.3580539]))
+        );
     }
 
     render() {
