@@ -28,7 +28,7 @@ install:
 script:
   - cd backend
   #- pylint --load-plugins pylint_django -f parseable --ignore-patterns="env/" * | tee pylint.out
-  - coverage run --branch --source=. ./manage.py test --keepdb --with-xunit
+  - coverage run --branch --source=. ./manage.py test --with-xunit
   - coverage xml
   - python-codacy-coverage -r coverage.xml
   - cd ..
