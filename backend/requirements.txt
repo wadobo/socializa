@@ -2,7 +2,7 @@ celery==4.0.2
 coverage==4.4
 django-extra-fields==0.9
 django-nose==1.4.4
-django-rest-framework-social-oauth2==1.0.5
+django-rest-framework-social-oauth2==1.0.8
 django-rest-swagger==2.1.2
 django==1.11.1
 djangorestframework==3.6.3
