@@ -12,7 +12,15 @@
 {% endblock %}
 
 {% block extrahead %}
-    <link rel="stylesheet" href="{% static "vendors/ol/ol.css" %}" />
+    <link href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" rel="stylesheet" type="text/css" />
+    <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet-src.js"></script>
+
+    <script src="{% static "vendors/leaflet/search/leaflet-search.js" %}"></script>
+    <link rel="stylesheet" href="{% static "vendors/leaflet/search/leaflet-search.css" %}" />
+
+    <script src="{% static "vendors/leaflet/draw/leaflet.draw.js" %}"></script>
+    <link rel="stylesheet" href="{% static "vendors/leaflet/draw/leaflet.draw.css" %}" />
+
     <link rel="stylesheet" href="{% static "edit_event.css" %}" />
     <link href="//cdn.jsdelivr.net/openlayers.geocoder/latest/ol3-geocoder.min.css" rel="stylesheet">
     <meta name="csrf-token" content="{{ csrf_token }}">
@@ -44,9 +52,7 @@
         {% endif %}
     </script>
 
-    <script src="{% static "vendors/ol/ol.js" %}"></script>
     <script src="{% static "vendors/tinymce/tinymce.min.js" %}"></script>
-    <script src="//cdn.jsdelivr.net/openlayers.geocoder/latest/ol3-geocoder.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/cytoscape/3.1.1/cytoscape.min.js"></script>
     <script src="{% static "vendors.js" %}"></script>
     <script src="{% static "eventeditor.js" %}"></script>

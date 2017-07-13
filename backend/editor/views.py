@@ -1,10 +1,12 @@
 import json
+import datetime
 from django.utils.timezone import make_aware
 from django.utils.dateparse import parse_datetime
 from django.utils.translation import ugettext as _
 from django.views.generic.base import TemplateView, View
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.gis.geos import GEOSGeometry
+from django.contrib.gis.geos import Polygon, MultiPolygon
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -219,5 +221,43 @@ class EventView(APIView):
         serializer = FullEventSerializer(ev)
         data = serializer.data
         return Response(data)
+
+    @classmethod
+    def post(cls, request, ev_id):
+        ev = request.data
+
+        if ev_id:
+            e = get_object_or_404(Event, pk=ev_id)
+        else:
+            e = Event()
+
+        for k, v in ev.items():
+            if k in ['pk', 'players', 'owners', 'task_id', 'place', 'game']:
+                continue
+            if 'date' in k:
+                try:
+                    v = datetime.datetime.strptime(v, '%Y-%m-%d %H:%M %z')
+                except:
+                    v = parse_datetime(v)
+            setattr(e, k, v)
+
+        # setting the place
+        place = ev.get('place', None)
+        if place:
+            place = GEOSGeometry(str(place['geometry']))
+            if isinstance(place, Polygon):
+                place = MultiPolygon(place)
+            e.place = place
+
+        # setting the game
+        g = ev.get('game', None)
+        if g:
+            g = get_object_or_404(Game, pk=g['pk'])
+            e.game = g
+
+        e.save()
+        e.owners.add(request.user)
+
+        return Response({'status': 'ok'})
 
 evview = EventView.as_view()

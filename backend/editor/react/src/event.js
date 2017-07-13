@@ -3,7 +3,27 @@ import Truncate from 'react-truncate-html';
 
 
 class EventEditorForm extends Component {
+    componentDidMount() {
+        this.initDatePicker();
+    }
+
+    componentDidUpdate() {
+        this.initDatePicker();
+    }
+
+    initDatePicker() {
+        window.jQuery(".datetimepicker").datetimepicker({
+            format: 'YYYY-MM-DD HH:mm ZZ',
+            sideBySide: true
+        });
+        window.jQuery(".datetimepicker").on("dp.change", function(e) {
+            let ev = new Event('input', { bubbles: true} );
+            window.jQuery(this)[0].dispatchEvent(ev);
+        });
+    }
+
     changeField = (field, e) => {
+        console.log("CHANGED", field, e.target.value);
         this.props.actions.setEvProp(field, e.target.value);
     }
 
@@ -179,6 +199,12 @@ export class EventMap extends Component {
     upPlayer = (i, e) => {
         let val = e.target.value;
         this.props.actions.upPlayer(i, 'username', val);
+
+        const { ev } = this.props;
+        let layer = ev.players[i].layer;
+        if (layer) {
+            layer.unbindTooltip().bindTooltip(val, { permanent: true, direction: 'top', });
+        }
     }
 
     rmPlayer = (i, e) => {
@@ -277,66 +303,88 @@ export class EventMap extends Component {
 
     initMap = () => {
         if (this.map) {
-            this.drawPlayers();
             return;
         }
 
-        let select = new ol.interaction.Select();
-        let translate = new ol.interaction.Translate({ features: select.getFeatures() });
+        const { actions, ev } = this.props;
 
-        this.map = new ol.Map({
-          interactions: ol.interaction.defaults().extend([select, translate]),
-          target: 'map',
-          layers: [
-            new ol.layer.Tile({
-              source: new ol.source.OSM()
-            })
-          ],
-          view: new ol.View({
-            center: ol.proj.fromLonLat([-5.9866369, 37.3580539]),
-            zoom: 14
-          })
+        this.map = L.map('map').setView([37.3580539, -5.9866369], 13);
+        L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(this.map);
+
+        // search with openstreetmap
+        this.map.addControl( new L.Control.Search({
+            url: 'http://nominatim.openstreetmap.org/search?format=json&q={s}',
+            jsonpParam: 'json_callback',
+            propertyName: 'display_name',
+            propertyLoc: ['lat','lon'],
+            marker: L.circleMarker([0,0], {radius:10}),
+            autoCollapse: true,
+            autoType: false,
+            minLength: 2
+        }) );
+
+        // Adding drawing tools
+        // TODO: load current players and zone
+        let drawnItems = new L.FeatureGroup();
+        this.map.addLayer(drawnItems);
+
+        // Set the title to show on the polygon button
+        L.drawLocal.draw.toolbar.buttons.polygon = 'Draw the event zone';
+
+        let drawControl = new L.Control.Draw({
+            position: 'topright',
+            draw: {
+                polygon: { shapeOptions: { color: '#880000' } },
+                polyline: false,
+                circle: false,
+                rectangle: false,
+                marker: true
+            },
+            edit: {
+                featureGroup: drawnItems,
+                remove: false
+            }
+        });
+        this.map.addControl(drawControl);
+
+        this.map.on(L.Draw.Event.CREATED, function (e) {
+            var type = e.layerType,
+                layer = e.layer;
+
+            if (type === 'marker') {
+                layer.bindTooltip("newplayer", { permanent: true, direction: 'top', });
+                layer.idx = ev.players.length;
+
+                let { lat, lng } = layer.getLatLng();
+                actions.newPlayer([lng, lat], layer);
+            } else {
+                if (this.zone) {
+                    this.zone.remove();
+                }
+                this.zone = layer;
+                actions.setEvProp('place', this.zone.toGeoJSON());
+            }
+
+            drawnItems.addLayer(layer);
         });
 
-        this.geocoder = new Geocoder('nominatim', {
-          provider: 'osm',
-          //key: '__some_key__',
-          lang: 'es-ES',
-          placeholder: 'Search for ...',
-          targetType: 'text-input',
-          limit: 5,
-          keepOpen: true
+        this.map.on(L.Draw.Event.EDITED, function (e) {
+            e.layers.eachLayer(function(l) {
+                if (l.idx !== undefined) {
+                    let { lat, lng } = l.getLatLng();
+                    actions.upPlayer(l.idx, 'pos', [lng, lat]);
+                }
+            });
         });
-        this.map.addControl(this.geocoder);
-        window.map = this.map;
-
-        // player layer
-        this.playerList = new ol.source.Vector();
-        new ol.layer.Vector({
-          map: this.map,
-          source: this.playerList
-        });
-
-        this.drawPlayers();
-    }
-
-    drawPlayers = () => {
-        let playerFeature = new ol.Feature();
-        playerFeature.setStyle(new ol.style.Style({
-          image: new ol.style.Icon({ src: '/static/img/geo1.svg' }),
-          zIndex: 100
-        }));
-        this.playerList.addFeature(playerFeature);
-
-        playerFeature.setGeometry(
-            new ol.geom.Point(ol.proj.fromLonLat([-5.9866369, 37.3580539]))
-        );
     }
 
     render() {
         const {ev, actions} = this.props;
         return (
             <div>
+                <h2>Map</h2>
+                <div id="map"></div>
+
                 <h2>Assign Clues / Players</h2>
                 <div className="well row">
                     <div className="col-sm-6">
@@ -379,14 +427,9 @@ export class EventMap extends Component {
                                     </ul>
                                 </li>
                             )}
-                            <li className="list-group-item active">
-                                <button className="btn btn-default btn-block" onClick={actions.newPlayer}>Add new player</button>
-                            </li>
                         </ul>
                     </div>
                 </div>
-                <h2>Map</h2>
-                <div id="map"></div>
             </div>
         );
     }
@@ -428,20 +471,22 @@ export default class EventEditor extends Component {
         this.setState(newst);
     }
 
-    newPlayer = () => {
+    newPlayer = (pos, layer) => {
         var ps = this.state.players;
         ps.push({
             pk: -this.state.idx,
-            pos: (0, 0),
+            pos: pos || (0, 0),
             ptype: 'pos',
             about: '',
             username: 'newplayer',
+            layer: layer,
         });
         this.setState({players: ps, idx: this.state.idx + 1});
     }
 
     rmPlayer = (i) => {
         var ps = this.state.players;
+        ps[i].layer && ps[i].layer.remove();
         ps.splice(i, 1);
         this.setState({players: ps});
     }
