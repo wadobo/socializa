@@ -23,7 +23,6 @@ class EventEditorForm extends Component {
     }
 
     changeField = (field, e) => {
-        console.log("CHANGED", field, e.target.value);
         this.props.actions.setEvProp(field, e.target.value);
     }
 
@@ -306,6 +305,8 @@ export class EventMap extends Component {
             return;
         }
 
+        let self = this;
+
         const { actions, ev } = this.props;
 
         this.map = L.map('map').setView([37.3580539, -5.9866369], 13);
@@ -325,8 +326,8 @@ export class EventMap extends Component {
 
         // Adding drawing tools
         // TODO: load current players and zone
-        let drawnItems = new L.FeatureGroup();
-        this.map.addLayer(drawnItems);
+        this.drawnItems = new L.FeatureGroup();
+        this.map.addLayer(this.drawnItems);
 
         // Set the title to show on the polygon button
         L.drawLocal.draw.toolbar.buttons.polygon = 'Draw the event zone';
@@ -341,7 +342,7 @@ export class EventMap extends Component {
                 marker: true
             },
             edit: {
-                featureGroup: drawnItems,
+                featureGroup: self.drawnItems,
                 remove: false
             }
         });
@@ -358,14 +359,14 @@ export class EventMap extends Component {
                 let { lat, lng } = layer.getLatLng();
                 actions.newPlayer([lng, lat], layer);
             } else {
-                if (this.zone) {
-                    this.zone.remove();
+                if (self.zone) {
+                    self.zone.remove();
                 }
-                this.zone = layer;
-                actions.setEvProp('place', this.zone.toGeoJSON());
+                self.zone = layer;
+                actions.setEvProp('place', self.zone.toGeoJSON());
             }
 
-            drawnItems.addLayer(layer);
+            self.drawnItems.addLayer(layer);
         });
 
         this.map.on(L.Draw.Event.EDITED, function (e) {
@@ -376,6 +377,24 @@ export class EventMap extends Component {
                 }
             });
         });
+
+        this.drawPlace();
+        this.drawPlayers();
+    }
+
+    drawPlace = () => {
+        const { ev } = this.props;
+
+        if (!ev.place) {
+            return;
+        }
+
+        this.zone = L.geoJson(JSON.parse(ev.place), { style: {color: "#880000"} });
+        this.drawnItems.addLayer(this.zone);
+        this.map.fitBounds(this.zone.getBounds());
+    }
+
+    drawPlayers = () => {
     }
 
     render() {
@@ -467,7 +486,6 @@ export default class EventEditor extends Component {
     setEvProp = (k, v) => {
         var newst = this.state;
         newst[k] = v;
-        console.log(newst);
         this.setState(newst);
     }
 
@@ -518,7 +536,6 @@ export default class EventEditor extends Component {
     }
 
     saveEv = (e) => {
-        console.log(this.state);
         var url = '/editor/api/ev/';
         if (evid) {
             url = `${url}${evid}/`;
@@ -537,6 +554,9 @@ export default class EventEditor extends Component {
 
     render() {
         var ev = this.state;
+
+        console.log(ev);
+
         var actions = {
             setEvProp: this.setEvProp.bind(this),
             newPlayer: this.newPlayer.bind(this),

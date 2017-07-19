@@ -19,9 +19,13 @@ class EventSerializer(serializers.Serializer):
     solved = serializers.SerializerMethodField('is_solved')
     solution = serializers.SerializerMethodField()
     admin = serializers.SerializerMethodField('is_admin')
+    place = serializers.SerializerMethodField()
 
     vision_distance = serializers.IntegerField()
     meeting_distance = serializers.IntegerField()
+
+    def get_place(self, event):
+        return event.place.geojson
 
     def is_player_joined(self, event):
         player = self.context.get("player")
