@@ -223,6 +223,17 @@ class EventView(APIView):
         return Response(data)
 
     @classmethod
+    def create_player(cls, ep):
+        username = ep.get('username', '')
+        username += '_ai_' + User.objects.make_random_password(length=8)
+        newu = User(username=username)
+        newu.save()
+        p = Player(user=newu, ptype=ep['ptype'])
+        p.save()
+
+        return p
+
+    @classmethod
     def post(cls, request, ev_id):
         ev = request.data
 
@@ -244,7 +255,10 @@ class EventView(APIView):
         # setting the place
         place = ev.get('place', None)
         if place:
-            place = GEOSGeometry(str(place['geometry']))
+            if type(place) == str:
+                place = GEOSGeometry(place)
+            else:
+                place = GEOSGeometry(str(place['geometry']))
             if isinstance(place, Polygon):
                 place = MultiPolygon(place)
             e.place = place
@@ -257,6 +271,33 @@ class EventView(APIView):
 
         e.save()
         e.owners.add(request.user)
+
+        players_ids = []
+        for ep in ev.get('players', []):
+            pk = ep['pk']
+            if pk < 0:
+                # negative pk will create the player
+                p = Player()
+                p = cls.create_player(ep)
+            else:
+                p = Player.objects.get(pk=pk)
+
+            p.about = ep['username']
+
+            p.set_position(*ep['pos'])
+            players_ids.append(p.pk)
+            e.set_playing(p)
+
+            Clue.objects.filter(player=p, event=e).delete()
+
+            for ch in ep.get('challenges', []):
+                c = Challenge.objects.get(pk=ch['pk'], games=e.game)
+                clue = Clue(player=p, event=e, challenge=c, main=True)
+                clue.save()
+
+        players = e.players.exclude(membership__player__pk__in=players_ids)
+        for p in players:
+            p.user.delete()
 
         return Response({'status': 'ok'})
 

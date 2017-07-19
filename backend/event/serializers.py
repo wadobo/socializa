@@ -1,6 +1,8 @@
 from rest_framework import serializers
 
 from clue.utils import possible_solutions
+from clue.models import Clue
+from game.models import Challenge
 from game.serializers import GameSerializer
 from game.serializers import FullGameSerializer
 from game.serializers import ChallengeSerializer
@@ -54,8 +56,21 @@ class EventSerializer(serializers.Serializer):
         return bool(event.owners.filter(pk=player.user.pk).exists())
 
 
+class PlayerWithChallengesSerializer(PlayerSerializer):
+    challenges = serializers.SerializerMethodField()
+
+    def get_challenges(self, player):
+        try:
+            ev = player.playing_event.event
+        except:
+            return []
+        clues = Clue.objects.filter(player=player, main=True, event=ev)
+        chs = Challenge.objects.filter(clues__in=clues)
+        return ChallengeSerializer(chs, many=True).data
+
+
 class FullEventSerializer(EventSerializer):
-    players = PlayerSerializer(many=True)
+    players = PlayerWithChallengesSerializer(many=True)
     game = FullGameSerializer()
 
 
