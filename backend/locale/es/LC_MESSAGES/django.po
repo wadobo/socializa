@@ -7,18 +7,18 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-30 12:30+0000\n"
-"PO-Revision-Date: 2017-03-30 14:48+0200\n"
+"POT-Creation-Date: 2017-05-15 11:16+0200\n"
+"PO-Revision-Date: 2017-05-15 11:21+0200\n"
+"Last-Translator: Daniel Garcia Moreno <danigm@wadobo.com>\n"
+"Language-Team: \n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"Last-Translator: Daniel Garcia Moreno <danigm@wadobo.com>\n"
-"Language-Team: \n"
 "X-Generator: Poedit 1.8.12\n"
 
-#: editor/templates/editor/base.html:13 editor/templates/editor/base.html:46
+#: editor/templates/editor/base.html:5 editor/templates/editor/base.html:10
 #: editor/templates/editor/editor.html:6
 msgid "Editor"
 msgstr "Editor"
@@ -85,7 +85,7 @@ msgstr "Nuevo juego"
 #: editor/templates/editor/editor.html:24
 #: landing/templates/landing/index.html:133
 #: landing/templates/landing/index.html:171
-#: landing/templates/landing/index.html:760
+#: landing/templates/landing/index.html:802
 msgid "Events"
 msgstr "Eventos"
 
@@ -266,38 +266,38 @@ msgstr "Jugadores verán a otros jugadores"
 msgid "Game description"
 msgstr "Descripción del juego"
 
-#: editor/views.py:155 editor/views.py:185 editor/views.py:211
-#: editor/views.py:277 editor/views.py:354
+#: editor/views.py:157 editor/views.py:187 editor/views.py:213
+#: editor/views.py:285 editor/views.py:366
 msgid "Unauthorized user"
 msgstr "Usuario no autorizado"
 
-#: editor/views.py:161
+#: editor/views.py:163
 msgid "Challenge removed correctly"
 msgstr "Reto eliminado correctamente"
 
-#: editor/views.py:169
+#: editor/views.py:171
 msgid "Updated game"
 msgstr "Juego actualizado"
 
-#: editor/views.py:172
+#: editor/views.py:174
 #, python-brace-format
 msgid "Created game with {0} challenges"
 msgstr "Juego creado con {0} retos"
 
-#: editor/views.py:182
+#: editor/views.py:184
 #, python-brace-format
 msgid "Deleted game: {0}"
 msgstr "Eliminado juego: {0}"
 
-#: editor/views.py:260
+#: editor/views.py:268
 msgid "Updated event"
 msgstr "Evento actualizado"
 
-#: editor/views.py:262
+#: editor/views.py:270
 msgid "Created event."
 msgstr "Evento creado."
 
-#: editor/views.py:274
+#: editor/views.py:282
 #, python-brace-format
 msgid "Deleted event: {0}"
 msgstr "Evento eliminado: {0}"
@@ -307,8 +307,8 @@ msgid "Discover the world playing"
 msgstr "Descubre el mundo jugando"
 
 #: landing/templates/landing/index.html:101
-msgid "Get the beta"
-msgstr "Consigue la beta"
+msgid "Get Editor Access"
+msgstr "Acceso al editor"
 
 #: landing/templates/landing/index.html:167
 msgid "Home"
@@ -457,44 +457,91 @@ msgstr ""
 "competitivos así que si eres el primero en encontrar la solución podrás "
 "ganar un premio, como una camiseta, dinero, y otras cosas"
 
-#: landing/templates/landing/index.html:730
-msgid "Access to Beta"
-msgstr "Acceso a la beta"
+#: landing/templates/landing/index.html:329
+msgid "Get Involved"
+msgstr "Colabora"
 
-#: landing/templates/landing/index.html:732
-msgid "Send us your google account and we'll give you access to the beta"
-msgstr "Envíanos tu cuenta de google y te daremos acceso a la beta"
+#: landing/templates/landing/index.html:330
+msgid ""
+"Socializa is a Open Source project, you can participate in the development"
+msgstr ""
+"Socializa es un proyecto Software Libre, puedes participar en el desarrollo"
 
-#: landing/templates/landing/index.html:737
+#: landing/templates/landing/index.html:341
+msgid "Report a Bug"
+msgstr "Reportando un error"
+
+#: landing/templates/landing/index.html:342
+msgid ""
+"You can report a bug or a feature request in the <a href=\"https://github."
+"com/wadobo/socializa/issues\">github issue list</a>"
+msgstr ""
+"Puedes reportar un error o solicitar una funcionalidad en la <a href="
+"\"https://github.com/wadobo/socializa/issues\">lista de tareas de github</a>"
+
+#: landing/templates/landing/index.html:350
+msgid "Translate the App"
+msgstr "Traduce la aplicación"
+
+#: landing/templates/landing/index.html:351
+msgid "You can translate the app to make it available in your local language"
+msgstr ""
+"Puedes traducir la aplicación para tenerla disponible en tu propio idioma"
+
+#: landing/templates/landing/index.html:359
+msgid "Documentation"
+msgstr "Documentación"
+
+#: landing/templates/landing/index.html:360
+msgid ""
+"You can create videos, tutorial and doc about how to play, how to create "
+"games and events or how to collaborate"
+msgstr ""
+"Puedes crear vídeos, tutoriales y documentación sobre cómo jugar, cómo crear "
+"juegos y eventos o cómo colaborar"
+
+#: landing/templates/landing/index.html:773
+msgid "Access to Beta Editor"
+msgstr "Acceso al Editor (Beta)"
+
+#: landing/templates/landing/index.html:775
+msgid "Send us your email and we'll give you access to the beta editor"
+msgstr "Envíanos tu email y te daremos acceso al editor beta"
+
+#: landing/templates/landing/index.html:780
 msgid "Send"
 msgstr "Enviar"
 
-#: landing/templates/landing/index.html:740
+#: landing/templates/landing/index.html:783
 msgid ""
-"We're currently in Beta,\n"
-"                            testing the application and organizing some\n"
-"                            events, but if you want to test the app and try\n"
-"                            the game in our events, please, send us your\n"
-"                            google account and we'll give you development\n"
-"                            access to the app"
+"\n"
+"                            We've a simple game editor, that you can use to "
+"create custom games and\n"
+"                            events. Currently is in a initial state and we "
+"only give access to some\n"
+"                            editors before open the Socializa Editor to "
+"everyone.\n"
+"                            "
 msgstr ""
-"Actualmente estamos en fase Beta, probando la aplicación y organizando "
-"algunos eventos, pero si quieres probar la aplicación y jugar en alguno de "
-"nuestros eventos, por favor, envíanos tu cuenta de google y te daremos "
-"acceso de desarrollador a la aplicación"
+"\n"
+"Tenemos un editor de juegos simple, que puedes usar para crear tus propios "
+"juegos y eventos.\n"
+"Actualmente está en un estado inicial y sólo damos acceso a algunos editores "
+"antes de abrir el\n"
+"editor de Socializa a todo el mundo."
 
-#: landing/templates/landing/index.html:762
+#: landing/templates/landing/index.html:804
 msgid ""
 "Here you have the next big events where you can find us and test the game"
 msgstr ""
 "Aquí podrás encontrar los próximos grandes eventos en los que podrás "
 "encontrarnos y probar el juego"
 
-#: landing/templates/landing/index.html:785
+#: landing/templates/landing/index.html:827
 msgid "get in touch"
 msgstr "ponte en contacto"
 
-#: landing/templates/landing/index.html:787
+#: landing/templates/landing/index.html:829
 msgid ""
 "You can ask us something or send us a message with the following form or "
 "directly sending an email to socializa@wadobo.com"
@@ -502,35 +549,35 @@ msgstr ""
 "Puedes preguntarnos cualquier cosa o enviarnos un mensaje con el siguiente "
 "formulario o directamente enviando un email a socializa@wadobo.com"
 
-#: landing/templates/landing/index.html:794
+#: landing/templates/landing/index.html:836
 msgid "Contact us if:"
 msgstr "Contacta con nosotros si:"
 
-#: landing/templates/landing/index.html:796
+#: landing/templates/landing/index.html:838
 msgid "You organize an event and want to prepare a game for it"
 msgstr "Organizas un evento y quieres preparar un juego para el mismo"
 
-#: landing/templates/landing/index.html:797
+#: landing/templates/landing/index.html:839
 msgid "You're a writter and want to create stories and games"
 msgstr "Eres un escritor y quieres crear historias y juegos"
 
-#: landing/templates/landing/index.html:798
+#: landing/templates/landing/index.html:840
 msgid "You want to collaborate in the development, translations, etc."
 msgstr "Quieres colaborar en el desarrollo, traducciones, etc."
 
-#: landing/templates/landing/index.html:805
+#: landing/templates/landing/index.html:847
 msgid "Your Name"
 msgstr "Tu nombre"
 
-#: landing/templates/landing/index.html:810
+#: landing/templates/landing/index.html:852
 msgid "Your Email"
 msgstr "Tu Email"
 
-#: landing/templates/landing/index.html:815
+#: landing/templates/landing/index.html:857
 msgid "Your Message"
 msgstr "Tu mensaje"
 
-#: landing/templates/landing/index.html:820
+#: landing/templates/landing/index.html:862
 msgid "submit your message"
 msgstr "Enviar tu mensaje"
 
@@ -541,3 +588,60 @@ msgstr "Error desconocido"
 #: landing/views.py:41
 msgid "Thank you!, we'll contact you as soon as possible"
 msgstr "Gracias! Contactaremos contigo tan pronto como nos sea posible"
+
+#: player/templates/register/confirmed.html:6
+msgid "Account confirmed"
+msgstr "Cuenta confirmada"
+
+#: player/templates/register/confirmed.html:11
+#, python-format
+msgid ""
+"\n"
+"        Conglatulations! The account %(p)s has been confirmed. Now you can "
+"login in\n"
+"        socializa.\n"
+"        "
+msgstr ""
+"\n"
+"Felicidades! La cuenta %(p)s ha sido confirmada. Ahora puedes hacer login en "
+"socializa."
+
+#: player/views.py:389
+msgid "Socializa account validation"
+msgstr "Validación de cuenta de Socializa"
+
+#: player/views.py:390
+#, python-format
+msgid "Validate your socializa account: %s"
+msgstr "Valida tu cuenta de Socializa: %s"
+
+#: player/views.py:393
+#, python-format
+msgid "Validate your socializa account: <a href=\"%s\">%s</a>"
+msgstr "Valida tu cuenta de socializa: <a href=\"%s\">%s</a>"
+
+#: socializa/settings.py:160
+msgid "English"
+msgstr "Inglés"
+
+#: socializa/settings.py:161
+msgid "Spanish"
+msgstr "Español"
+
+#~ msgid "Get the beta"
+#~ msgstr "Consigue la beta"
+
+#~ msgid ""
+#~ "We're currently in Beta,\n"
+#~ "                            testing the application and organizing some\n"
+#~ "                            events, but if you want to test the app and "
+#~ "try\n"
+#~ "                            the game in our events, please, send us your\n"
+#~ "                            google account and we'll give you "
+#~ "development\n"
+#~ "                            access to the app"
+#~ msgstr ""
+#~ "Actualmente estamos en fase Beta, probando la aplicación y organizando "
+#~ "algunos eventos, pero si quieres probar la aplicación y jugar en alguno "
+#~ "de nuestros eventos, por favor, envíanos tu cuenta de google y te daremos "
+#~ "acceso de desarrollador a la aplicación"

@@ -18,6 +18,8 @@ class ExtraBase:
 
     def add_extra(self, k, v):
         extra = self.get_extra()
+        if extra is None:
+            extra = {}
         extra[k] = v
         self.update_extra(extra)
 

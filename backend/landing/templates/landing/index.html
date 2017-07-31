@@ -71,6 +71,11 @@
                         <h3>{% trans "Discover the world playing" %}</h3>
                         <div class="col-md-4 col-md-push-4">
                             <div class="btn-group btn-group-justified btn-lg small">
+                                <div class="btn-group">
+                                    <a href="https://play.google.com/store/apps/details?id=com.wadobo.socializa" class="btn btn-default scrollpoint sp-effect6">
+                                        <span class="android"></span>
+                                    </a>
+                                </div>
                                 <!--
                                 <div class="btn-group">
                                     <a href="#" class="btn btn-default scrollpoint sp-effect6">
@@ -84,11 +89,6 @@
                                 </div>
                                 <div class="btn-group">
                                     <a href="#" class="btn btn-default scrollpoint sp-effect6">
-                                        <span class="android"></span>
-                                    </a>
-                                </div>
-                                <div class="btn-group">
-                                    <a href="#" class="btn btn-default scrollpoint sp-effect6">
                                         <span class="windows"></span>
                                     </a>
                                 </div>
@@ -98,7 +98,7 @@
                         <div class="col-md-10 col-md-push-1 hidden-xs mh-slider">
                             <div class="row">
                                 <div class="col-md-3">
-                                    <a href="#subscribe" class="btn btn-default side">{% trans "Get the beta" %}</a>
+                                    <a href="#subscribe" class="btn btn-default side">{% trans "Get Editor Access" %}</a>
                                 </div>
                                 <div class="col-md-6">
                                     <div id="carousel-slider" class="carousel slide" data-ride="carousel">
@@ -177,7 +177,7 @@
                 <!--/.container -->
             </div>
             <!--/.navbar -->
-            
+
         </header>
 
         <section id="features">
@@ -322,6 +322,51 @@
             </div>
         </section>
 
+        <section id="download">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-10 col-md-push-1">
+                        <h1>{% trans "Get Involved" %}</h1>
+                        <h4>{% trans "Socializa is a Open Source project, you can participate in the development" %}</h4>
+                    </div>
+
+
+                    <div class="col-md-10 col-md-push-1">
+                        <div class="row">
+                            <div class="col-md-4 col-sm-6">
+                                <div class="feature scrollpoint sp-effect2">
+                                    <div class="icon">
+                                        <i class="fa fa-github fa-4x"></i>
+                                    </div>
+                                    <h4>{% trans "Report a Bug" %}</h4>
+                                    <p>{% blocktrans %}You can report a bug or a feature request in the <a href="https://github.com/wadobo/socializa/issues">github issue list</a>{% endblocktrans %}</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-6">
+                                <div class="feature scrollpoint sp-effect2">
+                                    <div class="icon">
+                                        <i class="fa fa-flag fa-4x"></i>
+                                    </div>
+                                    <h4>{% trans "Translate the App" %}</h4>
+                                    <p>{% blocktrans %}You can translate the app to make it available in your local language{% endblocktrans %}</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-6">
+                                <div class="feature scrollpoint sp-effect1">
+                                    <div class="icon">
+                                        <i class="fa fa-book fa-4x"></i>
+                                    </div>
+                                    <h4>{% trans "Documentation" %}</h4>
+                                    <p>{% blocktrans %}You can create videos, tutorial and doc about how to play, how to create games and events or how to collaborate{% endblocktrans %}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
         {% comment %}
         <section id="download">
             <div class="container">
@@ -355,7 +400,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="btn-group btn-group-justified btn-lg">
                         <div class="row">
                             <div class="col-md-4 col-sm-4">
@@ -364,7 +409,7 @@
                                         <a href="#" class="btn btn-default">
                                             <span class="appstore"></span>
                                         </a>
-                                    </div>  
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-4 col-sm-4">
@@ -373,7 +418,7 @@
                                         <a href="#" class="btn btn-default">
                                             <span class="playstore"></span>
                                         </a>
-                                    </div>  
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-4 col-sm-4">
@@ -382,7 +427,7 @@
                                         <a href="#" class="btn btn-default">
                                             <span class="micstore"></span>
                                         </a>
-                                    </div>  
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -390,7 +435,6 @@
                 </div>
             </div>
         </section>
-        {% endcomment %}
 
         {% comment %}
         <section id="packages">
@@ -506,9 +550,9 @@
                             <a class="car-next" href="#carousel-team" role="button" data-slide="next">
                                 <i class="fa fa-chevron-right fa-2x"></i>
                             </a>
-                        </div>                 
+                        </div>
                     </div>
-                
+
                     <div class="carousel-inner">
                         <div class="item active">
                             <div class="col-md-6">
@@ -725,9 +769,9 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="newsletter-wrapper">
-                            <h3 class="scrollpoint sp-effect3">Socializa <span>{% trans "Access to Beta" %}</span></h3>
+                            <h3 class="scrollpoint sp-effect3">Socializa <span>{% trans "Access to Beta Editor" %}</span></h3>
                             <span class="divider scrollpoint sp-effect3"></span>
-                            <p class="scrollpoint sp-effect3">{% trans "Send us your google account and we'll give you access to the beta" %}</p>
+                            <p class="scrollpoint sp-effect3">{% trans "Send us your email and we'll give you access to the beta editor" %}</p>
                             <div class="form-group has-feedback">
                             <form method="POST" action="">
                             {% csrf_token %}
@@ -735,12 +779,11 @@
                                 <button class="form-control-feedback" name="action" value="beta">{% trans "Send" %}</button>
                             </form>
                             </div>
-                            <p>{% blocktrans %}We're currently in Beta,
-                            testing the application and organizing some
-                            events, but if you want to test the app and try
-                            the game in our events, please, send us your
-                            google account and we'll give you development
-                            access to the app{% endblocktrans %}</p>
+                            <p>{% blocktrans %}
+                            We've a simple game editor, that you can use to create custom games and
+                            events. Currently is in a initial state and we only give access to some
+                            editors before open the Socializa Editor to everyone.
+                            {% endblocktrans %}</p>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -766,7 +809,7 @@
                             <li>
                                 <h3>{{ ev.name }}</h3>
                                 <h4>{{ ev.start_date }} - {{ ev.end_date }}</h4>
-                                <p><strong>{{ ev.game.name }}</strong> / {{ ev.game.desc }}</p>
+                                <p><strong>{{ ev.game.name }}</strong> / {{ ev.game.get_desc_html|safe }}</p>
                             </li>
                             {% endfor %}
                         </ul>
@@ -861,6 +904,22 @@
             appMaster.preLoader();
         });
     </script>
+
+    <!--Start of Tawk.to Script-->
+    <script type="text/javascript">
+        var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+        (function(){
+            var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+            s1.async=true;
+            s1.src='https://embed.tawk.to/591e921c8028bb7327046a74/default';
+            s1.charset='UTF-8';
+            s1.setAttribute('crossorigin','*');
+            s0.parentNode.insertBefore(s1,s0);
+        })();
+    </script>
+    <!--End of Tawk.to Script-->
+
+<a href="https://github.com/wadobo/socializa"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a>
 
 </body>
 

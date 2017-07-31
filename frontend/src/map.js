@@ -1,6 +1,5 @@
 import React from 'react';
 import { withRouter } from 'react-router';
-import ol from 'openlayers';
 
 import { storeUser, user, logout, getIcon } from './auth';
 import API from './api';
@@ -8,6 +7,127 @@ import GEO from './geo';
 import Bucket from './bucket';
 
 import { translate } from 'react-i18next';
+
+
+import L from 'leaflet';
+
+// Patching leaflet to allow marker rotation
+// based on: https://github.com/bbecquet/Leaflet.RotatedMarker
+function patchL() {
+    var proto_initIcon = L.Marker.prototype._initIcon;
+    var proto_setPos = L.Marker.prototype._setPos;
+
+    var oldIE = (L.DomUtil.TRANSFORM === 'msTransform');
+
+    L.Marker.addInitHook(function () {
+        var iconOptions = this.options.icon && this.options.icon.options;
+        var iconAnchor = iconOptions && this.options.icon.options.iconAnchor;
+        if (iconAnchor) {
+            iconAnchor = (iconAnchor[0] + 'px ' + iconAnchor[1] + 'px');
+        }
+        this.options.rotationOrigin = this.options.rotationOrigin || iconAnchor || 'center bottom' ;
+        this.options.rotationAngle = this.options.rotationAngle || 0;
+
+        // Ensure marker keeps rotated during dragging
+        this.on('drag', function(e) { e.target._applyRotation(); });
+    });
+
+    L.Marker.include({
+        _initIcon: function() {
+            proto_initIcon.call(this);
+        },
+
+        _setPos: function (pos) {
+            proto_setPos.call(this, pos);
+            this._applyRotation();
+        },
+
+        _applyRotation: function () {
+            if(this.options.rotationAngle) {
+                this._icon.style[L.DomUtil.TRANSFORM+'Origin'] = this.options.rotationOrigin;
+
+                if(oldIE) {
+                    // for IE 9, use the 2D rotation
+                    this._icon.style[L.DomUtil.TRANSFORM] = 'rotate(' + this.options.rotationAngle + 'deg)';
+                } else {
+                    // for modern browsers, prefer the 3D accelerated version
+                    this._icon.style[L.DomUtil.TRANSFORM] += ' rotateZ(' + this.options.rotationAngle + 'deg)';
+                }
+            }
+        },
+
+        setRotationAngle: function(angle) {
+            this.options.rotationAngle = angle;
+            this.update();
+            return this;
+        },
+
+        setRotationOrigin: function(origin) {
+            this.options.rotationOrigin = origin;
+            this.update();
+            return this;
+        }
+    });
+}
+patchL();
+
+
+class Player {
+    constructor(map, p, icon) {
+        let deficon = L.icon({
+            iconUrl: 'app/images/geo1.svg',
+            iconSize: [28, 28],
+        });
+
+        this.map = map;
+        this.marker = L.marker([0, 0], {
+            zIndexOffset: -1000,
+        });
+        this.marker.setIcon(icon || deficon);
+        this.marker.customData = {name: 'me'};
+
+        this.layers = L.layerGroup([this.marker]);
+        this.layers.addTo(this.map);
+    }
+
+    showCircle(radius, color) {
+        let l = L.circle(this.marker.getLatLng(), radius, {
+            color: color,
+            weight: 1,
+            fillOpacity: 0.1,
+        });
+        this.layers.addLayer(l);
+    }
+
+    showDirection() {
+        let icon = L.icon({
+            iconUrl: 'app/images/heading.svg',
+            iconAnchor: [16, 26],
+            iconSize: [32, 42],
+        });
+
+        this.direction = L.marker(this.marker.getLatLng(), {
+            zIndexOffset: -1001,
+            rotationOrigin: 'center center',
+            rotationAngle: 0
+        });
+
+        this.direction.setIcon(icon);
+        this.layers.addLayer(this.direction);
+    }
+
+    rotate(deg) {
+        this.direction.setRotationAngle(deg);
+    }
+
+    moveTo([lat, lng]) {
+        this.layers.eachLayer(l => l.setLatLng([lat, lng]));
+    }
+
+    remove() {
+        this.layers.remove();
+    }
+}
 
 
 class Map extends React.Component {
@@ -39,39 +159,13 @@ class Map extends React.Component {
     }
 
     componentDidUpdate() {
-      var svq = ol.proj.fromLonLat([-5.9866369, 37.3580539]);
-      var c = Bucket.lastPost ? Bucket.lastPost : svq;
-      this.view = new ol.View({
-        center: c,
-        zoom: 12
-      });
-
-      if (this.map) {
-        this.map.setTarget(null);
-      }
-
-      this.map = new ol.Map({
-        target: 'socializa-map',
-        layers: [
-          new ol.layer.Tile({
-            source: new ol.source.OSM()
-          })
-        ],
-        view: this.view
-      });
-
-      this.startGeolocation();
-      this.updateDimensions();
-    }
-
-    updateDimensions() {
-        $('canvas').height($(window).height() - 120);
-        this.map.updateSize();
+        this.initMap();
+        this.startGeolocation();
+        this.updateDimensions();
     }
 
     componentWillUnmount() {
         clearTimeout(this.updateTimer);
-
         window.removeEventListener("resize", this.updateDimensions.bind(this));
     }
 
@@ -83,189 +177,146 @@ class Map extends React.Component {
             });
     }
 
+    initMap() {
+        if (this.map) {
+            return;
+        }
+
+        let svq = [37.3580539, -5.9866369];
+        let c = Bucket.lastPost ? Bucket.lastPost : svq;
+        this.map = L.map('socializa-map').setView(c, 12);
+
+        L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(this.map);
+
+    //  this.view.on('change:rotation', function() {
+    //    self.rotationChanged();
+    //  });
+    }
+
+    updateDimensions() {
+        $('#socializa-map').height($(window).height() - 120);
+        this.map.invalidateSize();
+    }
+
     centre = (e) => {
-        this.map.getView().animate({
-          center: Bucket.lastPost,
-          duration: 1000
+        this.map.panTo(Bucket.lastPost, {
+            animate: true,
+            duration: 1,
         });
+    }
+
+    rotationChanged() {
+        //var viewRot = this.map.getView().getRotation();
+        //var newrot = (this.heading || 0) + viewRot;
+        //this.direction.setRotation(newrot);
+        this.player.rotate(this.heading);
+    }
+
+    onCompass(heading) {
+        // degress to radians
+        var h = heading * Math.PI / 180;
+        this.heading = h;
+        this.rotationChanged();
     }
 
     onPosSuccess(position) {
         var lat = position.coords.latitude;
         var lon = position.coords.longitude;
-        var coords = [parseFloat(lon), parseFloat(lat)];
-
+        var coords = [parseFloat(lat), parseFloat(lon)];
         API.setPos(lat, lon);
 
-        var coordinates = new ol.geom.Point(ol.proj.fromLonLat(coords));
-        var center = ol.proj.transform([lon, lat], 'EPSG:4326', 'EPSG:3857');
-        Bucket.lastPost = center;
+        Bucket.lastPost = coords;
 
         if (this.firstCentre) {
             this.centre();
             this.firstCentre = false;
         }
-        this.positionFeature.setGeometry(coordinates);
 
-        var vd = user.activeEvent ? user.activeEvent.vision_distance : 0;
-        var md = user.activeEvent ? user.activeEvent.meeting_distance : 0;
-        var circle = new ol.geom.Circle(center, vd);
-        this.visionFeature.setGeometry(circle);
-        circle = new ol.geom.Circle(center, md);
-        this.meetingFeature.setGeometry(circle);
+        this.player.moveTo(coords);
     }
 
     onPosError(error) { }
 
     startGeolocation() {
-      var map = this.map;
-      var self = this;
-
-      this.positionFeature = new ol.Feature();
-      this.positionFeature.setStyle(new ol.style.Style({
-        image: new ol.style.Icon({ src: 'app/images/geo1.svg' }),
-        zIndex: 10
-      }));
-      this.positionFeature.customData = {name: 'me'};
-
-      this.visionFeature = new ol.Feature();
-      this.meetingFeature = new ol.Feature();
-
-      // vision layer
-      new ol.layer.Vector({
-        map: map,
-
-        source: new ol.source.Vector({
-          features: [this.visionFeature]
-        }),
-
-        style: new ol.style.Style({
-            fill: new ol.style.Fill({ color: 'rgba(255, 255, 255, 0.2)' }),
-            stroke: new ol.style.Stroke({ width: 1, color: '#286090' })
-        })
-
-      });
-
-      // meeting distance layer
-      new ol.layer.Vector({
-        map: map,
-
-        source: new ol.source.Vector({
-          features: [this.meetingFeature]
-        }),
-
-        style: new ol.style.Style({
-            fill: new ol.style.Fill({ color: 'rgba(92, 184, 92, 0.1)' }),
-            stroke: new ol.style.Stroke({ width: 0.5, color: '#5cb85c' })
-        })
-      });
-
-      // my position layer
-      new ol.layer.Vector({
-        map: map,
-
-        source: new ol.source.Vector({
-          features: [this.positionFeature]
-        })
-      });
-
-      this.playerList = new ol.source.Vector();
-
-      var playersLayer = new ol.layer.Vector({
-        map: map,
-        source: this.playerList
-      });
-
-      // starting tracking
-      if (this.state.state == 'started') {
-        GEO.successCB = this.onPosSuccess.bind(this);
-        GEO.errorCB = this.onPosError.bind(this);
-        GEO.start();
-
-        this.view.setZoom(18);
-        this.setUpdateTimer(500);
-      }
-
-      var select = new ol.interaction.Select({
-        filter: function (f, l) {
-            if (f == self.visionFeature) {
-                return false;
-            }
-            if (f == self.meetingFeature) {
-                return false;
-            }
-            if (f == self.positionFeature) {
-                return false;
-            }
-            return true;
+        if (this.player || this.state.state == 'stopped') {
+            return;
         }
-      });
-      map.addInteraction(select);
-      select.on('select', function(e) {
-          var f = e.target.getFeatures();
 
-          if (f.getLength()) {
-              var i = 0;
-              var feature = f.getArray()[i];
-              self.props.history.push('/connect/' + feature.customData.id);
-          }
-      });
+        let vd = user.activeEvent ? user.activeEvent.vision_distance : 0;
+        let md = user.activeEvent ? user.activeEvent.meeting_distance : 0;
+
+        this.player = new Player(this.map, [0, 0]);
+        this.player.showCircle(vd, '#286090');
+        this.player.showCircle(md, '#5cb85c');
+        this.player.showDirection();
+
+        if (this.state.state == 'started') {
+          GEO.successCB = this.onPosSuccess.bind(this);
+          GEO.errorCB = this.onPosError.bind(this);
+          GEO.compassCB = this.onCompass.bind(this);
+          GEO.start();
+
+          this.map.setZoom(18);
+          this.setUpdateTimer(500);
+        }
+
+        this.playerList = L.layerGroup();
+        this.playerList.addTo(this.map);
     }
 
     getIcon(p) {
-        return new ol.style.Icon({ src: getIcon(p) });
+        return L.icon({
+            iconUrl: getIcon(p),
+            iconSize: [28, 28],
+        });
     }
 
     playersUpdated = (data) => {
-        var self = this;
-        var fs = this.playerList.getFeatures();
+        let pl = this.playerList.getLayers();
+        let noremove = {};
 
-        var noremove = {};
-
-        data.forEach(function(p) {
+        data.map((p) => {
             noremove[p.pk] = true;
-            var playerFeature = null;
+            let layer = null;
 
-            var i = 0;
-            while (i < fs.length) {
-                var f = fs[i];
+            let i = 0;
+            while (i < pl.length) {
+                let f = pl[i];
                 if (f.customData.id == p.pk) {
-                    playerFeature = f;
+                    layer = f;
                     break;
                 }
                 i++;
             }
 
-            if (playerFeature == null) {
-                // adding not found features
-                playerFeature = new ol.Feature();
-                playerFeature.setStyle(new ol.style.Style({
-                  image: self.getIcon(p),
-                  zIndex: 100
-                }));
-                self.playerList.addFeature(playerFeature);
-            }
+            let point = [p.pos.latitude, p.pos.longitude];
 
-            // moving the features
-            var coords = [parseFloat(p.pos.longitude), parseFloat(p.pos.latitude)];
-            var point = new ol.proj.transform([coords[0], coords[1]], 'EPSG:4326', 'EPSG:3857');
-            playerFeature.customData = {id: p.pk, coords: point, name: p.username};
-            playerFeature.setGeometry(
-                new ol.geom.Point(ol.proj.fromLonLat(coords))
-            );
+            if (layer == null) {
+                // adding not found layers
+                layer = L.marker(point);
+                layer.setIcon(this.getIcon(p));
+
+                layer.on("click", (e) => {
+                    this.props.history.push('/connect/' + e.target.customData.id);
+                });
+
+                this.playerList.addLayer(layer);
+            }
+            layer.customData = {id: p.pk, coords: point, name: p.username};
+            layer.setLatLng(point);
         });
 
-        // removing removed featured
-        var i = 0;
-        var l = fs.length;
+        // removing removed layers
+        let i = 0;
+        let l = pl.length;
         while (i < l) {
-            var f = fs[i];
+            var f = pl[i];
             if (noremove[f.customData.id]) {
                 i++;
                 continue;
             }
 
-            this.playerList.removeFeature(f);
+            this.playerList.removeLayer(f);
             l--;
         }
     }
@@ -302,6 +353,17 @@ class Map extends React.Component {
         this.setState({ state: 'stopped' });
         GEO.stop();
         this.unplay();
+
+        if (this.player) {
+            this.player.remove();
+            this.player = null;
+        }
+
+        if (this.playerList) {
+            this.playerList.eachLayer(l => l.remove());
+            this.playerList.remove();
+            this.playerList = null;
+        }
     }
 
     viewEvent = (e) => {
