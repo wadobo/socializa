@@ -12,79 +12,48 @@
 {% endblock %}
 
 {% block extrahead %}
-    <link rel="stylesheet" href="{% static "vendors/ol/ol.css" %}" />
+    <link href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" rel="stylesheet" type="text/css" />
+    <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet-src.js"></script>
+
+    <script src="{% static "vendors/leaflet/search/leaflet-search.js" %}"></script>
+    <link rel="stylesheet" href="{% static "vendors/leaflet/search/leaflet-search.css" %}" />
+
+    <script src="{% static "vendors/leaflet/draw/leaflet.draw.js" %}"></script>
+    <link rel="stylesheet" href="{% static "vendors/leaflet/draw/leaflet.draw.css" %}" />
+
     <link rel="stylesheet" href="{% static "edit_event.css" %}" />
     <link href="//cdn.jsdelivr.net/openlayers.geocoder/latest/ol3-geocoder.min.css" rel="stylesheet">
+    <meta name="csrf-token" content="{{ csrf_token }}">
 {% endblock %}
 
 {% block head %}
     {% if ev %}
-        <h1>
-            <a class="pull-right btn btn-primary" href="{% url 'event_challenges' ev.id %}">{% trans "Assign challenges" %}</a>
-            {% trans "Edit:" %} {{ ev }}
-        </h1>
+        <h1>{% trans "Edit:" %} {{ ev }}</h1>
     {% else %}
         <h1>{% trans "Create a new Event" %}</h1>
     {% endif %}
 {% endblock %}
 
 {% block content %}
-    <form method="POST" action="">
-        {% csrf_token %}
-
-        {% if ev and not data %}
-            {% include "editor/forms/ev.html" with data=ev %}
-        {% else %}
-            {% include "editor/forms/ev.html" %}
-        {% endif %}
-
-        <h2>{% trans "Select the game" %}</h2>
-        <hr/>
-        <div class="games">
-        {% for game in games %}
-            {% if forloop.counter|divisibleby:"3" %}
-                <div class="row">
-            {% endif %}
-
-            <div class="col-sm-4">
-                <label class="row">
-                    <input type="radio" name="ev_game" value="{{ game.id }}" class="col-sm-1"
-                    {% if ev.game == game %}
-                        checked="checked"
-                    {% endif %}
-                    />
-                    <div class="col-sm-11">
-                        {{ game.name }} /
-                        <span class="text-primary">{{ game.challenges.all|length }} {% trans "challenges" %}</span>
-                        <p class="text-muted text-small">{{ game.get_desc_html|safe|truncatewords:50 }}</p>
-                    </div>
-                </label>
-            </div>
-
-            {% if forloop.counter|divisibleby:"3" %}
-                </div>
-            {% endif %}
-        {% endfor %}
-        </div>
-
-        <button class="btn btn-block btn-primary">
-            {% trans "Save and continue" %}
-        </button>
-        <hr/>
-    </form>
+    <div id="content">
+    </div>
 {% endblock %}
 
 {% block extrabody %}
-    <script src="{% static "vendors/ol/ol.js" %}"></script>
-    <script src="//cdn.jsdelivr.net/openlayers.geocoder/latest/ol3-geocoder.js"></script>
-
     <script>
-        {% if ev.place %}
-            var evplace = {{ ev.place.geojson|safe }};
-        {% else %}
-            var evplace = null;
+        window.evid = null;
+        {% if ev %}
+            window.evid = {{ ev.pk }};
+            {% if ev.place %}
+                window.evplace = {{ ev.place.geojson|safe }};
+            {% else %}
+                window.evplace = null;
+            {% endif %}
         {% endif %}
     </script>
 
-    <script src="{% static "edit_event.js" %}"></script>
+    <script src="{% static "vendors/tinymce/tinymce.min.js" %}"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/cytoscape/3.1.1/cytoscape.min.js"></script>
+    <script src="{% static "vendors.js" %}"></script>
+    <script src="{% static "eventeditor.js" %}"></script>
 {% endblock %}
