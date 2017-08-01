@@ -141,7 +141,7 @@ class GameView(APIView):
         return Response(data)
 
     @classmethod
-    def post(cls, request, game_id):
+    def post(cls, request, game_id=None):
         game = request.data
         challenges = request.data['challenges']
 
@@ -234,7 +234,7 @@ class EventView(APIView):
         return p
 
     @classmethod
-    def post(cls, request, ev_id):
+    def post(cls, request, ev_id=None):
         ev = request.data
 
         if ev_id:
