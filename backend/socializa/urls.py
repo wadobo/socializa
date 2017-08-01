@@ -26,6 +26,7 @@ schema_view = get_swagger_view(title="Socializa API")
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^accounts/', include('django.contrib.auth.urls')),
     url(r'^docs/', schema_view),
     url(r"^editor/", include("editor.urls")),
     url(r'^api/oauth2apps/$', oauth2apps),
