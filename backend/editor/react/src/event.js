@@ -413,9 +413,9 @@ export class EventMap extends Component {
             let { lat, lng } = l.getLatLng();
 
             l.idx = i;
-            l.unbindTooltip().bindTooltip(p.about, { permanent: true, direction: 'top', });
+            l.unbindTooltip().bindTooltip(p.about || p.username || "--", { permanent: true, direction: 'top', });
             actions.upPlayer(i, 'layer', l);
-            actions.upPlayer(i, 'username', p.about);
+            actions.upPlayer(i, 'username', p.about || p.username || "--");
             actions.upPlayer(i, 'pos', [lng, lat]);
 
             this.drawnItems.addLayer(l);
