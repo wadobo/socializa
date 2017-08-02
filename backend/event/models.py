@@ -55,7 +55,8 @@ class Event(models.Model):
     def set_playing(self, player):
         m, new = Membership.objects.get_or_create(player=player, event=self)
         m.save()
-        p, new = PlayingEvent.objects.get_or_create(player=player, event=self)
+        p, new = PlayingEvent.objects.get_or_create(player=player)
+        p.event = self
         p.save()
 
     def __str__(self):

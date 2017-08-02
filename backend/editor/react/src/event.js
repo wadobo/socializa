@@ -374,6 +374,8 @@ export class EventMap extends Component {
                 if (l.idx !== undefined) {
                     let { lat, lng } = l.getLatLng();
                     actions.upPlayer(l.idx, 'pos', [lng, lat]);
+                } else if (l == self.zone) {
+                    actions.setEvProp('place', self.zone.toGeoJSON());
                 }
             });
         });
@@ -390,6 +392,11 @@ export class EventMap extends Component {
         }
 
         this.zone = L.geoJson(JSON.parse(ev.place), { style: {color: "#880000"} });
+
+        let l = this.zone.getLayers()[0];
+        let latlngs = l.getLatLngs()[0][0].map(x => [x.lat, x.lng]);
+        this.zone = L.polygon(latlngs, { color: '#880000' });
+
         this.drawnItems.addLayer(this.zone);
         this.map.fitBounds(this.zone.getBounds());
     }
