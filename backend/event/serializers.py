@@ -27,7 +27,7 @@ class EventSerializer(serializers.Serializer):
     meeting_distance = serializers.IntegerField()
 
     def get_place(self, event):
-        return event.place.geojson
+        return event.place.geojson if event.place else None
 
     def is_player_joined(self, event):
         player = self.context.get("player")
