@@ -52,12 +52,13 @@ class Event(models.Model):
     def get_meeting_distance(self):
         return self.meeting_distance or settings.DEFAULT_MEETING_DISTANCE
 
-    def set_playing(self, player):
+    def set_playing(self, player, avoid_playing_event=False):
         m, new = Membership.objects.get_or_create(player=player, event=self)
         m.save()
-        p, new = PlayingEvent.objects.get_or_create(player=player)
-        p.event = self
-        p.save()
+        if not (avoid_playing_event and player.ptype == "player"):
+            p, new = PlayingEvent.objects.get_or_create(player=player)
+            p.event = self
+            p.save()
 
     def __str__(self):
         return self.name
