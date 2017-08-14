@@ -2,8 +2,13 @@
 {% load i18n %}
 {% load static %}
 
+{% block extrahead %}
+    <link rel="stylesheet" href="{% static "editor.css" %}" />
+{% endblock %}
+
 {% block head %}
     <h1>{% trans "Editor" %}</h1>
+    <span class="version">v0.0.1</span>
 {% endblock %}
 
 {% block content %}
