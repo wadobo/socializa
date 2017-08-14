@@ -11,7 +11,12 @@ class EventEditorForm extends Component {
         this.initDatePicker();
     }
 
+    changeField = (field, e) => {
+        this.props.actions.setEvProp(field, e.target.value);
+    }
+
     initDatePicker() {
+        let self = this;
         window.jQuery(".datetimepicker").datetimepicker({
             format: 'YYYY-MM-DD HH:mm ZZ',
             sideBySide: true
@@ -19,11 +24,8 @@ class EventEditorForm extends Component {
         window.jQuery(".datetimepicker").on("dp.change", function(e) {
             let ev = new Event('input', { bubbles: true} );
             window.jQuery(this)[0].dispatchEvent(ev);
+            self.changeField(e.target.name.substring(3), e);
         });
-    }
-
-    changeField = (field, e) => {
-        this.props.actions.setEvProp(field, e.target.value);
     }
 
     tinyChange = (field, e) => {
