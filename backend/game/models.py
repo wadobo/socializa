@@ -56,11 +56,8 @@ class Challenge(models.Model, ExtraBase):
         return desc_html
 
     def __str__(self):
-        g = self.games.all()
-        if g:
-            g = g[0]
-            return "{} - {} - {}...".format(g, self.name, self.desc[0:10])
-        return "{} - {}...".format(g, self.name, self.desc[0:10])
+        desc = self.desc[:10] if self.desc else "-"
+        return "{} - {}...".format(self.name, desc)
 
     class Meta:
         ordering = ['pk']

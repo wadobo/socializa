@@ -175,6 +175,8 @@ class GameView(APIView):
 
             c.add_extra('options', ch.get('options', []))
             c.save()
+            g.challenges.add(c)
+            g.save()
             pkch[pk] = c
 
         for ch in challenges:
