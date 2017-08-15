@@ -41,12 +41,14 @@
   "fields": {
     "client_id": "xKwVuUYr7BCVNrnSN5flaynFQ",
     "user": 1,
-    "redirect_uris": "",
+    "redirect_uris": "http://wadobo.com",
     "client_type": "public",
     "authorization_grant_type": "password",
     "client_secret": "gQVsC2wMMx0Wkp1pxHXHnhiRMFBXHqYcah3ABjqeHNXwoo2Ndl",
     "name": "local",
-    "skip_authorization": false
+    "skip_authorization": false,
+    "created": "2017-08-15T06:40:12.348Z",
+    "updated": "2017-08-15T06:40:12.351Z"
   }
 },
 {

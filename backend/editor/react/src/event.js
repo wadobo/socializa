@@ -11,7 +11,12 @@ class EventEditorForm extends Component {
         this.initDatePicker();
     }
 
+    changeField = (field, e) => {
+        this.props.actions.setEvProp(field, e.target.value);
+    }
+
     initDatePicker() {
+        let self = this;
         window.jQuery(".datetimepicker").datetimepicker({
             format: 'YYYY-MM-DD HH:mm ZZ',
             sideBySide: true
@@ -19,11 +24,8 @@ class EventEditorForm extends Component {
         window.jQuery(".datetimepicker").on("dp.change", function(e) {
             let ev = new Event('input', { bubbles: true} );
             window.jQuery(this)[0].dispatchEvent(ev);
+            self.changeField(e.target.name.substring(3), e);
         });
-    }
-
-    changeField = (field, e) => {
-        this.props.actions.setEvProp(field, e.target.value);
     }
 
     tinyChange = (field, e) => {
@@ -374,6 +376,8 @@ export class EventMap extends Component {
                 if (l.idx !== undefined) {
                     let { lat, lng } = l.getLatLng();
                     actions.upPlayer(l.idx, 'pos', [lng, lat]);
+                } else if (l == self.zone) {
+                    actions.setEvProp('place', self.zone.toGeoJSON());
                 }
             });
         });
@@ -390,6 +394,11 @@ export class EventMap extends Component {
         }
 
         this.zone = L.geoJson(JSON.parse(ev.place), { style: {color: "#880000"} });
+
+        let l = this.zone.getLayers()[0];
+        let latlngs = l.getLatLngs()[0][0].map(x => [x.lat, x.lng]);
+        this.zone = L.polygon(latlngs, { color: '#880000' });
+
         this.drawnItems.addLayer(this.zone);
         this.map.fitBounds(this.zone.getBounds());
     }
@@ -406,9 +415,9 @@ export class EventMap extends Component {
             let { lat, lng } = l.getLatLng();
 
             l.idx = i;
-            l.unbindTooltip().bindTooltip(p.about, { permanent: true, direction: 'top', });
+            l.unbindTooltip().bindTooltip(p.about || p.username || "--", { permanent: true, direction: 'top', });
             actions.upPlayer(i, 'layer', l);
-            actions.upPlayer(i, 'username', p.about);
+            actions.upPlayer(i, 'username', p.about || p.username || "--");
             actions.upPlayer(i, 'pos', [lng, lat]);
 
             this.drawnItems.addLayer(l);
