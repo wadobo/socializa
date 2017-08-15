@@ -10,7 +10,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         apps = ['local', 'facebook', 'google']
 
-        u = User.objects.all()[0]
+        u = User.objects.filter(is_superuser=True).order_by('pk').first()
 
         for app in apps:
             a, created = Application.objects.get_or_create(name=app, user=u)
