@@ -175,6 +175,8 @@ class GameView(APIView):
 
             c.add_extra('options', ch.get('options', []))
             c.save()
+            g.challenges.add(c)
+            g.save()
             pkch[pk] = c
 
         for ch in challenges:
@@ -286,7 +288,7 @@ class EventView(APIView):
 
             p.set_position(*ep['pos'])
             players_ids.append(p.pk)
-            e.set_playing(p)
+            e.set_playing(p, avoid_playing_event=True)
 
             Clue.objects.filter(player=p, event=e).delete()
 
