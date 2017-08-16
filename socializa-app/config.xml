@@ -39,6 +39,7 @@
         <param name="REVERSED_CLIENT_ID" value="com.googleusercontent.apps.180959654042-25rgejtel6r7m6dg93mnmhv39shfs93j" />
     </plugin>
     <icon src="icons/icon.png" />
+    <splash src="icons/splash.png" />
     <platform name="android">
         <icon density="ldpi" src="icons/res/icons/android/icon-36-ldpi.png" />
         <icon density="mdpi" src="icons/res/icons/android/icon-48-mdpi.png" />
@@ -52,6 +53,64 @@
         <splash density="port-xhdpi" src="icons/res/screens/android/screen-xhdpi-portrait.png" />
         <splash density="port-xxhdpi" src="icons/res/screens/android/screen-xxhdpi-portrait.png" />
         <splash density="port-xxxhdpi" src="icons/res/screens/android/screen-xxxhdpi-portrait.png" />
+    </platform>
+    <platform name="ios">
+        <!-- ICONS -->
+        <!-- Spotlight Icon -->
+        <icon src="icons/res/icons/ios/icon-40.png" width="40" height="40" />
+        <icon src="icons/res/icons/ios/icon-40@2x.png" width="80" height="80" />
+        <icon src="icons/res/icons/ios/icon-40@3x.png" width="120" height="120" />
+        
+        <!-- iPad Spotlight and Settings Icon -->
+        <icon src="icons/res/icons/ios/icon-50.png" width="50" height="50" />
+        <icon src="icons/res/icons/ios/icon-50@2x.png" width="100" height="100" />
+
+	<!-- iPhone 6 / 6+ -->
+        <icon src="icons/res/icons/ios/icon-60@3x.png" width="180" height="180" />
+        
+        <!-- iPhone / iPod Touch  -->
+        <icon src="icons/res/icons/ios/icon-60.png" width="60" height="60" />
+        <icon src="icons/res/icons/ios/icon-60@2x.png" width="120" height="120" />
+        
+        <!-- iPad -->
+        <icon src="icons/res/icons/ios/icon-72.png" width="72" height="72" />
+        <icon src="icons/res/icons/ios/icon-72@2x.png" width="144" height="144" />
+        
+        <!-- iPad -->
+        <icon src="icons/res/icons/ios/icon-76.png" width="76" height="76" />
+        <icon src="icons/res/icons/ios/icon-76@2x.png" width="152" height="152" />
+        <icon src="icons/res/icons/ios/icon-83.5@2x.png" width="167" height="167" />
+        
+        <!-- Settings Icon -->
+        <icon src="icons/res/icons/ios/icon-small.png" width="29" height="29" />
+        <icon src="icons/res/icons/ios/icon-small@2x.png" width="58" height="58" />
+        <icon src="icons/res/icons/ios/icon-small@3x.png" width="87" height="87" />
+        
+        <!-- iPhone / iPod Touch -->
+        <icon src="icon.png" width="57" height="57" />
+        <icon src="icon@2x.png" width="114" height="114" />
+
+        <!-- SPLASH -->
+        <!-- iPhone and iPod touch -->
+        <splash src="icons/res/screens/ios/Default.png" width="320" height="480" />
+        <splash src="icons/res/screens/ios/Default@2x.png" width="640" height="960" />
+        
+        <!-- iPhone 5 / iPod Touch (5th Generation) -->
+        <splash src="icons/res/screens/ios/Default-568h.png" width="320" height="568" />
+        <splash src="icons/res/screens/ios/Default-568h@2x.png" width="640" height="1136" />
+        
+        <!-- iPhone 6 -->
+        <splash src="icons/res/screens/ios/Default-667h@2x.png" width="750" height="1334" />
+        <splash src="icons/res/screens/ios/Default-Portrait-736h@3x.png" width="1242" height="2208" />
+        <splash src="icons/res/screens/ios/Default-Landscape-736h@3x.png" width="2208" height="1242" />
+        
+        <!-- iPad -->
+        <splash src="icons/res/screens/ios/Default-Portrait.png" width="768" height="1024" />
+        <splash src="icons/res/screens/ios/Default-Landscape.png" width="1024" height="768" />
+        
+        <!-- Retina iPad -->
+        <splash src="icons/res/screens/ios/Default-Portrait@2x.png" width="1536" height="2048" />
+        <splash src="icons/res/screens/ios/Default-Landscape@2x.png" width="2048" height="1536" />
     </platform>
     <access origin="*" />
     <allow-intent href="http://*/*" />
