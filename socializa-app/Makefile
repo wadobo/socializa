@@ -1,5 +1,8 @@
-frontend:
+dev:
 	cd ../frontend/; make app
+
+pro:
+	cd ../frontend/; make app-pro
 
 android: frontend
 	phonegap build android
