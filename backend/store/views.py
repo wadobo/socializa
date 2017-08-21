@@ -9,6 +9,7 @@ from .serializers import ProductSerializer
 class GetProducts(APIView):
 
     def get(self, request):
+        """ Get product that you can purchase. """
         products = Product.objects.all().order_by('coins')
         serializer = ProductSerializer(products, many=True)
         data = serializer.data
@@ -18,5 +19,6 @@ class GetProducts(APIView):
 class CheckPurchase(APIView):
 
     def get(self, request):
+        """ Check product that have buyed the request player. """
         data = {}
         return Response(data)

@@ -84,6 +84,7 @@ class JoinEvent(APIView):
 
     @classmethod
     def post(cls, request, event_id):
+        """ Player join {event_id}. """
         player = request.user.player
         event = Event.objects.get(pk=event_id)
         _, msg, status = create_member(player, event)
@@ -98,6 +99,7 @@ class UnjoinEvent(APIView):
 
     @classmethod
     def delete(cls, request, event_id):
+        """ Player unjoin {event_id}. """
         player = request.user.player
         event = Event.objects.get(pk=event_id)
         try:
@@ -114,6 +116,7 @@ class MyEvents(APIView):
 
     @classmethod
     def get(cls, request):
+        """ Player get his joined events. """
         events = request.user.player.event_set.all()
         serializer = EventSerializer(events, many=True)
         data = serializer.data
@@ -243,6 +246,7 @@ class AdminEventUpdate(APIView):
 
     @classmethod
     def post(cls, request, event_id):
+        """ Update {event_id}. You need event admin permissions. """
         event = Event.objects.get(pk=event_id)
         vision_distance = request.data.get('vision_distance', None)
         meeting_distance = request.data.get('meeting_distance', None)

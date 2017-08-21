@@ -30,11 +30,11 @@ class HasCluePermission(BasePermission):
 
 class MyClues(APIView):
 
+    permission_classes = [IsAuthenticated]
+
     @classmethod
     def get(cls, request, game_id):
-        if request.user.is_anonymous():
-            return Response("Anonymous user", status=rf_status.HTTP_401_UNAUTHORIZED)
-
+        """ Get all my clues of {game_id} """
         player = request.user.player
         game = get_object_or_404(Game, pk=game_id)
         challenges = game.challenges.all()

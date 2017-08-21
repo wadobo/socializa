@@ -24,12 +24,8 @@ from .views import oauth2apps, gplusid
 
 
 schema_url_patterns = [
-    url(r'^accounts/', include('django.contrib.auth.urls')),
-    url(r"^editor/", include("editor.urls")),
-    url(r'^oauth2apps/$', oauth2apps),
-    url(r'^gplusid/$', gplusid),
-    url(r'^token/', views.obtain_auth_token),
-    url(r"^social/", include("rest_framework_social_oauth2.urls")),
+    #url(r"^editor/", include("editor.urls")),
+    #url(r"^social/", include("rest_framework_social_oauth2.urls")),
     url(r"^player/", include("player.urls")),
     url(r"^event/", include("event.urls")),
     url(r"^clue/", include("clue.urls")),
