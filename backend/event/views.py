@@ -30,7 +30,7 @@ class HasEventPermission(BasePermission):
         self.message = "Event doesn't exists"
 
     def has_permission(self, request, view):
-        evid = view.kwargs.get('event_id', '')
+        evid = view.kwargs.get('event_id', None)
         if not Event.objects.filter(pk=evid).exists():
             return False
         return True
@@ -39,7 +39,7 @@ class HasEventPermission(BasePermission):
 class IsEventMemberPermission(HasEventPermission):
     def has_permission(self, request, view):
         super().has_permission(request, view)
-        evid = view.kwargs.get('event_id', '')
+        evid = view.kwargs.get('event_id', None)
         player = request.user.player
         if not Membership.objects.filter(event=evid, player=player).exists():
             self.message = "Unauthorized event"
@@ -50,8 +50,8 @@ class IsEventMemberPermission(HasEventPermission):
 class IsEventAdminPermission(HasEventPermission):
     def has_permission(self, request, view):
         super().has_permission(request, view)
-        evid = view.kwargs.get('event_id', '')
-        event = Event.objects.get(pk=evid)
+        evid = view.kwargs.get('event_id', None)
+        event = get_object_or_404(Event, pk=evid)
         if not event.owners.filter(pk=request.user.pk).exists():
             self.message = "Non admin user"
             return False

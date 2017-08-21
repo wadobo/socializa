@@ -46,13 +46,13 @@ def create_meeting(player1, player2, event_id=None):
 
 class PlayersNear(APIView):
 
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, event_id=None):
         """
         Get near player. If general event, obtain all players near; if not
         general event, obtain near player inside event if you inside event.
         """
-        if request.user.is_anonymous():
-            return Response("Anonymous user", status=rf_status.HTTP_401_UNAUTHORIZED)
         self.player = request.user.player
 
         # Check player position
