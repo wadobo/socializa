@@ -113,7 +113,10 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
     ),
-    'TEST_REQUEST_DEFAULT_FORMAT': 'json'
+    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning',
+    'DEFAULT_VERSION': 'v1',
+    'ALLOWED_VERSIONS': ['v1', 'v2'],
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json',
 }
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
@@ -286,9 +289,7 @@ SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
 
 SWAGGER_SETTINGS = {
         'DOC_EXPANSION': 'list',
-        'APIS_SORTER': 'alpha',
         'JSON_EDITOR': True,
-        'OPERATIONS_SORTER': 'alpha',
         'USE_SESSION_AUTH': False,
         'SHOW_REQUEST_HEADERS': True,
         'SECURITY_DEFINITIONS': {

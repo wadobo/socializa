@@ -135,6 +135,7 @@ class GameView(APIView):
 
     @classmethod
     def get(cls, request, game_id):
+        """ Get full game in json format. You should be {game_id} author. """
         game = get_object_or_404(Game, pk=game_id)
         serializer = FullGameSerializer(game)
         data = serializer.data
@@ -142,6 +143,7 @@ class GameView(APIView):
 
     @classmethod
     def post(cls, request, game_id=None):
+        """ Create/update full game. You should be {game_id} author or have editor permissions. """
         game = request.data
         challenges = request.data['challenges']
 
@@ -205,6 +207,7 @@ class GameList(APIView):
 
     @classmethod
     def get(cls, request):
+        """ List all yours game like author. """
         games = request.user.games.all()
         serializer = FullGameSerializer(games, many=True)
         data = serializer.data
@@ -219,6 +222,7 @@ class EventView(APIView):
 
     @classmethod
     def get(cls, request, ev_id):
+        """ Get full event in json format. You should be {ev_id} author. """
         ev = get_object_or_404(Event, pk=ev_id)
         serializer = FullEventSerializer(ev)
         data = serializer.data
@@ -237,6 +241,7 @@ class EventView(APIView):
 
     @classmethod
     def post(cls, request, ev_id=None):
+        """ Create/update full event. You should be {ev_id} author or have editor permissions. """
         ev = request.data
 
         if ev_id:

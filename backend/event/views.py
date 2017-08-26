@@ -30,7 +30,7 @@ class HasEventPermission(BasePermission):
         self.message = "Event doesn't exists"
 
     def has_permission(self, request, view):
-        evid = view.kwargs.get('event_id', '')
+        evid = view.kwargs.get('event_id', None)
         if not Event.objects.filter(pk=evid).exists():
             return False
         return True
@@ -39,7 +39,7 @@ class HasEventPermission(BasePermission):
 class IsEventMemberPermission(HasEventPermission):
     def has_permission(self, request, view):
         super().has_permission(request, view)
-        evid = view.kwargs.get('event_id', '')
+        evid = view.kwargs.get('event_id', None)
         player = request.user.player
         if not Membership.objects.filter(event=evid, player=player).exists():
             self.message = "Unauthorized event"
@@ -50,8 +50,8 @@ class IsEventMemberPermission(HasEventPermission):
 class IsEventAdminPermission(HasEventPermission):
     def has_permission(self, request, view):
         super().has_permission(request, view)
-        evid = view.kwargs.get('event_id', '')
-        event = Event.objects.get(pk=evid)
+        evid = view.kwargs.get('event_id', None)
+        event = get_object_or_404(Event, pk=evid)
         if not event.owners.filter(pk=request.user.pk).exists():
             self.message = "Non admin user"
             return False
@@ -84,6 +84,7 @@ class JoinEvent(APIView):
 
     @classmethod
     def post(cls, request, event_id):
+        """ Player join {event_id}. """
         player = request.user.player
         event = Event.objects.get(pk=event_id)
         _, msg, status = create_member(player, event)
@@ -98,6 +99,7 @@ class UnjoinEvent(APIView):
 
     @classmethod
     def delete(cls, request, event_id):
+        """ Player unjoin {event_id}. """
         player = request.user.player
         event = Event.objects.get(pk=event_id)
         try:
@@ -114,6 +116,7 @@ class MyEvents(APIView):
 
     @classmethod
     def get(cls, request):
+        """ Player get his joined events. """
         events = request.user.player.event_set.all()
         serializer = EventSerializer(events, many=True)
         data = serializer.data
@@ -243,6 +246,7 @@ class AdminEventUpdate(APIView):
 
     @classmethod
     def post(cls, request, event_id):
+        """ Update {event_id}. You need event admin permissions. """
         event = Event.objects.get(pk=event_id)
         vision_distance = request.data.get('vision_distance', None)
         meeting_distance = request.data.get('meeting_distance', None)

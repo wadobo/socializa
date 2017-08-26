@@ -4,7 +4,6 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status as rf_status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.permissions import BasePermission
 
@@ -22,7 +21,7 @@ class HasCluePermission(BasePermission):
         self.message = "Clue doesn't exists"
 
     def has_permission(self, request, view):
-        clueid = view.kwargs.get('clue_id', '')
+        clueid = view.kwargs.get('clue_id', None)
         player = request.user.player
         if not Clue.objects.filter(pk=clueid, player=player).exists():
             return False
@@ -31,11 +30,11 @@ class HasCluePermission(BasePermission):
 
 class MyClues(APIView):
 
+    permission_classes = [IsAuthenticated]
+
     @classmethod
     def get(cls, request, game_id):
-        if request.user.is_anonymous():
-            return Response("Anonymous user", status=rf_status.HTTP_401_UNAUTHORIZED)
-
+        """ Get all my clues of {game_id} """
         player = request.user.player
         game = get_object_or_404(Game, pk=game_id)
         challenges = game.challenges.all()

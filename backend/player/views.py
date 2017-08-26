@@ -46,13 +46,12 @@ def create_meeting(player1, player2, event_id=None):
 
 class PlayersNear(APIView):
 
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, event_id=None):
         """
-        Get near player. If general event, obtain all players near; if not
-        general event, obtain near player inside event if you inside event.
+        Get near players. If player inside event, get near players inside event, else get all near players.
         """
-        if request.user.is_anonymous():
-            return Response("Anonymous user", status=rf_status.HTTP_401_UNAUTHORIZED)
         self.player = request.user.player
 
         # Check player position
@@ -247,11 +246,10 @@ class MeetingCreate(APIView):
 
     def post(self, request, player_id, event_id=None, secret=None):
         """ For create a meeting there are 4 steps:
-            1: player1 try to connect with player2 (create meeting with status step1)
-               - Exception (if player2 is ai, return clue)
-            2: player2 try to connect with player1 (meeting to status step2 and generate secret)
-            3: player1 check the secret of meeting (if correct, status connected and return clue)
-            4: player2 make polling for check status (if correct, return clue)
+            - player1 try to connect with player2 (create meeting with status step1) [Exception (if player2 is ai, return clue)]
+            - player2 try to connect with player1 (meeting to status step2 and generate secret)
+            - player1 check the secret of meeting (if correct, status connected and return clue)
+            - player2 make polling for check status (if correct, return clue)
         """
         # Validate players, event and distance
         response, status = self.all_validates(request, player_id, event_id)
@@ -266,6 +264,8 @@ class MeetingCreate(APIView):
         return Response(response, status=status)
 
     def get(self, request, player_id, event_id=None):
+        """ Get meeting state between request player and {player_id}.
+        If {event_id} inside event, else in general event. """
         # STEP 4
         # Validate players, event and distance
         response, status = self.all_validates(request, player_id, event_id)
@@ -297,6 +297,7 @@ class SetPosition(APIView):
 
     @classmethod
     def post(cls, request):
+        """ Set position request player. """
         if request.user.is_anonymous():
             return Response("Anonymous user", status=rf_status.HTTP_401_UNAUTHORIZED)
         player = request.user.player
@@ -310,6 +311,7 @@ class SetPosition(APIView):
 
     @classmethod
     def delete(cls, request):
+        """ Set position request player to (None, None). """
         if request.user.is_anonymous():
             return Response("Anonymous user", status=rf_status.HTTP_401_UNAUTHORIZED)
         player = request.user.player
@@ -321,10 +323,10 @@ set_position = SetPosition.as_view()
 
 class Profile(APIView):
 
-    def get(self, request, player_id=None):
-        if request.user.is_anonymous():
-            return Response("Anonymous user", status=rf_status.HTTP_401_UNAUTHORIZED)
+    permission_classes = [IsAuthenticated]
 
+    def get(self, request, player_id=None):
+        """ Get profile request player. """
         if not player_id:
             player = request.user.player
         else:
@@ -336,8 +338,7 @@ class Profile(APIView):
         return Response(serializer.data)
 
     def post(self, request):
-        if request.user.is_anonymous():
-            return Response("Anonymous user", status=rf_status.HTTP_401_UNAUTHORIZED)
+        """ Update profile request player. """
         data = request.data
         player = request.user.player
 
@@ -361,7 +362,9 @@ profile = Profile.as_view()
 
 
 class Register(APIView):
+
     def post(self, request):
+        """ Register new player. """
         email = request.data.get('email', '')
         password = request.data.get('password', '')
 
@@ -421,6 +424,7 @@ class ChangePasswd(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
+        """ Player change his password. """
         current = request.data.get('current', '')
         newpwd = request.data.get('new', '')
         u = request.user
