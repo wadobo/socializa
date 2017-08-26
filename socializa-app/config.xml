@@ -40,18 +40,19 @@
     </plugin>
     <icon src="icons/icon.png" />
     <platform name="android">
-        <icon density="ldpi" src="icons/res/icons/android/icon-36-ldpi.png" />
-        <icon density="mdpi" src="icons/res/icons/android/icon-48-mdpi.png" />
-        <icon density="hdpi" src="icons/res/icons/android/icon-72-hdpi.png" />
-        <icon density="xhdpi" src="icons/res/icons/android/icon-96-xhdpi.png" />
-        <icon density="xxhdpi" src="icons/res/icons/android/icon-144-xxhdpi.png" />
-        <icon density="xxxhdpi" src="icons/res/icons/android/icon-192-xxxhdpi.png" />
-        <splash density="port-ldpi" src="icons/res/screens/android/screen-ldpi-portrait.png" />
-        <splash density="port-mdpi" src="icons/res/screens/android/screen-mdpi-portrait.png" />
-        <splash density="port-hdpi" src="icons/res/screens/android/screen-hdpi-portrait.png" />
-        <splash density="port-xhdpi" src="icons/res/screens/android/screen-xhdpi-portrait.png" />
-        <splash density="port-xxhdpi" src="icons/res/screens/android/screen-xxhdpi-portrait.png" />
-        <splash density="port-xxxhdpi" src="icons/res/screens/android/screen-xxxhdpi-portrait.png" />
+        <icon qualifier="ldpi" src="icons/res/icons/android/icon-36-ldpi.png" />
+        <icon qualifier="mdpi" src="icons/res/icons/android/icon-48-mdpi.png" />
+        <icon qualifier="hdpi" src="icons/res/icons/android/icon-72-hdpi.png" />
+        <icon qualifier="xhdpi" src="icons/res/icons/android/icon-96-xhdpi.png" />
+        <icon qualifier="xxhdpi" src="icons/res/icons/android/icon-144-xxhdpi.png" />
+        <icon qualifier="fr-xxhdpi" src="icons/res/icons/android/icon-192-xxxhdpi.png" />
+        <splash qualifier="ldpi" src="icons/res/screens/android/screen-ldpi-portrait.png" />
+        <splash qualifier="mdpi" src="icons/res/screens/android/screen-mdpi-portrait.png" />
+        <splash qualifier="hdpi" src="icons/res/screens/android/screen-hdpi-portrait.png" />
+        <splash qualifier="xhdpi" src="icons/res/screens/android/screen-xhdpi-portrait.png" />
+        <splash qualifier="fr-xhdpi" src="icons/res/screens/android/screen-xxhdpi-portrait.png" />
+        <splash qualifier="port-xxhdpi" src="icons/res/screens/android/screen-xxxhdpi-portrait.png" />
+        <splash qualifier="land-xxhdpi" src="icons/res/screens/android/screen-xxxhdpi-landscape.png" />
     </platform>
     <access origin="*" />
     <allow-intent href="http://*/*" />
@@ -68,11 +69,11 @@
         <allow-intent href="itms-apps:*" />
     </platform>
     <allow-navigation href="*" />
-    <engine name="android" spec="~6.0.0" />
     <plugin name="cordova-plugin-x-toast" spec="~2.6.0" />
     <plugin name="cc.fovea.cordova.purchase" spec="~6.1.2">
         <variable name="BILLING_KEY" value="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3wCaA/v3Iyc20AHD3Nfl+sXC15xvwqEiDuDq4xaVVBq4lvNGWQrbZ07IxCidFWoHkBEo6aC+h8BKZNlAAcfqo8ATXoIfXzWb9C7nlUkuAmIQvBFX7kyRN2trJRlllEFNNAqZgtTS8yHszRoKO76gdhaVMA8Gywz47psK5sOmExKCG53elOXiOgb9StDvViEfaamokgfxzrtGOf1k1aawzNPPnLlomM0bR2mhp/feGh7GTIuazyauktA4aTdi5X2o6Ewt5TgEao9kO53Y2phGoGmDzGwX/eJY49TzLKAqCqBdmLUnscgdqXWa2k1TmKjrgk/sI3Sn8hgVhETIt8kVnwIDAQAB" />
     </plugin>
     <plugin name="es6-promise-plugin" spec="~4.1.0" />
     <plugin name="cordova-plugin-device-orientation" spec="~1.0.6" />
+    <engine name="android" spec="~6.2.3" />
 </widget>
