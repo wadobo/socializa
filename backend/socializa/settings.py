@@ -287,6 +287,9 @@ SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
   'fields': 'id,name,email',
 }
 
+# Avoid CSRF fail in swagger
+CSRF_HEADER_NAME = "CSRF_COOKIE"
+
 SWAGGER_SETTINGS = {
         'DOC_EXPANSION': 'list',
         'JSON_EDITOR': True,
