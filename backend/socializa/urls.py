@@ -24,8 +24,6 @@ from .views import oauth2apps, gplusid
 
 
 schema_url_patterns = [
-    #url(r"^editor/", include("editor.urls")),
-    #url(r"^social/", include("rest_framework_social_oauth2.urls")),
     url(r"^player/", include("player.urls")),
     url(r"^event/", include("event.urls")),
     url(r"^clue/", include("clue.urls")),
@@ -33,7 +31,8 @@ schema_url_patterns = [
 ]
 
 schema_view_v1 = get_schema_view(
-        title="Socializa API",
+        title="Socializa API V1",
+        description="API versions: <a href='/docs/v1/'>V1</a> <a href='/docs/v2/'>V2 (latest)</a></p>",
         url="/api/v1",
         urlconf='socializa.urls',
         patterns=schema_url_patterns,
@@ -41,7 +40,8 @@ schema_view_v1 = get_schema_view(
 )
 
 schema_view_v2 = get_schema_view(
-        title="Socializa API",
+        title="Socializa API V2",
+        description="API versions: <a href='/docs/v1/'>V1</a> <a href='/docs/v2/'>V2 (latest)</a></p>",
         url="/api/v2",
         urlconf='socializa.urls',
         patterns=schema_url_patterns,
@@ -51,7 +51,7 @@ schema_view_v2 = get_schema_view(
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^accounts/', include('django.contrib.auth.urls')),
-    url(r'^docs/', schema_view_v1),
+    url(r'^docs/$', schema_view_v1),
     url(r'^docs/v1/', schema_view_v1),
     url(r'^docs/v2/', schema_view_v2),
     url(r"^editor/", include("editor.urls")),
@@ -65,7 +65,6 @@ urlpatterns = [
     url(r"^api/event/", include("event.urls", namespace='v1')),
     url(r"^api/v1/event/", include("event.urls", namespace='v1')),
     url(r"^api/v2/event/", include("event.urls", namespace='v2')),
-    url(r"^api/v3/event/", include("event.urls", namespace='v3')),
     url(r"^api/clue/", include("clue.urls", namespace='v1')),
     url(r"^api/v1/clue/", include("clue.urls", namespace='v1')),
     url(r"^api/v2/clue/", include("clue.urls", namespace='v2')),
