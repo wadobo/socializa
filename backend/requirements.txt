@@ -1,12 +1,12 @@
 celery==4.1.0
 coverage==4.4.1
 django-extra-fields==0.9
-django-nose==1.4.4
+django-nose==1.4.5
 django-oauth-toolkit==1.0.0
 django-rest-framework-social-oauth2==1.0.8
 django-rest-swagger==2.1.2
-django==1.11.3
-djangorestframework==3.6.3
+django==1.11.4
+djangorestframework==3.6.4
 psycopg2==2.7.3
 pylint==1.7.2
 pylint-django==0.7.2
