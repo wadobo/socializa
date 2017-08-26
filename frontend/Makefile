@@ -7,6 +7,8 @@ web: clean css webpack indexweb files
 
 app: clean css webpack indexapp files
 
+app-pro: clean css webpack indexapp-pro files
+
 css:
 	node_modules/less/bin/lessc styles/app.less > dist/app/main.css
 	cp -rf node_modules/font-awesome/fonts/ dist/app/
@@ -22,6 +24,8 @@ files:
 
 indexapp: index.html
 	cat index.html | tr '\n' '\r' | perl -pe 's|<!--<web>-->.*?<!--</web>-->|\1|g' | tr '\r' '\n' > dist/index.html
+indexapp-pro: index.html
+	cat index.html | tr '\n' '\r' | perl -pe 's|<!--<web>-->.*?<!--</web>-->|\1|g' | tr '\r' '\n' | sed -e 's/devsocializa/socializa/g' > dist/index.html
 indexweb: index.html
 	cat index.html | tr '\n' '\r' | perl -pe 's|<!--<app>-->.*?<!--</app>-->|\1|g' | tr '\r' '\n' > dist/index.html
 
