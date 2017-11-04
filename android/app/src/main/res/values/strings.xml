@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">socializa</string>
+    <string name="login">Login</string>
+    <string name="login_with">Login with:</string>
+    <string name="facebook">f</string>
+    <string name="google">G+</string>
+    <string name="email">email</string>
+    <string name="hint_mail">me@socializa.com</string>
+    <string name="hint_pwd">password</string>
 </resources>

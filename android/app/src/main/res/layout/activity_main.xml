@@ -6,13 +6,118 @@
     android:layout_height="match_parent"
     tools:context="com.wadobo.socializa.MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <ScrollView
+        android:id="@+id/layoutScroll"
+        android:layout_width="384dp"
+        android:layout_height="511dp" >
 
+        <LinearLayout
+            android:id="@+id/layoutLinearScroll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/imgApp"
+                android:layout_width="match_parent"
+                android:layout_height="144dp"
+                android:layout_marginTop="8dp"
+                android:contentDescription="@string/app_name"
+                app:srcCompat="@drawable/ic_app" />
+
+            <TextView
+                android:id="@+id/textApp"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="@string/app_name"
+                android:textAlignment="center"
+                android:textSize="24sp"
+                android:layout_marginTop="8dp"
+                android:textAllCaps="true"
+                android:textColor="@color/colorAccent"
+                android:visibility="visible" />
+
+            <TableRow
+                android:id="@+id/rowSocial"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical|center_horizontal"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textLogin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/login_with"
+                    android:textAlignment="center" />
+
+                <Button
+                    android:id="@+id/btnFacebook"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:backgroundTint="#3b5998"
+                    android:text="@string/facebook"
+                    android:textAllCaps="false"
+                    android:textColor="#ffffff" />
+
+                <Button
+                    android:id="@+id/btnGoogle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:backgroundTint="#dd4b39"
+                    android:text="@string/google"
+                    android:textColor="#ffffff" />
+
+                <ImageButton
+                    android:id="@+id/btnMail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:backgroundTint="#ffffff"
+                    android:src="@drawable/ic_material_mail"
+                    android:textAllCaps="false" />
+            </TableRow>
+
+            <LinearLayout
+                android:id="@+id/layoutSignup"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="8dp"
+                android:orientation="vertical"
+                android:visibility="invisible">
+
+                <EditText
+                    android:id="@+id/textMail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="@string/hint_mail"
+                    android:inputType="textEmailAddress"
+                    android:textAlignment="center" />
+
+                <EditText
+                    android:id="@+id/textPwd"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="@string/hint_pwd"
+                    android:inputType="textPassword"
+                    android:textAlignment="center" />
+
+                <Button
+                    android:id="@+id/btnLogin"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/colorPrimary"
+                    android:text="@string/login"
+                    android:textColor="#ffffff" />
+            </LinearLayout>
+        </LinearLayout>
+
+    </ScrollView>
 </android.support.constraint.ConstraintLayout>
