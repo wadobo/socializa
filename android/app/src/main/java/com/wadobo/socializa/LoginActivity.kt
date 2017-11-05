@@ -40,7 +40,7 @@ class LoginActivity : AppCompatActivity() {
             api_client.post(path, params) {response ->
                 service.setToken(response?.get("access_token") as String)
                 service.setRefreshToken(response?.get("refresh_token") as String)
-                val intent = Intent(this, MainActivity::class.java)
+                val intent = Intent(this, MenuActivity::class.java)
                 startActivity(intent)
             }
         })
