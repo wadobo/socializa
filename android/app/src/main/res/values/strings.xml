@@ -11,4 +11,13 @@
     <string name="hint_pwd2">repeat password</string>
     <string name="wrong_mail">invalid mail</string>
     <string name="wrong_password">password not match</string>
+
+
+    <string name="menu_settings">settings</string>
+    <string name="menu_play">play</string>
+    <string name="menu_add">add</string>
+    <string name="menu_stats">stats</string>
+    <string name="menu_ranking">rankins</string>
+    <string name="menu_news">news</string>
+    <string name="menu_last_event">last events</string>
 </resources>

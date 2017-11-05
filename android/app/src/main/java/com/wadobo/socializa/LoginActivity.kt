@@ -4,14 +4,14 @@ import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_login.*
 import org.json.JSONObject
 
 class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_login)
 
         btnGotoRegister.setOnClickListener({
             val intent = Intent(this, RegisterActivity::class.java)
@@ -40,8 +40,8 @@ class LoginActivity : AppCompatActivity() {
             api_client.post(path, params) {response ->
                 service.setToken(response?.get("access_token") as String)
                 service.setRefreshToken(response?.get("refresh_token") as String)
-                //val intent = Intent(this, MainActivity::class.java)
-                //startActivity(intent)
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
             }
         })
 

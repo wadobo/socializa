@@ -4,131 +4,79 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.wadobo.socializa.LoginActivity">
+    tools:context="com.wadobo.socializa.MainActivity">
 
-    <ScrollView
-        android:id="@+id/layoutScroll"
+    <ImageView
+        android:id="@+id/imgApp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="144dp"
+        android:layout_marginTop="4dp"
+        android:contentDescription="@string/app_name"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_app" />
 
-        <LinearLayout
-            android:id="@+id/layoutLinearScroll"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:visibility="visible">
+    <Button
+        style="@style/btnMenu"
+        android:id="@+id/btnStats"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/menu_stats"
+        app:layout_constraintTop_toBottomOf="@+id/imgApp" />
 
-            <ImageView
-                android:id="@+id/imgApp"
-                android:layout_width="match_parent"
-                android:layout_height="144dp"
-                android:layout_marginTop="8dp"
-                android:contentDescription="@string/app_name"
-                app:srcCompat="@drawable/ic_app" />
+    <Button
+        style="@style/btnMenu"
+        android:id="@+id/btnRanking"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/menu_ranking"
+        app:layout_constraintTop_toBottomOf="@+id/btnStats" />
 
-            <TextView
-                android:id="@+id/textApp"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginTop="8dp"
-                android:text="@string/app_name"
-                android:textAlignment="center"
-                android:textAllCaps="true"
-                android:textColor="@color/colorAccent"
-                android:textSize="24sp"
-                android:visibility="visible" />
+    <Button
+        style="@style/btnMenu"
+        android:id="@+id/btnNews"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/menu_news"
+        app:layout_constraintTop_toBottomOf="@+id/btnRanking"
+        />
 
-            <TableRow
-                android:id="@+id/rowSocial"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="8dp"
-                android:gravity="center_vertical|center_horizontal"
-                android:orientation="horizontal">
+    <Button
+        style="@style/btnMenu"
+        android:id="@+id/btnLastEvent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/menu_last_event"
+        app:layout_constraintTop_toBottomOf="@+id/btnNews" />
 
-                <TextView
-                    android:id="@+id/textLogin"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/login_with"
-                    android:textAlignment="center" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-                <Button
-                    android:id="@+id/btnFacebook"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:backgroundTint="#3b5998"
-                    android:text="@string/facebook"
-                    android:textAllCaps="false"
-                    android:textColor="#ffffff" />
+        <Button
+            style="@style/btnMenu"
+            android:id="@+id/btnMenuSettings"
+            android:drawableLeft="@drawable/ic_material_settings"
+            android:text="@string/menu_settings" />
 
-                <Button
-                    android:id="@+id/btnGoogle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:backgroundTint="#dd4b39"
-                    android:text="@string/google"
-                    android:textColor="#ffffff" />
+        <Button
+            style="@style/btnMenu"
+            android:id="@+id/btnMenuPlay"
+            android:backgroundTint="@color/colorPrimary"
+            android:drawableLeft="@drawable/ic_material_play"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="0dp"
+            android:text="@string/menu_play" />
 
-                <ImageButton
-                    android:id="@+id/btnMail"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:backgroundTint="#ffffff"
-                    android:src="@drawable/ic_material_mail"
-                    android:textAllCaps="false" />
-            </TableRow>
+        <Button
+            style="@style/btnMenu"
+            android:id="@+id/btnMenuAdd"
+            android:backgroundTint="#333333"
+            android:drawableLeft="@drawable/ic_material_add"
+            android:text="@string/menu_add" />
+    </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/layoutSignup"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="8dp"
-                android:orientation="vertical"
-                android:visibility="invisible">
-
-                <EditText
-                    android:id="@+id/textMail"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:hint="@string/hint_mail"
-                    android:inputType="textEmailAddress"
-                    android:textAlignment="center" />
-
-                <EditText
-                    android:id="@+id/textPwd"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:hint="@string/hint_pwd"
-                    android:inputType="textPassword"
-                    android:textAlignment="center" />
-
-                <Button
-                    android:id="@+id/btnLogin"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@color/colorPrimary"
-                    android:text="@string/login"
-                    android:textColor="#ffffff" />
-
-                <Button
-                    android:id="@+id/btnGotoRegister"
-                    style="@style/Widget.AppCompat.Button.Small"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Go to register"
-                    android:textAlignment="center"
-                    android:layout_gravity="right"
-                    android:layout_marginRight="8dp"
-                    android:textAllCaps="false" />
-            </LinearLayout>
-        </LinearLayout>
-
-    </ScrollView>
 </android.support.constraint.ConstraintLayout>
