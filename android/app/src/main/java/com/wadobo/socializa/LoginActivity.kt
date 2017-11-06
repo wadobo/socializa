@@ -53,5 +53,10 @@ class LoginActivity : AppCompatActivity() {
                 textApp.text = response.toString()
             }
         })
+
+        btnGoogle.setOnClickListener({
+            val intent = Intent(this, ListEventActivity::class.java)
+            startActivity(intent)
+        })
     }
 }

@@ -20,7 +20,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".RegisterActivity" />
-        <activity android:name=".MenuActivity"></activity>
+        <activity android:name=".MenuActivity" />
+        <activity
+            android:name=".ListEventActivity"
+            android:label="@string/title_activity_list_event"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>
