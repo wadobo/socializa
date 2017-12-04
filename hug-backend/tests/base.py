@@ -9,10 +9,10 @@ from socializa.config import TestingConfig
 
 class Client:
 
-    def __init__(self, app, base_url='/api'):
+    def __init__(self, app, base_url='/api', version=''):
         self.app = app
         self.headers = {}
-        self.__base_url = base_url
+        self.__base_url = base_url + version
 
     def set_base_url(self, base_url):
         """ Set base_url and put / at start if not exists and remove / at end if exists. """

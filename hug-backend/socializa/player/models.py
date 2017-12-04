@@ -1,10 +1,12 @@
 from datetime import datetime
+
 from geoalchemy2 import Geometry
 from passlib.hash import bcrypt
 from sqlalchemy import Column
 from sqlalchemy import DateTime
 from sqlalchemy import Integer
 from sqlalchemy import String
+from sqlalchemy.orm import relationship
 from sqlalchemy_utils import ChoiceType
 
 from socializa.base_db import Base

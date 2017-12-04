@@ -44,7 +44,7 @@ class PlayerTest(TestBase):
         response = self.client.get('/player/{0}/'.format(self.player.email))
         self.assertEqual(response.status, hug.HTTP_404)
 
-    def test_list_players(self):
+    def test_list(self):
         response = self.client.get('/player/')
         self.assertEqual(response.status, hug.HTTP_200)
         self.assertEqual(len(response.data), 1)

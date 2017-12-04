@@ -3,6 +3,7 @@ import os
 
 from socializa.config import config
 from socializa.base_db import Base, db
+from socializa.game import api as game_api
 from socializa.player import api as player_api
 from socializa.player.models import Player
 
@@ -33,3 +34,7 @@ db.init_app(app, config.SQLALCHEMY_DATABASE_URI)
 @hug.extend_api('/api/player')
 def extend_api():
     return [player_api]
+
+@hug.extend_api('/api/game')
+def extend_api():
+    return [game_api]

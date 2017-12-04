@@ -1,12 +1,9 @@
 from geoalchemy2 import Geometry
 from marshmallow import fields
-from marshmallow import pre_load
-from marshmallow_sqlalchemy import ModelConverter
 from marshmallow_sqlalchemy import ModelSchema
-from marshmallow_sqlalchemy import field_for
 from shapely import wkb
 
-from socializa import config
+from socializa.config import config
 from socializa.base_db import db
 from socializa.player.models import Player
 
