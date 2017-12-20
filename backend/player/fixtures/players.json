@@ -1,0 +1,12 @@
+[
+{
+  "model": "player.player",
+  "pk": 1,
+  "fields": {
+    "user": 1,
+    "position": null,
+    "type": "human",
+    "created": "2016-09-17T13:59:10.267Z"
+  }
+}
+]

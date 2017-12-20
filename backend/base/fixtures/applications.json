@@ -1,0 +1,68 @@
+[
+{
+  "model": "auth.user",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$100000$Sa6B8zLnp1xP$BoBLdjC0nihCgAqtGsZYBxc37R2rwE/e0XOD86sYFs8=",
+    "last_login": "2016-09-24T16:02:25.774Z",
+    "is_superuser": true,
+    "username": "me@socializa.com",
+    "first_name": "",
+    "last_name": "",
+    "email": "me@socializa.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2016-09-17T13:59:10.267Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "oauth2_provider.application",
+  "pk": 1,
+  "fields": {
+    "client_id": "EKtlY3tAxgxzlFXLzw4PnPeY9jWq2FQq0p86VvI4",
+    "user": 1,
+    "redirect_uris": "http://wadobo.com",
+    "client_type": "public",
+    "authorization_grant_type": "password",
+    "client_secret": "U7n5Hv11b3QkXMZ8XXF0jay1C8EiCr5fuzR39tYVJNJtyMXAp0Db3gw8UU8rE0q3EOnh0c0AZ53ZwMRGFnpYFzR02j1vt6YKtdyT2P7NlaN3UYSiI0T6ptKXWZDLEk2t",
+    "name": "local",
+    "skip_authorization": false,
+    "created": "2017-12-05T08:23:17.402Z",
+    "updated": "2017-12-05T08:23:17.406Z"
+  }
+},
+{
+  "model": "oauth2_provider.application",
+  "pk": 2,
+  "fields": {
+    "client_id": "TDT21zQ18j7mL4r4YZ6cUsChu7pPjr3ddTx4jwLs",
+    "user": 1,
+    "redirect_uris": "http://wadobo.com",
+    "client_type": "public",
+    "authorization_grant_type": "authorization-code",
+    "client_secret": "XKPyTcKxsW3aNCZI736FM6njTKZmErG09EpZb5SBGvzbZMCuP4nyScOWJrfdUhKDqGaohhdkoBOIUMPHrRiNGbLRm37AcAy4KYh9ljJWZcf8qt6yp1VVx1y0kxekQVHH",
+    "name": "facebook",
+    "skip_authorization": false,
+    "created": "2017-12-05T08:23:17.413Z",
+    "updated": "2017-12-05T08:23:17.417Z"
+  }
+},
+{
+  "model": "oauth2_provider.application",
+  "pk": 3,
+  "fields": {
+    "client_id": "f5YSsXHYYJ9v14wp6hH9Mz5NEXP6ure46zu8Wip6",
+    "user": 1,
+    "redirect_uris": "http://wadobo.com",
+    "client_type": "public",
+    "authorization_grant_type": "authorization-code",
+    "client_secret": "6A5c875gaqpHtpiycXVCR3bEwCX87tmX19XcmXKTdppcWTq44hFlTMtafDYfO3Qvtygtz7luVTk4Rxu6KdmPYcTF5wfDpX8GHgfoDQPnXatRwavgeSyqYCw1xexlM9FH",
+    "name": "google",
+    "skip_authorization": false,
+    "created": "2017-12-05T08:23:17.422Z",
+    "updated": "2017-12-05T08:23:17.424Z"
+  }
+}
+]
