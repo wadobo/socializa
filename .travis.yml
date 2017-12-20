@@ -17,6 +17,7 @@ before_script:
   - psql -U postgres -c "create user socializa password 'socializa'"
   - psql -U postgres -c "create database test_socializa owner socializa"
   - psql -U postgres -d test_socializa -c "create extension postgis"
+  - psql -U postgres -c "ALTER USER socializa CREATEDB"
 language: python
 python:
   - "3.4"
