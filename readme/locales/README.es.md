@@ -1,4 +1,4 @@
-### Idiomas:  [![Spanish](/readme/icons/es.png)](/readme/locales/README.es.md) [![English](/readme/icons/en.png)](README.md)
+### Idiomas:  [![Spanish](/readme/icons/es.png)](/readme/locales/README.es.md) [![English](/readme/icons/en.png)](../../README.md)
 
 # Socializa
 
